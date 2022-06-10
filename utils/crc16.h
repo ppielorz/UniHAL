@@ -1,14 +1,14 @@
 /******************************************************************************
- @file crc.h
+ @file crc16.h
 
- @brief CRC helpers declaration
+ @brief CRC16 helpers declaration
 
  @author Paweł Pielorz (pawel.pielorz@gmail.com)
 
  *****************************************************************************/
 
-#ifndef _CRC_H_
-#define _CRC_H_
+#ifndef _CRC16_H_
+#define _CRC16_H_
 
 /******************************************************************************
  Includes
@@ -36,4 +36,4 @@ uint16_t crc16_CCITT(uint8_t* buffer, size_t bufferLen, size_t offset, size_t by
 }
 #endif
 
-#endif /* _CRC_H_ */
+#endif /* _CRC16_H_ */
