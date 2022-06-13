@@ -101,13 +101,19 @@ bool unihal_gpio_write(UniHAL_gpio_t* instance, UniHAL_gpio_value_t outputValue)
     return mock().boolReturnValue();
 }
 
-extern bool unihal_gpio_configureOutput(UniHAL_gpio_t* instance, UniHAL_gpio_value_t outputValue,
+bool unihal_gpio_configureOutput(UniHAL_gpio_t* instance, UniHAL_gpio_value_t outputValue,
                                     UniHAL_gpio_outputType_t outputType)
 {
     mock().actualCall("unihal_gpio_configureOutput").withPointerParameter("instance", instance)
         .withParameter("outputValue", outputValue)
         .withParameter("outputType", outputType);
     return mock().boolReturnValue();
+}
+
+uint32_t unihal_getVoltage(void)
+{
+    mock().actualCall("unihal_getVoltage");
+    return mock().unsignedIntReturnValue();
 }
 
 /******************************************************************************
