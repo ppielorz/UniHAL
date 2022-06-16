@@ -68,7 +68,6 @@ TEST_GROUP(Stream)
 
 TEST(Stream, initNullPointerStream)
 {
-    Stream_t stream = {};
     uint8_t streamBuffer[100] = {};
 
     Stream_status_t status = stream_init(NULL, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
@@ -113,7 +112,6 @@ TEST(Stream, getUint8NullPointerValue)
 {
     Stream_t stream = {};
     uint8_t streamBuffer[2 * sizeof(uint8_t)] = {0xAB, 0xCD};
-    uint8_t value = 0U;
     Stream_status_t status = stream_init(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
     LONGS_EQUAL(Stream_status_success, status);
 
@@ -223,7 +221,6 @@ TEST(Stream, getUint16NullPointerValue)
 {
     Stream_t stream = {};
     uint8_t streamBuffer[2 * sizeof(uint16_t)] = {0x12, 0x34, 0x56, 0x78};
-    uint16_t value = 0U;
     Stream_status_t status = stream_init(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
     LONGS_EQUAL(Stream_status_success, status);
 
@@ -397,7 +394,6 @@ TEST(Stream, getUint32NullPointerValue)
 {
     Stream_t stream = {};
     uint8_t streamBuffer[2 * sizeof(uint32_t)] = {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0};
-    uint32_t value = 0U;
     Stream_status_t status = stream_init(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
     LONGS_EQUAL(Stream_status_success, status);
 
@@ -583,7 +579,6 @@ TEST(Stream, getUint64NullPointerValue)
 {
     Stream_t stream = {};
     uint8_t streamBuffer[2 * sizeof(uint64_t)] = {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88};
-    uint64_t value = 0U;
     Stream_status_t status = stream_init(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
     LONGS_EQUAL(Stream_status_success, status);
 
@@ -793,7 +788,6 @@ TEST(Stream, getBoolNullPointerValue)
 {
     Stream_t stream = {};
     uint8_t streamBuffer[2 * sizeof(uint8_t)] = {0xAB, 0xCD};
-    bool value = false;
     Stream_status_t status = stream_init(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
     LONGS_EQUAL(Stream_status_success, status);
 
@@ -1201,7 +1195,6 @@ TEST(Stream, getCursorNullPointerCursor)
 {
     Stream_t stream = {};
     uint8_t streamBuffer[5] = {};
-    size_t cursor = 0U;
     Stream_status_t status = stream_init(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
     LONGS_EQUAL(Stream_status_success, status);
 
@@ -1280,7 +1273,6 @@ TEST(Stream, freeBytesNullPointerFreeBytes)
 {
     Stream_t stream = {};
     uint8_t streamBuffer[5] = {};
-    size_t freeBytes = sizeof(streamBuffer);
     Stream_status_t status = stream_init(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
     LONGS_EQUAL(Stream_status_success, status);
 
