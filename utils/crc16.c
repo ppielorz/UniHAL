@@ -34,6 +34,7 @@
 uint16_t crc16_CCITT(uint8_t* buffer, size_t bufferLen, size_t offset, size_t byteCount)
 {
     uint16_t crc = 0U;
+    (void) bufferLen;
     //DU_ASSERT(buffer != NULL);
     //DU_ASSERT((bufferLen - offset) >= byteCount);
     buffer += offset;
