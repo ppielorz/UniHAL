@@ -24,7 +24,7 @@ $(TESTS): %: bin/%_tests
 
 $(TESTS_BINS): bin/%_tests: objs/%.o objs/%_tests.o
 	@echo "Linking $@"
-	@g++ $(CFLAGS_COV) $? $(LDFLAGS) $(LDLIBS) -o $@
+	@g++ $(CFLAGS_COV) $^ $(LDFLAGS) $(LDLIBS) -o $@
 
 $(TESTS_OBJS): objs/%.o : %.cpp
 	@echo "Building $@"
