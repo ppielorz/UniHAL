@@ -82,7 +82,7 @@ typedef struct
  * @retval Stream_status_nullPointer NULL pointer provided.
  * @retval Stream_status_wrongDataFormat Wrong data format provided.
  */
-Stream_status_t stream_init(Stream_t* stream, uint8_t* buffer, size_t bufLen, Stream_dataFormat_t dataFormat);
+Stream_status_t stream_init(Stream_t* const stream, uint8_t* const buffer, const size_t bufLen, const Stream_dataFormat_t dataFormat);
 
 /*!
  * @brief Takes out an uint8_t number from given Stream and moves the cursor forwards by 1.
@@ -96,7 +96,7 @@ Stream_status_t stream_init(Stream_t* stream, uint8_t* buffer, size_t bufLen, St
  * @retval Stream_status_nullPointer NULL pointer provided.
  * @retval Stream_status_bufferOverflow Reading out requested number would overflow the buffer.
  */
-Stream_status_t stream_getUint8(Stream_t* stream, uint8_t* value);
+Stream_status_t stream_getUint8(Stream_t* const stream, uint8_t* const value);
 
 /*!
  * @brief Inserts an uint8_t number to given Stream and moves the cursor forwards by 1.
@@ -110,7 +110,7 @@ Stream_status_t stream_getUint8(Stream_t* stream, uint8_t* value);
  * @retval Stream_status_nullPointer NULL pointer provided.
  * @retval Stream_status_bufferOverflow Inserting requested number would overflow the buffer.
  */
-Stream_status_t stream_putUint8(Stream_t* stream, uint8_t value);
+Stream_status_t stream_putUint8(Stream_t* const stream, const uint8_t value);
 
 /*!
  * @brief Takes out an uint16_t number from given Stream and moves the cursor forwards by 2.
@@ -125,7 +125,7 @@ Stream_status_t stream_putUint8(Stream_t* stream, uint8_t value);
  * @retval Stream_status_bufferOverflow Reading out requested number would overflow the buffer.
  * @retval Stream_status_wrongDataFormat Wrong data format provided.
  */
-Stream_status_t stream_getUint16(Stream_t* stream, uint16_t* value);
+Stream_status_t stream_getUint16(Stream_t* const stream, uint16_t* const value);
 
 /*!
  * @brief Inserts an uint16_t number to given Stream and moves the cursor forwards by 2.
@@ -140,7 +140,7 @@ Stream_status_t stream_getUint16(Stream_t* stream, uint16_t* value);
  * @retval Stream_status_bufferOverflow Inserting requested number would overflow the buffer.
  * @retval Stream_status_wrongDataFormat Wrong data format provided.
  */
-Stream_status_t stream_putUint16(Stream_t* stream, uint16_t value);
+Stream_status_t stream_putUint16(Stream_t* const stream, const uint16_t value);
 
 /*!
  * @brief Takes out an uint32_t number from given Stream and moves the cursor forwards by 4.
@@ -155,7 +155,7 @@ Stream_status_t stream_putUint16(Stream_t* stream, uint16_t value);
  * @retval Stream_status_bufferOverflow Reading out requested number would overflow the buffer.
  * @retval Stream_status_wrongDataFormat Wrong data format provided.
  */
-Stream_status_t stream_getUint32(Stream_t* stream, uint32_t* value);
+Stream_status_t stream_getUint32(Stream_t* const stream, uint32_t* const value);
 
 /*!
  * @brief Inserts an uint32_t number to given Stream and moves the cursor forwards by 4.
@@ -170,7 +170,7 @@ Stream_status_t stream_getUint32(Stream_t* stream, uint32_t* value);
  * @retval Stream_status_bufferOverflow Inserting requested number would overflow the buffer.
  * @retval Stream_status_wrongDataFormat Wrong data format provided.
  */
-Stream_status_t stream_putUint32(Stream_t* stream, uint32_t value);
+Stream_status_t stream_putUint32(Stream_t* const stream, const uint32_t value);
 
 /*!
  * @brief Takes out an uint64_t number from given Stream and moves the cursor forwards by 8.
@@ -185,7 +185,7 @@ Stream_status_t stream_putUint32(Stream_t* stream, uint32_t value);
  * @retval Stream_status_bufferOverflow Reading out requested number would overflow the buffer.
  * @retval Stream_status_wrongDataFormat Wrong data format provided.
  */
-Stream_status_t stream_getUint64(Stream_t* stream, uint64_t* value);
+Stream_status_t stream_getUint64(Stream_t* const stream, uint64_t* const value);
 
 /*!
  * @brief Inserts an uint32_t number to given Stream and moves the cursor forwards by 8.
@@ -200,7 +200,7 @@ Stream_status_t stream_getUint64(Stream_t* stream, uint64_t* value);
  * @retval Stream_status_bufferOverflow Inserting requested number would overflow the buffer.
  * @retval Stream_status_wrongDataFormat Wrong data format provided.
  */
-Stream_status_t stream_putUint64(Stream_t* stream, uint64_t value);
+Stream_status_t stream_putUint64(Stream_t* const stream, const uint64_t value);
 
 /*!
  * @brief Takes out a boolean from given Stream and moves the cursor forwards by 1.
@@ -216,7 +216,7 @@ Stream_status_t stream_putUint64(Stream_t* stream, uint64_t value);
  * @retval Stream_status_nullPointer NULL pointer provided.
  * @retval Stream_status_bufferOverflow Reading out requested boolean would overflow the buffer.
  */
-Stream_status_t stream_getBool(Stream_t* stream, bool* value);
+Stream_status_t stream_getBool(Stream_t* const stream, bool* const value);
 
 /*!
  * @brief Inserts a boolean to given Stream and moves the cursor forwards by 1.
@@ -232,7 +232,7 @@ Stream_status_t stream_getBool(Stream_t* stream, bool* value);
  * @retval Stream_status_nullPointer NULL pointer provided.
  * @retval Stream_status_bufferOverflow Inserting requested boolean would overflow the buffer.
  */
-Stream_status_t stream_putBool(Stream_t* stream, bool value);
+Stream_status_t stream_putBool(Stream_t* const stream, const bool value);
 
 /*!
  * @brief Takes out given number of bytes from given Stream to outputBuffer and moves the cursor forwards by byteCount.
@@ -248,7 +248,7 @@ Stream_status_t stream_putBool(Stream_t* stream, bool value);
  * @retval Stream_status_nullPointer NULL pointer provided.
  * @retval Stream_status_bufferOverflow Reading out requested number of bytes would overflow the buffer or outputBuffer is too small.
  */
-Stream_status_t stream_getBytes(Stream_t* stream, size_t byteCount, uint8_t* outputBuffer, size_t outputBufferLen);
+Stream_status_t stream_getBytes(Stream_t* const stream, const size_t byteCount, uint8_t* const outputBuffer, const size_t outputBufferLen);
 
 /*!
  * @brief Inserts given number of bytes from given sourceBuffer to stream and moves the cursor forwards by byteCount.
@@ -264,7 +264,7 @@ Stream_status_t stream_getBytes(Stream_t* stream, size_t byteCount, uint8_t* out
  * @retval Stream_status_nullPointer NULL pointer provided.
  * @retval Stream_status_bufferOverflow Inserting requested number of bytes would overflow the buffer or sourceBuffer is too small.
  */
-Stream_status_t stream_putBytes(Stream_t* stream, size_t byteCount, uint8_t* sourceBuffer, size_t sourceBufferLen);
+Stream_status_t stream_putBytes(Stream_t* const stream, const size_t byteCount, const uint8_t* const sourceBuffer, const size_t sourceBufferLen);
 
 /*!
  * @brief Takes out given number of bytes from given Stream to outputStream and moves the cursor forwards by byteCount in both streams.
@@ -279,7 +279,7 @@ Stream_status_t stream_putBytes(Stream_t* stream, size_t byteCount, uint8_t* sou
  * @retval Stream_status_nullPointer NULL pointer provided.
  * @retval Stream_status_bufferOverflow Reading out requested number of bytes would overflow the buffer(s).
  */
-Stream_status_t stream_getFromStream(Stream_t* stream, size_t byteCount, Stream_t* outputStream);
+Stream_status_t stream_getFromStream(Stream_t* const stream, const size_t byteCount, Stream_t* const outputStream);
 
 /*!
  * @brief Inserts given number of bytes from sourceStream to given stream and moves the cursor forwards by byteCount in both streams.
@@ -294,7 +294,7 @@ Stream_status_t stream_getFromStream(Stream_t* stream, size_t byteCount, Stream_
  * @retval Stream_status_nullPointer NULL pointer provided.
  * @retval Stream_status_bufferOverflow Reading out requested number of bytes would overflow the buffer(s).
  */
-Stream_status_t stream_putFromStream(Stream_t* stream, size_t byteCount, Stream_t* sourceStream);
+Stream_status_t stream_putFromStream(Stream_t* const stream, const size_t byteCount, Stream_t* const sourceStream);
 
 /*!
  * @brief Prints given stream details and content to stdout.
@@ -306,7 +306,7 @@ Stream_status_t stream_putFromStream(Stream_t* stream, size_t byteCount, Stream_
  * @retval Stream_status_success Bytes inserted properly.
  * @retval Stream_status_nullPointer NULL pointer provided.
  */
-Stream_status_t stream_print(Stream_t* stream);
+Stream_status_t stream_print(const Stream_t* const stream);
 
 /*!
  * @brief Gets the actual cursor position of the given Stream.
@@ -319,7 +319,7 @@ Stream_status_t stream_print(Stream_t* stream);
  * @retval Stream_status_success Cursor extracted properly.
  * @retval Stream_status_nullPointer NULL pointer provided.
  */
-Stream_status_t stream_getCursor(Stream_t* stream, size_t* actualPosition);
+Stream_status_t stream_getCursor(const Stream_t* const stream, size_t* const actualPosition);
 
 /*!
  * @brief Sets the actual cursor position of the given Stream to the given value.
@@ -333,7 +333,7 @@ Stream_status_t stream_getCursor(Stream_t* stream, size_t* actualPosition);
  * @retval Stream_status_nullPointer NULL pointer provided.
  * @retval Stream_status_bufferOverflow Given cursor value exceeds buffer length.
  */
-Stream_status_t stream_setCursor(Stream_t* stream, size_t cursor);
+Stream_status_t stream_setCursor(Stream_t* const stream, const size_t cursor);
 
 /*!
  * @brief Gets the actual number of free bytes in the given Stream.
@@ -346,7 +346,7 @@ Stream_status_t stream_setCursor(Stream_t* stream, size_t cursor);
  * @retval Stream_status_success Number of free bytes extracted properly.
  * @retval Stream_status_nullPointer NULL pointer provided.
  */
-Stream_status_t stream_freeBytes(Stream_t* stream, size_t* freeBytes);
+Stream_status_t stream_freeBytes(const Stream_t* const stream, size_t* const freeBytes);
 
 #ifdef __cplusplus
 }
