@@ -58,6 +58,7 @@ TEST_GROUP(Ssd1306Tests)
     void setup()
     {
     }
+
     void teardown()
     {
     }
