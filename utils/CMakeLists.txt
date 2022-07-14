@@ -1,4 +1,5 @@
 add_library(unihal-utils stream.c crc16.c)
+target_include_directories(unihal-utils PUBLIC .)
 
 add_library(unihal-utils-tools tools/cpputest_comparators.cpp
                                tools/cpputest_copiers.cpp)
