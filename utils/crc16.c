@@ -31,13 +31,12 @@
  Public Functions
  *****************************************************************************/
 
-uint16_t crc16_CCITT(uint8_t* buffer, size_t bufferLen, size_t offset, size_t byteCount)
+uint16_t crc16_CCITT(const uint8_t* const buffer, const size_t bufferLen, const size_t offset, const size_t byteCount)
 {
     uint16_t crc = 0U;
     (void) bufferLen;
     //DU_ASSERT(buffer != NULL);
     //DU_ASSERT((bufferLen - offset) >= byteCount);
-    buffer += offset;
 
     const uint16_t crc16Array[256] =
     {
@@ -75,10 +74,9 @@ uint16_t crc16_CCITT(uint8_t* buffer, size_t bufferLen, size_t offset, size_t by
         0x6E17,0x7E36,0x4E55,0x5E74,0x2E93,0x3EB2,0x0ED1,0x1EF0,
     };
 
-    while(byteCount >= 1)
+    for(size_t i = offset; i < byteCount; i++)
     {
-        crc = (crc << 8) ^ crc16Array[((crc >> 8) ^ *buffer++) & 0xff];
-        byteCount--;
+        crc = (crc << 8) ^ crc16Array[((crc >> 8) ^ buffer[i]) & 0xff];
     }
 
     return crc;

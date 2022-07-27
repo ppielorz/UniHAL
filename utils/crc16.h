@@ -30,7 +30,7 @@ extern "C"
  Function Prototypes
  *****************************************************************************/
 
-uint16_t crc16_CCITT(uint8_t* buffer, size_t bufferLen, size_t offset, size_t byteCount);
+uint16_t crc16_CCITT(const uint8_t* const buffer, const size_t bufferLen, const size_t offset, const size_t byteCount);
 
 #ifdef __cplusplus
 }
