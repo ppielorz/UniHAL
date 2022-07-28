@@ -11,5 +11,6 @@ add_subdirectory(utils)
 
 add_library(unihal unihal.c)
 target_link_libraries(unihal unihal-drivers unihal-gfx unihal-utils)
+target_include_directories(unihal PUBLIC .)
 
 add_library(unihal-mocks implementations/unihal_mocks.cpp)
