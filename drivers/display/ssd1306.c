@@ -88,6 +88,7 @@ static void writedata(SSD1306_t* display, uint8_t data);
 /******************************************************************************
  Global functions
  ******************************************************************************/
+#define DU_ASSERT(x) x
 void ssd1306_initSPI(SSD1306_t* display, monoGFX_t* gfx,UniHAL_spi_t* spi,
                    UniHAL_gpio_t* cs,UniHAL_gpio_t* rst,UniHAL_gpio_t* dc)
 {
@@ -104,13 +105,13 @@ void ssd1306_initSPI(SSD1306_t* display, monoGFX_t* gfx,UniHAL_spi_t* spi,
     display->dc = dc;
     display->gfx = gfx;
 
-    //DU_ASSERT(unihal_gpio_init(display->cs));
-    //DU_ASSERT(unihal_gpio_init(display->rst));
-    //DU_ASSERT(unihal_gpio_init(display->dc));
+    DU_ASSERT(unihal_gpio_init(display->cs));
+    DU_ASSERT(unihal_gpio_init(display->rst));
+    DU_ASSERT(unihal_gpio_init(display->dc));
 
-    //DU_ASSERT(unihal_gpio_configureOutput(display->cs,UniHAL_gpio_value_high,UniHAL_gpio_outputType_pushPull));
-    //DU_ASSERT(unihal_gpio_configureOutput(display->rst,UniHAL_gpio_value_high,UniHAL_gpio_outputType_pushPull));
-    //DU_ASSERT(unihal_gpio_configureOutput(display->dc,UniHAL_gpio_value_low,UniHAL_gpio_outputType_pushPull));
+    DU_ASSERT(unihal_gpio_configureOutput(display->cs,UniHAL_gpio_value_high,UniHAL_gpio_outputType_pushPull));
+    DU_ASSERT(unihal_gpio_configureOutput(display->rst,UniHAL_gpio_value_high,UniHAL_gpio_outputType_pushPull));
+    DU_ASSERT(unihal_gpio_configureOutput(display->dc,UniHAL_gpio_value_low,UniHAL_gpio_outputType_pushPull));
 
     ssd1306_reset(display);
 
@@ -252,7 +253,7 @@ static void writecmd(SSD1306_t* display, uint8_t data)
     unihal_gpio_write(display->cs,UniHAL_gpio_value_low);
     unihal_spi_transfer(display->spi, sizeof(data), &data, NULL);
     unihal_gpio_write(display->cs,UniHAL_gpio_value_high);
-    //unihal_gpio_write(display->dc,UniHAL_gpio_value_high);
+    unihal_gpio_write(display->dc,UniHAL_gpio_value_high);
 }
 static void writedata(SSD1306_t* display, uint8_t data)
 {
