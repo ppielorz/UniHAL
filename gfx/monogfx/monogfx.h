@@ -3,6 +3,11 @@
 
  @author Paweł Pielorz (pawel.pielorz@gmail.com)
 
+ @brief monoGFX is a simple graphics library for 2-D static binary image
+ generation.
+
+ @details
+
  *****************************************************************************/
 
 #ifndef MONOGFX_H_
@@ -22,6 +27,12 @@ extern "C"
 /******************************************************************************
  Constants and definitions
  *****************************************************************************/
+typedef enum
+{
+    monoGFX_status_success = 0U,
+    monoGFX_status_nullPointer = 1U,
+} monoGFX_status_t;
+
 typedef struct
 {
     uint8_t* buffer;
@@ -63,7 +74,7 @@ typedef struct {
  Function Prototypes
  *****************************************************************************/
 
-extern void monoGFX_init(monoGFX_t* gfx, size_t xSize, size_t ySize, uint8_t* buffer, size_t bufferSize);
+extern monoGFX_status_t monoGFX_init(monoGFX_t* gfx, size_t xSize, size_t ySize, uint8_t* buffer, size_t bufferSize);
 extern void monoGFX_clear(monoGFX_t* gfx);
 extern void monoGFX_drawHLine(monoGFX_t* gfx, size_t yPosition, size_t thickness);
 extern void monoGFX_drawVLine(monoGFX_t* gfx, size_t xPosition, size_t thickness);

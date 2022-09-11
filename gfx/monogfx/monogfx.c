@@ -18,7 +18,7 @@
 /******************************************************************************
  Constants and definitions
  *****************************************************************************/
-
+#define CHECK_AND_RETURN_STATUS(condition, failStatus) if(!(condition)) { return failStatus; }
 
 /******************************************************************************
  Local variables
@@ -32,18 +32,20 @@
  Public Functions
  *****************************************************************************/
 
-void monoGFX_init(monoGFX_t* gfx, size_t xSize, size_t ySize, uint8_t* buffer, size_t bufferSize)
+monoGFX_status_t monoGFX_init(monoGFX_t* const gfx, const size_t xSize, const size_t ySize, uint8_t* const buffer, const size_t bufferSize)
 {
-    //DU_ASSERT(gfx != NULL);
-    //DU_ASSERT(buffer != NULL);
-    //DU_ASSERT(xSize < (SIZE_MAX - 7));
-    //DU_ASSERT(bufferSize >= (((ySize + (8 - 1)) / 8 ) * xSize));
-    memset(gfx, 0U, sizeof(gfx));
+    CHECK_AND_RETURN_STATUS(gfx != NULL, monoGFX_status_nullPointer);
+    CHECK_AND_RETURN_STATUS(buffer != NULL, monoGFX_status_nullPointer);
+    //CHECK_AND_RETURN_STATUS(xSize < (SIZE_MAX - 7));
+    //CHECK_AND_RETURN_STATUS(bufferSize >= (((ySize + (8 - 1)) / 8 ) * xSize));
+    memset(gfx, 0U, sizeof(*gfx));
 
     gfx->xSize = xSize;
     gfx->ySize = ySize;
     gfx->buffer = buffer;
     gfx->bufferSize = bufferSize;
+
+    return monoGFX_status_success;
 }
 
 void monoGFX_clear(monoGFX_t* gfx)
@@ -88,7 +90,11 @@ void monoGFX_setPixel(monoGFX_t* gfx, size_t xPosition, size_t yPosition)
     Dla SSD1306 oraz SSD1675 potrzebna jest odwrotna kolejność bitów w bajcie.
     Do uwzględnienia jako parametr konfiguracyjny monoGFX.
     */
-    gfx->buffer[xPosition + yPosition / 8 * gfx->xSize] |= 0x01 << (yPosition % 8);
+    size_t xBufferWidth = (gfx->xSize + 8 - 1) / 8;
+    //gfx->buffer[xBufferWidth * yPosition + xPosition/8] |= 0x80 >> (xPosition % 8);
+    //gfx->buffer[xPosition + yPosition / 8 * gfx->xSize] |= 0x01 << (yPosition % 8);
+    //gfx->buffer[xPosition / 8 + yPosition / 8 * gfx->xSize] |= 0x01 << (xPosition % 8);
+    gfx->buffer[xPosition / 8 + yPosition * (gfx->xSize / 8 + 1)] |= 0x80 >> (xPosition % 8);
 }
 
 void monoGFX_clearPixel(monoGFX_t* gfx, size_t x, size_t y)
