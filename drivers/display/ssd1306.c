@@ -192,6 +192,7 @@ SSD1306_status_t ssd1306_initSPI(SSD1306_t* const display, monoGFX_t* const gfx,
     CHECK_AND_RETURN_STATUS(gfx->ySize <= HEIGHT_MAX, SSD1306_status_heightTooLarge);
     display->xSize = gfx->xSize;
     display->ySize = gfx->ySize;
+    gfx->bitReverseOrder = true;
 
     ssd1306_reset(display);
 

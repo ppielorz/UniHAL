@@ -39,11 +39,13 @@ monoGFX_status_t monoGFX_init(monoGFX_t* const gfx, const size_t xSize, const si
     //CHECK_AND_RETURN_STATUS(xSize < (SIZE_MAX - 7));
     //CHECK_AND_RETURN_STATUS(bufferSize >= (((ySize + (8 - 1)) / 8 ) * xSize));
     memset(gfx, 0U, sizeof(*gfx));
+    memset(buffer, 0U, bufferSize);
 
     gfx->xSize = xSize;
     gfx->ySize = ySize;
     gfx->buffer = buffer;
     gfx->bufferSize = bufferSize;
+    gfx->bitReverseOrder = false;
 
     return monoGFX_status_success;
 }
@@ -89,7 +91,14 @@ void monoGFX_setPixel(monoGFX_t* gfx, size_t xPosition, size_t yPosition)
     size_t offset = xPosition / 8 + yPosition * ((gfx->xSize + 7) / 8);
     if(offset < gfx->bufferSize)
     {
-        gfx->buffer[offset] |= 0x80 >> (xPosition % 8);
+        if(gfx->bitReverseOrder)
+        {
+            gfx->buffer[offset] |= 0x01 << (xPosition % 8);
+        }
+        else
+        {
+            gfx->buffer[offset] |= 0x80 >> (xPosition % 8);
+        }
     }
 }
 

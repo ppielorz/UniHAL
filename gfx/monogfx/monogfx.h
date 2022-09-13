@@ -18,6 +18,7 @@
  *****************************************************************************/
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -39,6 +40,7 @@ typedef struct
     size_t bufferSize;
     size_t xSize;
     size_t ySize;
+    bool bitReverseOrder;
 } monoGFX_t;
 
 
