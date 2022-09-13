@@ -201,7 +201,7 @@ SSD1306_status_t ssd1306_initSPI(SSD1306_t* const display, monoGFX_t* const gfx,
     CHECK_AND_RETURN_IF_ERROR(setDisplayStartLine(display, 0U));
     CHECK_AND_RETURN_IF_ERROR(setSegmentRemap(display, false));
     CHECK_AND_RETURN_IF_ERROR(setComOutputScanDirection(display, true));
-    CHECK_AND_RETURN_IF_ERROR(setComPinsHardwareConfiguration(display, false, false));
+    CHECK_AND_RETURN_IF_ERROR(setComPinsHardwareConfiguration(display, true, false));
     CHECK_AND_RETURN_IF_ERROR(ssd1306_setContrast(display, 255));
     //CHECK_AND_RETURN_IF_ERROR(ssd1306_displayOn(display, false));
     CHECK_AND_RETURN_IF_ERROR(displayRamContent(display, true));
