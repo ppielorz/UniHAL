@@ -86,15 +86,11 @@ void monoGFX_drawHLine(monoGFX_t* gfx, size_t yPosition, size_t thickness)
 
 void monoGFX_setPixel(monoGFX_t* gfx, size_t xPosition, size_t yPosition)
 {
-    /* TODO
-    Dla SSD1306 oraz SSD1675 potrzebna jest odwrotna kolejność bitów w bajcie.
-    Do uwzględnienia jako parametr konfiguracyjny monoGFX.
-    */
-    size_t xBufferWidth = (gfx->xSize + 8 - 1) / 8;
-    //gfx->buffer[xBufferWidth * yPosition + xPosition/8] |= 0x80 >> (xPosition % 8);
-    //gfx->buffer[xPosition + yPosition / 8 * gfx->xSize] |= 0x01 << (yPosition % 8);
-    //gfx->buffer[xPosition / 8 + yPosition / 8 * gfx->xSize] |= 0x01 << (xPosition % 8);
-    gfx->buffer[xPosition / 8 + yPosition * (gfx->xSize / 8 + 1)] |= 0x80 >> (xPosition % 8);
+    size_t offset = xPosition / 8 + yPosition * ((gfx->xSize + 7) / 8);
+    if(offset < gfx->bufferSize)
+    {
+        gfx->buffer[offset] |= 0x80 >> (xPosition % 8);
+    }
 }
 
 void monoGFX_clearPixel(monoGFX_t* gfx, size_t x, size_t y)
