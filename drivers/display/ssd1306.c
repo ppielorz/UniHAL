@@ -115,8 +115,8 @@ static SSD1306_status_t enableChargePump(const SSD1306_t* const display, const b
  Global functions
  ******************************************************************************/
 
-SSD1306_status_t ssd1306_initSPI(SSD1306_t* const display, monoGFX_t* const gfx, const UniHAL_spi_t* const spi,
-                                        const UniHAL_gpio_t* const cs, const UniHAL_gpio_t* const rst, const UniHAL_gpio_t* const dc)
+SSD1306_status_t ssd1306_initSPI(SSD1306_t* const display, monoGFX_t* const gfx, UniHAL_spi_t* const spi,
+                                        UniHAL_gpio_t* const cs, UniHAL_gpio_t* const rst, UniHAL_gpio_t* const dc)
 {
     SSD1306_status_t ret = SSD1306_status_ok;
 

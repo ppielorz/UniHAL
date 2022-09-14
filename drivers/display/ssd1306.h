@@ -77,8 +77,8 @@ typedef struct
 /******************************************************************************
  Function Prototypes
  *****************************************************************************/
-extern SSD1306_status_t ssd1306_initSPI(SSD1306_t* const display, monoGFX_t* const gfx, const UniHAL_spi_t* const spi,
-                                        const UniHAL_gpio_t* const cs, const UniHAL_gpio_t* const rst, const UniHAL_gpio_t* const dc);
+extern SSD1306_status_t ssd1306_initSPI(SSD1306_t* const display, monoGFX_t* const gfx, UniHAL_spi_t* const spi,
+                                        UniHAL_gpio_t* const cs, UniHAL_gpio_t* const rst, UniHAL_gpio_t* const dc);
 
 extern void ssd1306_initI2C(SSD1306_t* display, monoGFX_t* gfx, UniHAL_i2c_t* i2c, uint8_t address);
 
