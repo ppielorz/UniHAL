@@ -67,12 +67,10 @@
 /******************************************************************************
  Local function prototypes
  *****************************************************************************/
+static SSD1306_status_t reset(const SSD1306_t* const display);
 static SSD1306_status_t sendCommand(const SSD1306_t* const display, const uint8_t command);
-
-
 static SSD1306_status_t setAddressingMode(SSD1306_t* const display, const SSD1306_addressingMode_t addressingMode);
 static SSD1306_status_t setCursor(const SSD1306_t* const display, const size_t xPosition, const size_t yPosition);
-
 static SSD1306_status_t setMuxRatio(const SSD1306_t* const display, const uint8_t muxRatio);
 static SSD1306_status_t setDisplayOffset(const SSD1306_t* const display, const uint8_t offset);
 static SSD1306_status_t setDisplayStartLine(const SSD1306_t* const display, const uint8_t startLine);
@@ -113,9 +111,6 @@ static SSD1306_status_t displayRamContent(const SSD1306_t* const display, const 
 static SSD1306_status_t setOscillatorFrequency(const SSD1306_t* const display, const uint8_t oscillatorFrequencySetting);
 static SSD1306_status_t enableChargePump(const SSD1306_t* const display, const bool chargePumpEnabled);
 
-static void writecmd(SSD1306_t* display, uint8_t data);
-static void writedata(SSD1306_t* display, uint8_t data);
-
 /******************************************************************************
  Global functions
  ******************************************************************************/
@@ -152,8 +147,7 @@ SSD1306_status_t ssd1306_initSPI(SSD1306_t* const display, monoGFX_t* const gfx,
     display->ySize = gfx->ySize;
     gfx->bitReverseOrder = true;
 
-    ssd1306_reset(display);
-
+    CHECK_AND_RETURN_IF_ERROR(reset(display));
     CHECK_AND_RETURN_IF_ERROR(setMuxRatio(display, gfx->xSize));
     CHECK_AND_RETURN_IF_ERROR(setDisplayOffset(display, 0U));
     CHECK_AND_RETURN_IF_ERROR(setDisplayStartLine(display, 0U));
@@ -184,25 +178,21 @@ void ssd1306_initI2C(SSD1306_t* display, monoGFX_t* gfx,UniHAL_i2c_t* i2c, uint8
     //DU_ASSERT(false);
 }
 
-void ssd1306_reset(SSD1306_t* display)
-{
-    unihal_gpio_write(display->rst,UniHAL_gpio_value_low);
-    unihal_usleep(5000);
-    unihal_gpio_write(display->rst,UniHAL_gpio_value_high);
-}
 
-void ssd1306_setCursor(SSD1306_t* display, uint8_t x, uint16_t y)
+SSD1306_status_t ssd1306_refresh(const SSD1306_t* const display)
 {
-    
-}
+    SSD1306_status_t ret = SSD1306_status_ok;
 
-void ssd1306_refresh(SSD1306_t* display)
-{
-    setCursor(display, 0, 0);
-    unihal_gpio_write(display->dc,UniHAL_gpio_value_high);
-    unihal_gpio_write(display->cs,UniHAL_gpio_value_low);
-    unihal_spi_transfer(display->spi, display->gfx->bufferSize, display->gfx->buffer, NULL);
-    unihal_gpio_write(display->cs,UniHAL_gpio_value_high);
+    CHECK_AND_RETURN_STATUS(display != NULL, SSD1306_status_nullPointer);
+
+    CHECK_AND_RETURN_IF_ERROR(setCursor(display, 0, 0));
+    CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->dc, UniHAL_gpio_value_high) == true, SSD1306_status_dcPinWriteError);
+    CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->cs, UniHAL_gpio_value_low) == true, SSD1306_status_csPinWriteError);
+    CHECK_AND_RETURN_STATUS(unihal_spi_transfer(display->spi, display->gfx->bufferSize, display->gfx->buffer, NULL) == true, SSD1306_status_spiCommunicationError);
+    CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->cs, UniHAL_gpio_value_high) == true, SSD1306_status_csPinWriteError);
+    CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->dc, UniHAL_gpio_value_high) == true, SSD1306_status_dcPinWriteError);
+
+    return ret;
 }
 
 SSD1306_status_t ssd1306_setContrast(const SSD1306_t* const display, const uint8_t contrast)
@@ -227,6 +217,17 @@ SSD1306_status_t ssd1306_displayOn(const SSD1306_t* const display, const bool di
  Local Functions
  *****************************************************************************/
 
+static SSD1306_status_t reset(const SSD1306_t* const display)
+{
+    CHECK_AND_RETURN_STATUS(display != NULL, SSD1306_status_nullPointer);
+
+    CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->rst, UniHAL_gpio_value_low) == true, SSD1306_status_rstPinWriteError);
+    unihal_usleep(5000);
+    CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->rst, UniHAL_gpio_value_high) == true, SSD1306_status_rstPinWriteError);
+
+    return SSD1306_status_ok;
+}
+
 static SSD1306_status_t sendCommand(const SSD1306_t* const display, const uint8_t command)
 {
     CHECK_AND_RETURN_STATUS(display != NULL, SSD1306_status_nullPointer);
@@ -238,21 +239,6 @@ static SSD1306_status_t sendCommand(const SSD1306_t* const display, const uint8_
     CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->dc, UniHAL_gpio_value_high) == true, SSD1306_status_dcPinWriteError);
 
     return SSD1306_status_ok;
-}
-
-static void writecmd(SSD1306_t* display, uint8_t data)
-{
-    unihal_gpio_write(display->dc,UniHAL_gpio_value_low);
-    unihal_gpio_write(display->cs,UniHAL_gpio_value_low);
-    unihal_spi_transfer(display->spi, sizeof(data), &data, NULL);
-    unihal_gpio_write(display->cs,UniHAL_gpio_value_high);
-    unihal_gpio_write(display->dc,UniHAL_gpio_value_high);
-}
-static void writedata(SSD1306_t* display, uint8_t data)
-{
-    unihal_gpio_write(display->cs,UniHAL_gpio_value_low);
-    unihal_spi_transfer(display->spi, sizeof(data), &data, NULL);
-    unihal_gpio_write(display->cs,UniHAL_gpio_value_high);
 }
 
 static SSD1306_status_t setAddressingMode(SSD1306_t* const display, const SSD1306_addressingMode_t addressingMode)
@@ -285,9 +271,11 @@ static SSD1306_status_t setCursor(const SSD1306_t* const display, const size_t x
             CHECK_AND_RETURN_IF_ERROR(sendCommand(display, REG_PAGE_ADDRESS));
             CHECK_AND_RETURN_IF_ERROR(sendCommand(display, 0x00));
             CHECK_AND_RETURN_IF_ERROR(sendCommand(display, display->xSize / 8 - 1));
+            break;
 
         default:
             ret = SSD1306_status_invalidAddressingMode;
+            break;
     }
 
     return ret;

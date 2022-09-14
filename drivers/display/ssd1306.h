@@ -39,16 +39,14 @@ typedef enum
     SSD1306_status_dcPinInitError = 7U,
     SSD1306_status_csPinConfigureError = 8U,
     SSD1306_status_rstPinConfigureError = 9U,
-    SSD1306_status_bsyPinConfigureError = 10U,
-    SSD1306_status_dcPinConfigureError = 11U,
-    SSD1306_status_csPinWriteError = 12U,
-    SSD1306_status_bsyPinWriteError = 13U,
-    SSD1306_status_dcPinWriteError = 14U,
-    SSD1306_status_spiCommunicationError = 15U,
-    SSD1306_status_timeout = 16U,
-    SSD1306_status_invalidMuxRatio = 17U,
-    SSD1306_status_invalidDisplayStartLine = 18U,
-    SSD1306_status_invalidAddressingMode = 19U,
+    SSD1306_status_dcPinConfigureError = 10U,
+    SSD1306_status_csPinWriteError = 11U,
+    SSD1306_status_rstPinWriteError = 12U,
+    SSD1306_status_dcPinWriteError = 13U,
+    SSD1306_status_spiCommunicationError = 14U,
+    SSD1306_status_invalidMuxRatio = 15U,
+    SSD1306_status_invalidDisplayStartLine = 16U,
+    SSD1306_status_invalidAddressingMode = 17U,
 } SSD1306_status_t;
 
 typedef enum
@@ -84,38 +82,8 @@ extern SSD1306_status_t ssd1306_initSPI(SSD1306_t* const display, monoGFX_t* con
 
 extern void ssd1306_initI2C(SSD1306_t* display, monoGFX_t* gfx, UniHAL_i2c_t* i2c, uint8_t address);
 
-extern void ssd1306_reset(SSD1306_t* display);
+extern SSD1306_status_t ssd1306_refresh(const SSD1306_t* const display);
 
-extern void ssd1306_setCursor(SSD1306_t* display, uint8_t x, uint16_t y);
-
-extern void ssd1306_refresh(SSD1306_t* display);
-
-/*1. Fundamental Command Table
-D/C# Hex D7 D6 D5 D4 D3 D2 D1 D0 Command Description
-0 81 1 0 0 0 0 0 0 1
-0 A[7:0] A 7 A6 A5 A4 A3 A2 A1 A0
-Set Contrast Control Double byte command to select 1 out of 256
-contrast steps. Contrast increases as the value
-increases.
-(RESET = 7Fh )
-0 A4/A5 1 0 1 0 0 1 0 X 0 Entire Display ON A4h, X0=0b: Resume to RAM content display
-(RESET)
-Output follows RAM content
-A5h, X0=1b: Entire display ON
-Output ignores RAM content
-0 A6/A7 1 0 1 0 0 1 1 X 0 Set Normal/Inverse
-Display
-A6h, X[0]=0b: Normal display (RESET)
-0 in RAM: OFF in display panel
-1 in RAM: ON in display panel
-A7h, X[0]=1b: Inverse display
-0 in RAM: ON in display panel
-1 in RAM: OFF in display panel
-0 AE 1 0 1 0 1 1 1 X 0
-AF
-Set Display ON/OFF AEh, X[0]=0b:Display OFF (sleep mode)
-(RESET)
-AFh X[0]=1b:Display ON in normal mode*/
 /*!
  * @brief Sets fundamental display parameters.
  *
