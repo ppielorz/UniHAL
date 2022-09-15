@@ -54,7 +54,7 @@ Stream_status_t stream_init(Stream_t* const stream, uint8_t* const buffer, const
     return Stream_status_success;
 }
 
-Stream_status_t stream_getUint8(Stream_t* const stream, uint8_t* value)
+Stream_status_t stream_getUint8(Stream_t* const stream, uint8_t* const value)
 {
     CHECK(stream != NULL, Stream_status_nullPointer);
     CHECK(value != NULL, Stream_status_nullPointer);
