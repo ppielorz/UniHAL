@@ -109,15 +109,15 @@ SSD1675_status_t ssd1675_init(SSD1675_t* display, monoGFX_t* bwGfx, monoGFX_t* r
     CHECK_AND_RETURN_STATUS(unihal_gpio_configureInput(display->bsy, UniHAL_gpio_pull_noPull) == true, SSD1675_status_bsyPinConfigureError);
     CHECK_AND_RETURN_STATUS(unihal_gpio_configureOutput(display->dc, UniHAL_gpio_value_low, UniHAL_gpio_outputType_pushPull) == true, SSD1675_status_dcPinConfigureError);
 
-    CHECK_AND_RETURN_STATUS(bwGfx->xSize <= WIDTH_MAX, SSD1675_status_widthTooLarge);
-    CHECK_AND_RETURN_STATUS(bwGfx->ySize <= HEIGHT_MAX, SSD1675_status_heightTooLarge);
+    display->xSize = bwGfx->xSizeBuffer;
+    display->ySize = bwGfx->ySizeBuffer;
+    display->bwGfx = bwGfx;
+    display->rGfx = rGfx;
+    CHECK_AND_RETURN_STATUS(display->xSize <= WIDTH_MAX, SSD1675_status_widthTooLarge);
+    CHECK_AND_RETURN_STATUS(display->ySize <= HEIGHT_MAX, SSD1675_status_heightTooLarge);
     CHECK_AND_RETURN_STATUS(rGfx == NULL || bwGfx->xSize == rGfx->xSize, SSD1675_status_gfxSizeMismatch);
     CHECK_AND_RETURN_STATUS(rGfx == NULL || bwGfx->ySize == rGfx->ySize, SSD1675_status_gfxSizeMismatch);
 
-    display->bwGfx = bwGfx;
-    display->rGfx = rGfx;
-    display->xSize = bwGfx->xSize;
-    display->ySize = bwGfx->ySize;
 
     CHECK_AND_RETURN_IF_ERROR(hwReset(display));
     CHECK_AND_RETURN_IF_ERROR(swReset(display));
@@ -135,7 +135,7 @@ SSD1675_status_t ssd1675_init(SSD1675_t* display, monoGFX_t* bwGfx, monoGFX_t* r
     sendData(display, 0xB0);
     sendCommand(display, 0x20);
 
-    //while(unihal_gpio_read(display->bsy) == UniHAL_gpio_value_high); TODO timeout
+    //while(unihal_gpio_read(display->bsy) == UniHAL_gpio_value_high);
 
     sendCommand(display, 0x01);
     //sendData(display, 0xD3);
