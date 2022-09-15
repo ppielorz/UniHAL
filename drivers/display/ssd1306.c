@@ -141,14 +141,14 @@ SSD1306_status_t ssd1306_initSPI(SSD1306_t* const display, monoGFX_t* const gfx,
     CHECK_AND_RETURN_STATUS(unihal_gpio_configureOutput(display->rst, UniHAL_gpio_value_high, UniHAL_gpio_outputType_pushPull) == true, SSD1306_status_rstPinConfigureError);
     CHECK_AND_RETURN_STATUS(unihal_gpio_configureOutput(display->dc, UniHAL_gpio_value_high, UniHAL_gpio_outputType_pushPull) == true, SSD1306_status_dcPinConfigureError);
 
-    CHECK_AND_RETURN_STATUS(gfx->xSize <= WIDTH_MAX, SSD1306_status_widthTooLarge);
-    CHECK_AND_RETURN_STATUS(gfx->ySize <= HEIGHT_MAX, SSD1306_status_heightTooLarge);
-    display->xSize = gfx->xSize;
-    display->ySize = gfx->ySize;
+    CHECK_AND_RETURN_STATUS(gfx->xSizeBuffer <= WIDTH_MAX, SSD1306_status_widthTooLarge);
+    CHECK_AND_RETURN_STATUS(gfx->ySizeBuffer <= HEIGHT_MAX, SSD1306_status_heightTooLarge);
+    display->xSize = gfx->xSizeBuffer;
+    display->ySize = gfx->ySizeBuffer;
     gfx->bitReverseOrder = true;
 
     CHECK_AND_RETURN_IF_ERROR(reset(display));
-    CHECK_AND_RETURN_IF_ERROR(setMuxRatio(display, gfx->xSize));
+    CHECK_AND_RETURN_IF_ERROR(setMuxRatio(display, display->xSize));
     CHECK_AND_RETURN_IF_ERROR(setDisplayOffset(display, 0U));
     CHECK_AND_RETURN_IF_ERROR(setDisplayStartLine(display, 0U));
     CHECK_AND_RETURN_IF_ERROR(setSegmentRemap(display, false));

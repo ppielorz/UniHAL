@@ -32,10 +32,12 @@
  Public Functions
  *****************************************************************************/
 
-monoGFX_status_t monoGFX_init(monoGFX_t* const gfx, const size_t xSize, const size_t ySize, uint8_t* const buffer, const size_t bufferSize)
+monoGFX_status_t monoGFX_init(monoGFX_t* const gfx, const size_t xSize, const size_t ySize, uint8_t* const buffer, 
+                                const size_t bufferSize, const monoGFX_rotation_t rotation)
 {
     CHECK_AND_RETURN_STATUS(gfx != NULL, monoGFX_status_nullPointer);
     CHECK_AND_RETURN_STATUS(buffer != NULL, monoGFX_status_nullPointer);
+    CHECK_AND_RETURN_STATUS(rotation < monoGFX_rotation_count, monoGFX_status_invalidRotation);
     //CHECK_AND_RETURN_STATUS(xSize < (SIZE_MAX - 7));
     //CHECK_AND_RETURN_STATUS(bufferSize >= (((ySize + (8 - 1)) / 8 ) * xSize));
     memset(gfx, 0U, sizeof(*gfx));
@@ -43,9 +45,21 @@ monoGFX_status_t monoGFX_init(monoGFX_t* const gfx, const size_t xSize, const si
 
     gfx->xSize = xSize;
     gfx->ySize = ySize;
+    gfx->rotation = rotation;
+    if(gfx->rotation == monoGFX_rotation_clockwise || gfx->rotation == monoGFX_rotation_counterclockwise)
+    {
+        gfx->xSizeBuffer = ySize;
+        gfx->ySizeBuffer = xSize;
+    }
+    else
+    {
+        gfx->xSizeBuffer = xSize;
+        gfx->ySizeBuffer = ySize;
+    }
     gfx->buffer = buffer;
     gfx->bufferSize = bufferSize;
     gfx->bitReverseOrder = false;
+
 
     return monoGFX_status_success;
 }
@@ -88,16 +102,37 @@ void monoGFX_drawHLine(monoGFX_t* gfx, size_t yPosition, size_t thickness)
 
 void monoGFX_setPixel(monoGFX_t* gfx, size_t xPosition, size_t yPosition)
 {
-    size_t offset = xPosition / 8 + yPosition * ((gfx->xSize + 7) / 8);
+    size_t xPositionRotated = xPosition;
+    size_t yPositionRotated = yPosition;
+
+    switch(gfx->rotation)
+    {
+        case monoGFX_rotation_clockwise:
+            xPositionRotated = gfx->xSizeBuffer - yPosition;
+            yPositionRotated = xPosition;
+            break;
+
+        case monoGFX_rotation_counterclockwise:
+            xPositionRotated = yPosition;
+            yPositionRotated = gfx->ySizeBuffer - xPosition;
+            break;
+
+        case monoGFX_rotation_halfTurn:
+            xPositionRotated = gfx->xSizeBuffer - xPosition;
+            yPositionRotated = gfx->ySizeBuffer - yPosition;
+            break;
+    }
+
+    size_t offset = xPositionRotated / 8 + yPositionRotated * ((gfx->xSizeBuffer + 7) / 8);
     if(offset < gfx->bufferSize)
     {
         if(gfx->bitReverseOrder)
         {
-            gfx->buffer[offset] |= 0x01 << (xPosition % 8);
+            gfx->buffer[offset] |= 0x01 << (xPositionRotated % 8);
         }
         else
         {
-            gfx->buffer[offset] |= 0x80 >> (xPosition % 8);
+            gfx->buffer[offset] |= 0x80 >> (xPositionRotated % 8);
         }
     }
 }

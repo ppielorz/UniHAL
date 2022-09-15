@@ -32,7 +32,18 @@ typedef enum
 {
     monoGFX_status_success = 0U,
     monoGFX_status_nullPointer = 1U,
+    monoGFX_status_invalidRotation = 2U
 } monoGFX_status_t;
+
+typedef enum
+{
+    monoGFX_rotation_none = 0U,
+    monoGFX_rotation_clockwise = 1U,
+    monoGFX_rotation_counterclockwise = 2U,
+    monoGFX_rotation_halfTurn = 3U,
+
+    monoGFX_rotation_count
+} monoGFX_rotation_t;
 
 typedef struct
 {
@@ -40,7 +51,10 @@ typedef struct
     size_t bufferSize;
     size_t xSize;
     size_t ySize;
+    size_t xSizeBuffer;
+    size_t ySizeBuffer;
     bool bitReverseOrder;
+    monoGFX_rotation_t rotation;
 } monoGFX_t;
 
 
@@ -76,7 +90,8 @@ typedef struct {
  Function Prototypes
  *****************************************************************************/
 
-extern monoGFX_status_t monoGFX_init(monoGFX_t* gfx, size_t xSize, size_t ySize, uint8_t* buffer, size_t bufferSize);
+extern monoGFX_status_t monoGFX_init(monoGFX_t* const gfx, const size_t xSize, const size_t ySize, uint8_t* const buffer, 
+                                        const size_t bufferSize, const monoGFX_rotation_t rotation);
 extern void monoGFX_clear(monoGFX_t* gfx);
 extern void monoGFX_drawHLine(monoGFX_t* gfx, size_t yPosition, size_t thickness);
 extern void monoGFX_drawVLine(monoGFX_t* gfx, size_t xPosition, size_t thickness);
