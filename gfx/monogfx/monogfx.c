@@ -19,7 +19,7 @@
  Constants and definitions
  *****************************************************************************/
 #define CHECK_AND_RETURN_STATUS(condition, failStatus) if(!(condition)) { return failStatus; }
-#define IS_ROTATED_BY_90_DEG(rotation) (rotation == monoGFX_rotation_clockwise || rotation == monoGFX_rotation_counterclockwise)
+#define IS_ROTATED_BY_90_DEG(gfx) (gfx->rotation == monoGFX_rotation_clockwise || gfx->rotation == monoGFX_rotation_counterclockwise)
 
 /******************************************************************************
  Local variables
@@ -47,8 +47,8 @@ monoGFX_status_t monoGFX_init(monoGFX_t* const gfx, const size_t xSize, const si
     gfx->xSize = xSize;
     gfx->ySize = ySize;
     gfx->rotation = rotation;
-    gfx->xSizeBuffer = IS_ROTATED_BY_90_DEG(gfx->rotation) ? ySize : xSize;
-    gfx->ySizeBuffer = IS_ROTATED_BY_90_DEG(gfx->rotation) ? xSize : ySize;
+    gfx->xSizeBuffer = IS_ROTATED_BY_90_DEG(gfx) ? ySize : xSize;
+    gfx->ySizeBuffer = IS_ROTATED_BY_90_DEG(gfx) ? xSize : ySize;
     gfx->buffer = buffer;
     gfx->bufferSize = bufferSize;
     gfx->bitReverseOrder = false;
@@ -68,13 +68,12 @@ monoGFX_status_t monoGFX_clear(const monoGFX_t* const gfx)
 monoGFX_status_t monoGFX_drawVLine(const monoGFX_t* const gfx, const size_t xPosition, const size_t thickness)
 {
     monoGFX_status_t status = monoGFX_status_success;
+    const size_t xStart = (thickness / 2) >= xPosition ? 0U : xPosition - thickness / 2;
+    const size_t xEnd = (xPosition + (thickness / 2) - 1) >= gfx->xSize ? gfx->xSize - 1 : xPosition + thickness / 2;
 
     CHECK_AND_RETURN_STATUS(gfx != NULL, monoGFX_status_nullPointer);
     CHECK_AND_RETURN_STATUS(xPosition < gfx->xSize, monoGFX_status_xAxisExceeded);
     CHECK_AND_RETURN_STATUS(thickness > 0U, monoGFX_status_invalidThickness);
-
-    const size_t xStart = (thickness / 2) >= xPosition ? 0U : xPosition - thickness / 2;
-    const size_t xEnd = (xPosition + (thickness / 2) - 1) >= gfx->xSize ? gfx->xSize - 1 : xPosition + thickness / 2;
 
     for(size_t x = xStart; x <= xEnd; x++)
     {
@@ -87,7 +86,6 @@ monoGFX_status_t monoGFX_drawVLine(const monoGFX_t* const gfx, const size_t xPos
             }
         }
     }
-
 
     return status;
 }
