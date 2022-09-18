@@ -19,6 +19,7 @@
  Constants and definitions
  *****************************************************************************/
 #define CHECK_AND_RETURN_STATUS(condition, failStatus) if(!(condition)) { return failStatus; }
+#define IS_ROTATED_BY_90_DEG(rotation) (rotation == monoGFX_rotation_clockwise || rotation == monoGFX_rotation_counterclockwise)
 
 /******************************************************************************
  Local variables
@@ -38,56 +39,57 @@ monoGFX_status_t monoGFX_init(monoGFX_t* const gfx, const size_t xSize, const si
     CHECK_AND_RETURN_STATUS(gfx != NULL, monoGFX_status_nullPointer);
     CHECK_AND_RETURN_STATUS(buffer != NULL, monoGFX_status_nullPointer);
     CHECK_AND_RETURN_STATUS(rotation < monoGFX_rotation_count, monoGFX_status_invalidRotation);
-    //CHECK_AND_RETURN_STATUS(xSize < (SIZE_MAX - 7));
-    //CHECK_AND_RETURN_STATUS(bufferSize >= (((ySize + (8 - 1)) / 8 ) * xSize));
+    CHECK_AND_RETURN_STATUS(bufferSize >= (((ySize + (8 - 1)) / 8 ) * xSize), monoGFX_status_bufferTooSmall);
+
     memset(gfx, 0U, sizeof(*gfx));
     memset(buffer, 0U, bufferSize);
 
     gfx->xSize = xSize;
     gfx->ySize = ySize;
     gfx->rotation = rotation;
-    if(gfx->rotation == monoGFX_rotation_clockwise || gfx->rotation == monoGFX_rotation_counterclockwise)
-    {
-        gfx->xSizeBuffer = ySize;
-        gfx->ySizeBuffer = xSize;
-    }
-    else
-    {
-        gfx->xSizeBuffer = xSize;
-        gfx->ySizeBuffer = ySize;
-    }
+    gfx->xSizeBuffer = IS_ROTATED_BY_90_DEG(gfx->rotation) ? ySize : xSize;
+    gfx->ySizeBuffer = IS_ROTATED_BY_90_DEG(gfx->rotation) ? xSize : ySize;
     gfx->buffer = buffer;
     gfx->bufferSize = bufferSize;
     gfx->bitReverseOrder = false;
 
+    return monoGFX_status_success;
+}
+
+monoGFX_status_t monoGFX_clear(const monoGFX_t* const gfx)
+{
+    CHECK_AND_RETURN_STATUS(gfx != NULL, monoGFX_status_nullPointer);
+
+    memset(gfx->buffer, 0U, gfx->bufferSize);
 
     return monoGFX_status_success;
 }
 
-void monoGFX_clear(monoGFX_t* gfx)
+monoGFX_status_t monoGFX_drawVLine(const monoGFX_t* const gfx, const size_t xPosition, const size_t thickness)
 {
-    memset(gfx->buffer, 0U, gfx->bufferSize);
-}
+    monoGFX_status_t status = monoGFX_status_success;
 
-void monoGFX_drawVLine(monoGFX_t* gfx, size_t xPosition, size_t thickness)
-{
-    size_t y = 0;
-    size_t xBufferWidth = (gfx->xSize + 8 - 1) / 8;
-    uint8_t firstColumnMask = 0;
-    uint8_t lastColumnMask = 0;
+    CHECK_AND_RETURN_STATUS(gfx != NULL, monoGFX_status_nullPointer);
+    CHECK_AND_RETURN_STATUS(xPosition < gfx->xSize, monoGFX_status_xAxisExceeded);
+    CHECK_AND_RETURN_STATUS(thickness > 0U, monoGFX_status_invalidThickness);
 
-    uint8_t i = 0;
-    //for(i = 0; i < )
+    const size_t xStart = (thickness / 2) >= xPosition ? 0U : xPosition - thickness / 2;
+    const size_t xEnd = (xPosition + (thickness / 2) - 1) >= gfx->xSize ? gfx->xSize - 1 : xPosition + thickness / 2;
 
-    //if(display->xSize % 8 != 0)
-    //{
-    //    xBufferWidth++;
-    //}
-    for(y = 0; y < gfx->ySize / 8; y++)
+    for(size_t x = xStart; x <= xEnd; x++)
     {
-        gfx->buffer[xPosition + y * gfx->xSize] = 0xFF;
-        //monoGFX_setPixel(gfx, xPosition, y);
+        for(size_t yPosition = 0; yPosition < gfx->ySize; yPosition++)
+        {
+            status = monoGFX_setPixel(gfx, x, yPosition);
+            if(status != monoGFX_status_success)
+            {
+                return status;
+            }
+        }
     }
+
+
+    return status;
 }
 
 void monoGFX_drawHLine(monoGFX_t* gfx, size_t yPosition, size_t thickness)
@@ -100,7 +102,7 @@ void monoGFX_drawHLine(monoGFX_t* gfx, size_t yPosition, size_t thickness)
     }
 }
 
-void monoGFX_setPixel(monoGFX_t* gfx, size_t xPosition, size_t yPosition)
+monoGFX_status_t monoGFX_setPixel(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition)
 {
     size_t xPositionRotated = xPosition;
     size_t yPositionRotated = yPosition;
@@ -135,6 +137,8 @@ void monoGFX_setPixel(monoGFX_t* gfx, size_t xPosition, size_t yPosition)
             gfx->buffer[offset] |= 0x80 >> (xPositionRotated % 8);
         }
     }
+
+    return monoGFX_status_success;
 }
 
 void monoGFX_clearPixel(monoGFX_t* gfx, size_t x, size_t y)

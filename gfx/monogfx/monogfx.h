@@ -32,7 +32,10 @@ typedef enum
 {
     monoGFX_status_success = 0U,
     monoGFX_status_nullPointer = 1U,
-    monoGFX_status_invalidRotation = 2U
+    monoGFX_status_invalidRotation = 2U,
+    monoGFX_status_bufferTooSmall = 3U,
+    monoGFX_status_xAxisExceeded = 4U,
+    monoGFX_status_invalidThickness = 5U
 } monoGFX_status_t;
 
 typedef enum
@@ -92,10 +95,10 @@ typedef struct {
 
 extern monoGFX_status_t monoGFX_init(monoGFX_t* const gfx, const size_t xSize, const size_t ySize, uint8_t* const buffer, 
                                         const size_t bufferSize, const monoGFX_rotation_t rotation);
-extern void monoGFX_clear(monoGFX_t* gfx);
+extern monoGFX_status_t monoGFX_clear(const monoGFX_t* const gfx);
+extern monoGFX_status_t monoGFX_drawVLine(const monoGFX_t* const gfx, const size_t xPosition, const size_t thickness);
 extern void monoGFX_drawHLine(monoGFX_t* gfx, size_t yPosition, size_t thickness);
-extern void monoGFX_drawVLine(monoGFX_t* gfx, size_t xPosition, size_t thickness);
-extern void monoGFX_setPixel(monoGFX_t* gfx, size_t xPosition, size_t yPosition);
+extern monoGFX_status_t monoGFX_setPixel(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition);
 extern void monoGFX_clearPixel(monoGFX_t* gfx, size_t x, size_t y);
 extern uint8_t monoGFX_getPixel(monoGFX_t* gfx, size_t xPosition, size_t yPosition);
 extern void monoGFX_drawLine(monoGFX_t* gfx, size_t xStart, size_t yStart, size_t xEnd, size_t yEnd);
