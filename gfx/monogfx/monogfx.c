@@ -108,18 +108,18 @@ void monoGFX_setPixel(monoGFX_t* gfx, size_t xPosition, size_t yPosition)
     switch(gfx->rotation)
     {
         case monoGFX_rotation_clockwise:
-            xPositionRotated = gfx->xSizeBuffer - yPosition;
+            xPositionRotated = gfx->xSizeBuffer - yPosition - 1;
             yPositionRotated = xPosition;
             break;
 
         case monoGFX_rotation_counterclockwise:
             xPositionRotated = yPosition;
-            yPositionRotated = gfx->ySizeBuffer - xPosition;
+            yPositionRotated = gfx->ySizeBuffer - xPosition - 1;
             break;
 
         case monoGFX_rotation_halfTurn:
-            xPositionRotated = gfx->xSizeBuffer - xPosition;
-            yPositionRotated = gfx->ySizeBuffer - yPosition;
+            xPositionRotated = gfx->xSizeBuffer - xPosition - 1;
+            yPositionRotated = gfx->ySizeBuffer - yPosition - 1;
             break;
     }
 
