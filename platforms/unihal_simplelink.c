@@ -85,7 +85,7 @@ extern bool unihal_init(void)
     return status;
 }
 
-extern bool unihal_gpio_init(UniHAL_gpio_t* instance)
+extern bool unihal_gpio_init(UniHAL_gpio_t* const instance)
 {
     //DU_ASSERT(instance != NULL);
 
@@ -94,7 +94,7 @@ extern bool unihal_gpio_init(UniHAL_gpio_t* instance)
     return (PIN_SUCCESS == status);
 }
 
-extern bool unihal_gpio_configureInput(UniHAL_gpio_t* instance, UniHAL_gpio_pull_t pull)
+extern bool unihal_gpio_configureInput(UniHAL_gpio_t* const instance, const UniHAL_gpio_pull_t pull)
 {
     //DU_ASSERT(instance != NULL);
     PIN_Config pinConfig = SIMPLELINK_PIN_ID(instance) | PIN_INPUT_EN;
@@ -128,8 +128,8 @@ extern bool unihal_gpio_configureInput(UniHAL_gpio_t* instance, UniHAL_gpio_pull
     return status;
 }
 
-extern bool unihal_gpio_configureOutput(UniHAL_gpio_t* instance, UniHAL_gpio_value_t outputValue,
-                                    UniHAL_gpio_outputType_t outputType)
+extern bool unihal_gpio_configureOutput(const UniHAL_gpio_t* const instance, const UniHAL_gpio_value_t outputValue,
+                                    const UniHAL_gpio_outputType_t outputType)
 {
     //DU_ASSERT(instance != NULL);
     PIN_Config pinConfig = SIMPLELINK_PIN_ID(instance) | PIN_GPIO_OUTPUT_EN;
@@ -177,7 +177,7 @@ extern bool unihal_gpio_configureOutput(UniHAL_gpio_t* instance, UniHAL_gpio_val
     return status;
 }
 
-extern bool unihal_gpio_deinit(UniHAL_gpio_t* instance)
+extern bool unihal_gpio_deinit(UniHAL_gpio_t* const instance)
 {
     //DU_ASSERT(instance != NULL);
     //PIN_Status status = PIN_remove(pin, instance->index);
@@ -185,7 +185,8 @@ extern bool unihal_gpio_deinit(UniHAL_gpio_t* instance)
 }
 
 
-extern bool unihal_gpio_registerInterrupt(UniHAL_gpio_t* instance, UniHAL_gpio_interrupt_t type, void (*handler)(void* arg), void* arg)
+extern bool unihal_gpio_registerInterrupt(UniHAL_gpio_t* const instance, const UniHAL_gpio_interrupt_t type, 
+                void (*handler)(void* const arg), void* const arg)
 {
     size_t gpioInterruptEntry = 0U;
     bool status = true;
@@ -236,7 +237,7 @@ extern bool unihal_gpio_registerInterrupt(UniHAL_gpio_t* instance, UniHAL_gpio_i
     return status;
 }
 
-extern bool unihal_gpio_write(UniHAL_gpio_t* instance, UniHAL_gpio_value_t outputValue)
+extern bool unihal_gpio_write(const UniHAL_gpio_t* const instance, const UniHAL_gpio_value_t outputValue)
 {
     //DU_ASSERT(instance != NULL);
     bool status = true;
@@ -267,7 +268,7 @@ extern bool unihal_gpio_write(UniHAL_gpio_t* instance, UniHAL_gpio_value_t outpu
     return status;
 }
 
-extern UniHAL_gpio_value_t unihal_gpio_read(UniHAL_gpio_t* instance)
+extern UniHAL_gpio_value_t unihal_gpio_read(const UniHAL_gpio_t* const instance)
 {
     return PIN_getInputValue(SIMPLELINK_PIN_ID(instance));
 }
@@ -282,8 +283,8 @@ extern UniHAL_gpio_value_t unihal_gpio_read(UniHAL_gpio_t* instance)
     return true;
 }*/
 
-bool unihal_i2c_transfer(UniHAL_i2c_t* instance, uint8_t slaveAddress, uint32_t timeout,
-                        vector_t* writeVector, vector_t* readVector)
+bool unihal_i2c_transfer(const UniHAL_i2c_t* const instance, const uint8_t slaveAddress, const uint32_t timeout,
+                        const vector_t* const writeVector, vector_t* const readVector)
 {
     //DU_ASSERT(instance != NULL);
     UniHAL_SimpleLink_i2cStruct_t* i2cStruct = (UniHAL_SimpleLink_i2cStruct_t*) instance->obj;
@@ -308,7 +309,8 @@ bool unihal_i2c_transfer(UniHAL_i2c_t* instance, uint8_t slaveAddress, uint32_t 
     return (I2C_STATUS_SUCCESS == i2cStatus);
 }
 
-bool unihal_i2c_readMem(UniHAL_i2c_t* instance, uint8_t slaveAddress, uint32_t timeout, uint16_t memoryAddress, uint8_t memoryAddressSize, uint8_t* data, size_t dataLen)
+bool unihal_i2c_readMem(const UniHAL_i2c_t* const instance, const uint8_t slaveAddress, const uint32_t timeout, 
+                        const uint16_t memoryAddress, const uint8_t memoryAddressSize, uint8_t* const data, const size_t dataLen)
 {
     //DU_ASSERT(instance != NULL);
     //DU_ASSERT(data != NULL);
@@ -335,7 +337,7 @@ bool unihal_i2c_readMem(UniHAL_i2c_t* instance, uint8_t slaveAddress, uint32_t t
     return unihal_i2c_transfer(instance, slaveAddress, timeout, &writeBuffer, &readBuffer);
 }
 
-extern bool unihal_spi_transfer(UniHAL_spi_t* instance, size_t dataLen, uint8_t* writeBuffer, uint8_t* readBuffer)
+bool unihal_spi_transfer(const UniHAL_spi_t* const instance, const size_t dataLen, const uint8_t* const writeBuffer, uint8_t* const readBuffer)
 {
     UniHAL_SimpleLink_spiStruct_t* spiStruct = (UniHAL_SimpleLink_spiStruct_t*) instance->obj;
     SPI_Handle spiHandle = SPI_open(spiStruct->index, NULL);//TODO spi params
@@ -352,12 +354,12 @@ extern bool unihal_spi_transfer(UniHAL_spi_t* instance, size_t dataLen, uint8_t*
 }
 
 #include <ti/sysbios/knl/Task.h>
-void unihal_usleep(uint32_t microseconds)
+void unihal_usleep(const uint32_t microseconds)
 {
     Task_sleep(microseconds / 10);
 }
 
-void unihal_sleep(uint32_t seconds)
+void unihal_sleep(const uint32_t seconds)
 {
     Task_sleep(seconds * 1000 * 100);
 }
