@@ -128,7 +128,7 @@ extern bool unihal_gpio_configureInput(UniHAL_gpio_t* const instance, const UniH
     return status;
 }
 
-extern bool unihal_gpio_configureOutput(const UniHAL_gpio_t* const instance, const UniHAL_gpio_value_t outputValue,
+extern bool unihal_gpio_configureOutput(UniHAL_gpio_t* const instance, const UniHAL_gpio_value_t outputValue,
                                     const UniHAL_gpio_outputType_t outputType)
 {
     //DU_ASSERT(instance != NULL);
