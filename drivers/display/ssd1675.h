@@ -55,7 +55,7 @@ typedef struct
     monoGFX_t* bwGfx;
     monoGFX_t* rGfx;
     uint8_t xSize;
-    uint8_t ySize;
+    uint16_t ySize;
 
     UniHAL_spi_t* spi;
     UniHAL_gpio_t* cs;
@@ -73,7 +73,7 @@ extern SSD1675_status_t ssd1675_init(SSD1675_t* display, monoGFX_t* bwGfx, monoG
 
 
 
-extern void ssd1675_refresh(SSD1675_t* display);
+extern SSD1675_status_t ssd1675_refresh(SSD1675_t* display);
 
 #ifdef __cplusplus
 }

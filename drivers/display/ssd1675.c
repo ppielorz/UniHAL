@@ -31,6 +31,8 @@
 #define REG_RAM_Y_ADDRESS               0x4F
 #define REG_ANALOG_BLOCK_CONTROL        0x74
 #define REG_DIGITAL_BLOCK_CONTROL       0x7E
+#define REG_WRITE_RAM_BW                0x24
+#define REG_WRITE_RAM_RED               0x26
 
 
 #define OPERATION_MODE_NORMAL       0x00
@@ -68,8 +70,10 @@
  *****************************************************************************/
 static SSD1675_status_t sendCommand(const SSD1675_t* const display, const uint8_t command);
 static SSD1675_status_t sendData(const SSD1675_t* const display, const uint8_t data);
+static SSD1675_status_t initDisplay(const SSD1675_t* const display);
 static SSD1675_status_t hwReset(const SSD1675_t* const display);
 static SSD1675_status_t swReset(const SSD1675_t* const display);
+static SSD1675_status_t waitForBusyFlag(const SSD1675_t* const display, const uint32_t delayMs, const uint32_t pollTimespanUs);
 static SSD1675_status_t enterSleep(const SSD1675_t* const display);
 static SSD1675_status_t setCursor(const SSD1675_t* const display, const uint8_t x, const uint16_t y);
 
@@ -81,11 +85,9 @@ static SSD1675_status_t setCursor(const SSD1675_t* const display, const uint8_t 
 /******************************************************************************
  Global functions
  ******************************************************************************/
-SSD1675_status_t ssd1675_init(SSD1675_t* display, monoGFX_t* bwGfx, monoGFX_t* rGfx, UniHAL_spi_t* spi,
-                    UniHAL_gpio_t* cs, UniHAL_gpio_t* rst, UniHAL_gpio_t* bsy, UniHAL_gpio_t* dc)
+SSD1675_status_t ssd1675_init(SSD1675_t* const display, monoGFX_t* const bwGfx, monoGFX_t* const rGfx, UniHAL_spi_t* const spi,
+                    UniHAL_gpio_t* const cs, UniHAL_gpio_t* const rst, UniHAL_gpio_t* const bsy, UniHAL_gpio_t* const dc)
 {
-    SSD1675_status_t ret = SSD1675_status_ok;
-
     CHECK_AND_RETURN_STATUS(display != NULL, SSD1675_status_nullPointer);
     CHECK_AND_RETURN_STATUS(bwGfx != NULL, SSD1675_status_nullPointer);
     CHECK_AND_RETURN_STATUS(spi != NULL, SSD1675_status_nullPointer);
@@ -106,7 +108,7 @@ SSD1675_status_t ssd1675_init(SSD1675_t* display, monoGFX_t* bwGfx, monoGFX_t* r
     CHECK_AND_RETURN_STATUS(unihal_gpio_init(display->dc) == true, SSD1675_status_dcPinInitError);
     CHECK_AND_RETURN_STATUS(unihal_gpio_configureOutput(display->cs, UniHAL_gpio_value_high, UniHAL_gpio_outputType_pushPull) == true, SSD1675_status_csPinConfigureError);
     CHECK_AND_RETURN_STATUS(unihal_gpio_configureOutput(display->rst, UniHAL_gpio_value_high, UniHAL_gpio_outputType_pushPull) == true, SSD1675_status_rstPinConfigureError);
-    CHECK_AND_RETURN_STATUS(unihal_gpio_configureInput(display->bsy, UniHAL_gpio_pull_noPull) == true, SSD1675_status_bsyPinConfigureError);
+    CHECK_AND_RETURN_STATUS(unihal_gpio_configureInput(display->bsy, UniHAL_gpio_pull_pullDown) == true, SSD1675_status_bsyPinConfigureError);
     CHECK_AND_RETURN_STATUS(unihal_gpio_configureOutput(display->dc, UniHAL_gpio_value_low, UniHAL_gpio_outputType_pushPull) == true, SSD1675_status_dcPinConfigureError);
 
     display->xSize = bwGfx->xSizeBuffer;
@@ -118,6 +120,83 @@ SSD1675_status_t ssd1675_init(SSD1675_t* display, monoGFX_t* bwGfx, monoGFX_t* r
     CHECK_AND_RETURN_STATUS(rGfx == NULL || bwGfx->xSize == rGfx->xSize, SSD1675_status_gfxSizeMismatch);
     CHECK_AND_RETURN_STATUS(rGfx == NULL || bwGfx->ySize == rGfx->ySize, SSD1675_status_gfxSizeMismatch);
 
+    return SSD1675_status_ok;
+}
+
+SSD1675_status_t ssd1675_refresh(SSD1675_t* const display)
+{
+    SSD1675_status_t ret = SSD1675_status_ok;
+
+    CHECK_AND_RETURN_STATUS(display != NULL, SSD1675_status_nullPointer);
+
+    CHECK_AND_RETURN_IF_ERROR(initDisplay(display));
+
+    sendCommand(display, 0x22);
+    sendData(display, 0xB1);
+    unihal_usleep(100000);
+    setCursor(display, 0, 0);
+
+    CHECK_AND_RETURN_IF_ERROR(setCursor(display, 0, 0));
+    CHECK_AND_RETURN_IF_ERROR(sendCommand(display, REG_WRITE_RAM_BW));
+    unihal_gpio_write(display->cs, UniHAL_gpio_value_low);
+    unihal_spi_transfer(display->spi, display->bwGfx->bufferSize, display->bwGfx->buffer, NULL);
+    unihal_gpio_write(display->cs, UniHAL_gpio_value_high);
+
+    if(display->rGfx != NULL)
+    {
+        setCursor(display, 0, 0);
+        CHECK_AND_RETURN_IF_ERROR(sendCommand(display, REG_WRITE_RAM_RED));
+        unihal_gpio_write(display->cs, UniHAL_gpio_value_low);
+        unihal_spi_transfer(display->spi, display->rGfx->bufferSize, display->rGfx->buffer, NULL);
+        unihal_gpio_write(display->cs, UniHAL_gpio_value_high);
+
+    }
+
+
+    sendCommand(display, 0x22);
+    sendData(display, 0xC7);
+    unihal_usleep(100000);
+    sendCommand(display, 0x20);
+
+    CHECK_AND_RETURN_IF_ERROR(enterSleep(display));
+
+    //while(unihal_gpio_read(display->bsy) == UniHAL_gpio_value_high); TODO timeout
+    return SSD1675_status_ok;
+}
+
+
+/******************************************************************************
+ Local Functions
+ *****************************************************************************/
+static SSD1675_status_t sendCommand(const SSD1675_t* const display, const uint8_t command)
+{
+    CHECK_AND_RETURN_STATUS(display != NULL, SSD1675_status_nullPointer);
+
+    CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->dc, UniHAL_gpio_value_low) == true, SSD1675_status_dcPinWriteError);
+    CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->cs, UniHAL_gpio_value_low) == true, SSD1675_status_csPinWriteError);
+    CHECK_AND_RETURN_STATUS(unihal_spi_transfer(display->spi, sizeof(command), &command, NULL) == true, SSD1675_status_spiCommunicationError);
+    CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->cs, UniHAL_gpio_value_high) == true, SSD1675_status_csPinWriteError);
+    CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->dc, UniHAL_gpio_value_high) == true, SSD1675_status_dcPinWriteError);
+
+    return SSD1675_status_ok;
+}
+
+static SSD1675_status_t sendData(const SSD1675_t* const display, const uint8_t data)
+{
+    CHECK_AND_RETURN_STATUS(display != NULL, SSD1675_status_nullPointer);
+
+    CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->cs, UniHAL_gpio_value_low) == true, SSD1675_status_csPinWriteError);
+    CHECK_AND_RETURN_STATUS(unihal_spi_transfer(display->spi, sizeof(data), &data, NULL) == true, SSD1675_status_spiCommunicationError);
+    CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->cs, UniHAL_gpio_value_high) == true, SSD1675_status_csPinWriteError);
+
+    return SSD1675_status_ok;
+}
+
+static SSD1675_status_t initDisplay(const SSD1675_t* const display)
+{
+    SSD1675_status_t ret = SSD1675_status_ok;
+
+    CHECK_AND_RETURN_STATUS(display != NULL, SSD1675_status_nullPointer);
 
     CHECK_AND_RETURN_IF_ERROR(hwReset(display));
     CHECK_AND_RETURN_IF_ERROR(swReset(display));
@@ -160,78 +239,6 @@ SSD1675_status_t ssd1675_init(SSD1675_t* display, monoGFX_t* bwGfx, monoGFX_t* r
     return SSD1675_status_ok;
 }
 
-void ssd1675_refresh(SSD1675_t* display)
-{
-    size_t i = 0;
-
-    sendCommand(display, 0x22);
-    sendData(display, 0xB1);
-    unihal_usleep(100000);
-    setCursor(display, 0, 0);
-
-    sendCommand(display, 0x24);
-    for (i = 0; i < display->bwGfx->bufferSize; i++)
-    {
-        sendData(display, display->bwGfx->buffer[i]);
-        //sendData(display, display->rGfx->buffer[i]);
-    }
-        /*unihal_gpio_write(display->cs, UniHAL_gpio_value_low);
-        unihal_spi_transfer(display->spi, display->bwGfx->bufferSize, display->bwGfx->buffer, NULL);
-        unihal_gpio_write(display->cs, UniHAL_gpio_value_high);*/
-
-    if(display->rGfx != NULL)
-    {
-        setCursor(display, 0, 0);
-
-        sendCommand(display, 0x26);
-        for (i = 0; i < display->rGfx->bufferSize; i++)
-        {
-            //sendData(display, display->bwGfx->buffer[i]);
-            sendData(display, display->rGfx->buffer[i]);
-        }
-        /*unihal_gpio_write(display->cs, UniHAL_gpio_value_low);
-        unihal_spi_transfer(display->spi, display->rGfx->bufferSize, display->rGfx->buffer, NULL);
-        unihal_gpio_write(display->cs, UniHAL_gpio_value_high);*/
-
-    }
-
-
-    sendCommand(display, 0x22);
-    sendData(display, 0xC7);
-    unihal_usleep(100000);
-    sendCommand(display, 0x20);
-
-    //while(unihal_gpio_read(display->bsy) == UniHAL_gpio_value_high); TODO timeout
-}
-
-
-/******************************************************************************
- Local Functions
- *****************************************************************************/
-static SSD1675_status_t sendCommand(const SSD1675_t* const display, const uint8_t command)
-{
-    CHECK_AND_RETURN_STATUS(display != NULL, SSD1675_status_nullPointer);
-
-    CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->dc, UniHAL_gpio_value_low) == true, SSD1675_status_dcPinWriteError);
-    CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->cs, UniHAL_gpio_value_low) == true, SSD1675_status_csPinWriteError);
-    CHECK_AND_RETURN_STATUS(unihal_spi_transfer(display->spi, sizeof(command), &command, NULL) == true, SSD1675_status_spiCommunicationError);
-    CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->cs, UniHAL_gpio_value_high) == true, SSD1675_status_csPinWriteError);
-    CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->dc, UniHAL_gpio_value_high) == true, SSD1675_status_dcPinWriteError);
-
-    return SSD1675_status_ok;
-}
-
-static SSD1675_status_t sendData(const SSD1675_t* const display, const uint8_t data)
-{
-    CHECK_AND_RETURN_STATUS(display != NULL, SSD1675_status_nullPointer);
-
-    CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->cs, UniHAL_gpio_value_low) == true, SSD1675_status_csPinWriteError);
-    CHECK_AND_RETURN_STATUS(unihal_spi_transfer(display->spi, sizeof(data), &data, NULL) == true, SSD1675_status_spiCommunicationError);
-    CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->cs, UniHAL_gpio_value_high) == true, SSD1675_status_csPinWriteError);
-
-    return SSD1675_status_ok;
-}
-
 static SSD1675_status_t hwReset(const SSD1675_t* const display)
 {
     CHECK_AND_RETURN_STATUS(display != NULL, SSD1675_status_nullPointer);
@@ -249,26 +256,32 @@ static SSD1675_status_t hwReset(const SSD1675_t* const display)
 static SSD1675_status_t swReset(const SSD1675_t* const display)
 {
     SSD1675_status_t ret = SSD1675_status_ok;
+
+    CHECK_AND_RETURN_STATUS(display != NULL, SSD1675_status_nullPointer);
+
+    CHECK_AND_RETURN_IF_ERROR(sendCommand(display, REG_RESET));
+    CHECK_AND_RETURN_IF_ERROR(waitForBusyFlag(display, SW_RESET_TIMEOUT_MS, SW_RESET_TIMESPAN_US));
+
+    return ret;
+}
+
+static SSD1675_status_t waitForBusyFlag(const SSD1675_t* const display, const uint32_t delayMs, const uint32_t pollTimespanUs)
+{
     uint32_t timeoutTicksStart;
 
     CHECK_AND_RETURN_STATUS(display != NULL, SSD1675_status_nullPointer);
 
-    ret = sendCommand(display, REG_RESET);
-    if(ret == SSD1675_status_ok)
+    timeoutTicksStart = unihal_getTickCount();
+    while(unihal_gpio_read(display->bsy) == UniHAL_gpio_value_high)
     {
-        timeoutTicksStart = unihal_getTickCount();
-        while(unihal_gpio_read(display->bsy) == UniHAL_gpio_value_high)
+        if((unihal_getTickCount() - timeoutTicksStart) > delayMs)
         {
-            if((unihal_getTickCount() - timeoutTicksStart) > SW_RESET_TIMEOUT_MS)
-            {
-                ret = SSD1675_status_timeout;
-                break;
-            }
-            unihal_usleep(SW_RESET_TIMESPAN_US);
+            return SSD1675_status_timeout;
         }
+        unihal_usleep(pollTimespanUs);
     }
 
-    return ret;
+    return SSD1675_status_ok;
 }
 
 static SSD1675_status_t enterSleep(const SSD1675_t* const display)
@@ -290,13 +303,17 @@ static SSD1675_status_t setCursor(const SSD1675_t* const display, const uint8_t 
 {
     SSD1675_status_t ret = SSD1675_status_ok;
 
-    CHECK_AND_RETURN_IF_ERROR(sendCommand(display, REG_DISPLAY_UPDATE_CONTROL_1));
-    sendCommand(display, REG_RAM_X_ADDRESS);
-    sendData(display, x / 8);
+    CHECK_AND_RETURN_STATUS(display != NULL, SSD1675_status_nullPointer);
+    CHECK_AND_RETURN_STATUS(x < display->xSize, SSD1675_status_widthTooLarge);
+    CHECK_AND_RETURN_STATUS(y < display->ySize, SSD1675_status_heightTooLarge);
 
-    sendCommand(display, REG_RAM_Y_ADDRESS);
-    sendData(display, y & 0xFF);
-    sendData(display, (y >> 8) & 0xFF);
+    CHECK_AND_RETURN_IF_ERROR(sendCommand(display, REG_DISPLAY_UPDATE_CONTROL_1));
+    CHECK_AND_RETURN_IF_ERROR(sendCommand(display, REG_RAM_X_ADDRESS));
+    CHECK_AND_RETURN_IF_ERROR(sendData(display, x / 8));
+
+    CHECK_AND_RETURN_IF_ERROR(sendCommand(display, REG_RAM_Y_ADDRESS));
+    CHECK_AND_RETURN_IF_ERROR(sendData(display, y & 0xFF));
+    CHECK_AND_RETURN_IF_ERROR(sendData(display, (y >> 8) & 0xFF));
 
     return ret;
 }
