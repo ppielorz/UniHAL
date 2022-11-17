@@ -258,6 +258,8 @@ static SSD1306_status_t setAddressingMode(SSD1306_t* const display, const SSD130
 static SSD1306_status_t setCursor(const SSD1306_t* const display, const size_t xPosition, const size_t yPosition)
 {
     SSD1306_status_t ret = SSD1306_status_ok;
+    (void) xPosition;
+    (void) yPosition;
 
     CHECK_AND_RETURN_STATUS(display != NULL, SSD1306_status_nullPointer);
 

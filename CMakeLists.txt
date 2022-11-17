@@ -5,7 +5,7 @@ include(CTest)
 
 add_library(unihal unihal.c)
 target_include_directories(unihal PUBLIC include)
-#target_compile_options(unihal PRIVATE -Wall -Wextra -Wpedantic -Werror)
+target_compile_options(unihal PRIVATE -Wall -Wextra -Wpedantic -Werror)
 
 add_subdirectory(utils)
 add_subdirectory(drivers)

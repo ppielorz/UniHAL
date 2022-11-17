@@ -84,6 +84,7 @@ extern bool mlx90614_init(MLX90614_t* instance, UniHAL_i2c_t* i2cDriver, uint8_t
 extern uint64_t mlx90614_getId(MLX90614_t* instance)
 {
     uint64_t dummyId = 0U;
+    (void) instance;
 
     return dummyId;
 }
@@ -154,8 +155,8 @@ static bool mlxRead(MLX90614_t* instance, uint8_t command, uint16_t* data)
         return false;
     }
 
-    uint8_t readBufferData[3] = {};
-    uint8_t crcTemporary[5] = {};
+    uint8_t readBufferData[3] = {0U};
+    uint8_t crcTemporary[5] = {0U};
     bool status = true;
     vector_t readVector = {.data = readBufferData, .size = sizeof(readBufferData)};
     vector_t writeVector = {.data = &command, .size = sizeof(command)};
@@ -187,7 +188,7 @@ static bool mlxWrite(MLX90614_t* instance, uint8_t command, uint16_t data)
         return false;
     }
 
-    uint8_t writeBufferData[5] = {};
+    uint8_t writeBufferData[5] = {0U};
     writeBufferData[0] = (instance->deviceAddress << 1) | 0;
     writeBufferData[1] = command;
     writeBufferData[2] = (uint8_t) data & 0xFF;

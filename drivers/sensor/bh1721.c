@@ -99,7 +99,7 @@ uint16_t bh1721_readIlluminance(BH1721_t* instance)
 
     bool status = true;
     uint16_t illuminance = 0U;
-    uint8_t readVectorData[2] = {};
+    uint8_t readVectorData[2] = {0U};
     vector_t readVector = {.data = readVectorData, .size = sizeof(readVectorData)};
     vector_t writeVector = {.data = NULL, .size = 0U};
 
