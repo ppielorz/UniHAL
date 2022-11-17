@@ -13,7 +13,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "monogfx.h"
+#include "unihal/gfx/monogfx/monogfx.h"
 
 /******************************************************************************
  Constants and definitions
@@ -92,6 +92,7 @@ monoGFX_status_t monoGFX_drawVLine(const monoGFX_t* const gfx, const size_t xPos
 
 void monoGFX_drawHLine(monoGFX_t* gfx, size_t yPosition, size_t thickness)
 {
+    (void) thickness;
     size_t x = 0;
     for(x = 0; x < gfx->xSize; x++)
     {
@@ -107,6 +108,9 @@ monoGFX_status_t monoGFX_setPixel(const monoGFX_t* const gfx, const size_t xPosi
 
     switch(gfx->rotation)
     {
+        case monoGFX_rotation_none:
+            break;
+
         case monoGFX_rotation_clockwise:
             xPositionRotated = gfx->xSizeBuffer - yPosition - 1;
             yPositionRotated = xPosition;
@@ -120,6 +124,10 @@ monoGFX_status_t monoGFX_setPixel(const monoGFX_t* const gfx, const size_t xPosi
         case monoGFX_rotation_halfTurn:
             xPositionRotated = gfx->xSizeBuffer - xPosition - 1;
             yPositionRotated = gfx->ySizeBuffer - yPosition - 1;
+            break;
+
+        default:
+            //TODO assert
             break;
     }
 
@@ -141,7 +149,9 @@ monoGFX_status_t monoGFX_setPixel(const monoGFX_t* const gfx, const size_t xPosi
 
 void monoGFX_clearPixel(monoGFX_t* gfx, size_t x, size_t y)
 {
-
+    (void) gfx;
+    (void) x;
+    (void) y;
 }
 
 uint8_t monoGFX_getPixel(monoGFX_t* gfx, size_t xPosition, size_t yPosition)
@@ -189,19 +199,19 @@ void monoGFX_putChar(monoGFX_t* gfx, size_t xPosition, size_t yPosition, const G
     uint8_t h = glyph->height;
     int8_t xo = glyph->xOffset;
     int8_t yo = glyph->yOffset;
-    uint8_t size_x = 1;
-    uint8_t size_y = 1;
+    //uint8_t size_x = 1;
+    //uint8_t size_y = 1;
     uint8_t xx;
     uint8_t yy;
     uint8_t bits = 0;
     uint8_t bit = 0;
-    int16_t xo16 = 0;
+    /*int16_t xo16 = 0;
     int16_t yo16 = 0;
 
     if (size_x > 1 || size_y > 1) {
       xo16 = xo;
       yo16 = yo;
-    }
+    }*/
 
     // Todo: Add character clipping here
 
@@ -233,13 +243,13 @@ void monoGFX_putChar(monoGFX_t* gfx, size_t xPosition, size_t yPosition, const G
             }
             if (bits & 0x80)
             {
-                if (size_x == 1 && size_y == 1)
+                //if (size_x == 1 && size_y == 1)
                 {
                     monoGFX_setPixel(gfx, xPosition + xo + xx,
                                      yPosition + yo + yy);
                     //monoGFX_setPixel(gfx, yPosition + yo + yy, xPosition + xo + xx);
                 }
-                else
+                //else
                 {
                     //writeFillRect(x + (xo16 + xx) * size_x, y + (yo16 + yy) * size_y,
                     //size_x, size_y, color);
