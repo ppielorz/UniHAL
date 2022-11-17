@@ -1,7 +1,7 @@
 /******************************************************************************
- @file cpputest_copiers.cpp
+ @file ssd1675_tests.cpp
 
- @brief CppUTest Copiers implementations for UniHAL utils
+ @brief SSD675 driver tests
  
  @author Paweł Pielorz (pawel.pielorz@gmail.com)
 
@@ -10,15 +10,26 @@
 /******************************************************************************
  Includes
  *****************************************************************************/
-#include <stdint.h>
-#include <stddef.h>
-#include <string.h>
+#include <cstring>
 
-#include "array.h"
-#include "cpputest_copiers.hpp"
+#include <CppUTest/TestHarness.h>
+#include <CppUTest/CommandLineTestRunner.h>
+#include <CppUTestExt/MockSupport.h>
+
+#include "unihal/unihal.h"
+#include "unihal/utils/array.h"
+#include "unihal/drivers/display/ssd1675.h"
 
 /******************************************************************************
  Constants and definitions
+ *****************************************************************************/
+
+/******************************************************************************
+ External Variables
+ *****************************************************************************/
+
+/******************************************************************************
+ Global variables
  *****************************************************************************/
 
 /******************************************************************************
@@ -26,20 +37,33 @@
  *****************************************************************************/
 
 /******************************************************************************
- Local function prototypes
- *****************************************************************************/
+ Global functions
+ ******************************************************************************/
 
-/******************************************************************************
- Member Function Definitions
- *****************************************************************************/
-
-void VectorCopier::copy(void* out, const void* in)
+int main(int ac, char** av)
 {
-    vector_t* outVector = (vector_t*) out;
-    vector_t* inVector = (vector_t*) in;
-    memcpy(outVector->data, inVector->data, outVector->size);
+    return CommandLineTestRunner::RunAllTests(ac, av);
 }
 
 /******************************************************************************
- Local Functions
+ Mock Functions
  *****************************************************************************/
+
+/******************************************************************************
+ Tests
+ *****************************************************************************/
+TEST_GROUP(Ssd1675Tests)
+{
+    void setup()
+    {
+    }
+
+    void teardown()
+    {
+    }
+};
+
+TEST(Ssd1675Tests, empty)
+{
+	CHECK(true);
+}

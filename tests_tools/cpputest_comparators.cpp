@@ -14,7 +14,7 @@
 #include <stddef.h>
 #include <string.h>
 
-#include "array.h"
+#include "unihal/utils/array.h"
 #include "cpputest_comparators.hpp"
 
 /******************************************************************************

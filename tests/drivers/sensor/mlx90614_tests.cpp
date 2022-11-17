@@ -16,9 +16,9 @@
 #include <CppUTest/CommandLineTestRunner.h>
 #include <CppUTestExt/MockSupport.h>
 
-#include "array.h"
-#include "unihal.h"
-#include "mlx90614.h"
+#include "unihal/unihal.h"
+#include "unihal/utils/array.h"
+#include "unihal/drivers/sensor/mlx90614.h"
 #include "cpputest_comparators.hpp"
 #include "cpputest_copiers.hpp"
 
@@ -96,7 +96,7 @@ TEST(MLX90614, getObjectTemperature)
     uint8_t mockReadVectorData[] = {0xD2, 0x3A, 0x30};
     vector_t mockReadVector = {.data = mockReadVectorData, .size = sizeof(mockReadVectorData)};
 
-    mock().expectOneCall("unihal_i2c_transfer").withPointerParameter("instance", &mockI2c)
+    mock().expectOneCall("unihal_i2c_transfer").withConstPointerParameter("instance", &mockI2c)
                                            .withUnsignedIntParameter("address", MLX90614_DEFAULT_ADDRESS)
                                            .withUnsignedIntParameter("timeout", 100U)
                                            .withParameterOfType("vector_t", "writeVector", &mockWriteVector)
@@ -118,7 +118,7 @@ TEST(MLX90614, getAmbientTemperature)
     uint8_t mockReadVectorData[] = {0xD2, 0x3A, 0x26};
     vector_t mockReadVector = {.data = mockReadVectorData, .size = sizeof(mockReadVectorData)};
 
-    mock().expectOneCall("unihal_i2c_transfer").withPointerParameter("instance", &mockI2c)
+    mock().expectOneCall("unihal_i2c_transfer").withConstPointerParameter("instance", &mockI2c)
                                            .withUnsignedIntParameter("address", MLX90614_DEFAULT_ADDRESS)
                                            .withUnsignedIntParameter("timeout", 100U)
                                            .withParameterOfType("vector_t", "writeVector", &mockWriteVector)
@@ -145,7 +145,7 @@ TEST(MLX90614, getObjectTemperatureFail)
     uint8_t mockReadVectorData[] = {0xD2, 0x3A, 0x30};
     vector_t mockReadVector = {.data = mockReadVectorData, .size = sizeof(mockReadVectorData)};
 
-    mock().expectOneCall("unihal_i2c_transfer").withPointerParameter("instance", &mockI2c)
+    mock().expectOneCall("unihal_i2c_transfer").withConstPointerParameter("instance", &mockI2c)
                                            .withUnsignedIntParameter("address", MLX90614_DEFAULT_ADDRESS)
                                            .withUnsignedIntParameter("timeout", 100U)
                                            .withParameterOfType("vector_t", "writeVector", &mockWriteVector)
@@ -172,7 +172,7 @@ TEST(MLX90614, getAmbientTemperatureFail)
     uint8_t mockReadVectorData[] = {0xD2, 0x3A, 0x26};
     vector_t mockReadVector = {.data = mockReadVectorData, .size = sizeof(mockReadVectorData)};
 
-    mock().expectOneCall("unihal_i2c_transfer").withPointerParameter("instance", &mockI2c)
+    mock().expectOneCall("unihal_i2c_transfer").withConstPointerParameter("instance", &mockI2c)
                                            .withUnsignedIntParameter("address", MLX90614_DEFAULT_ADDRESS)
                                            .withUnsignedIntParameter("timeout", 100U)
                                            .withParameterOfType("vector_t", "writeVector", &mockWriteVector)
@@ -194,7 +194,7 @@ TEST(MLX90614, getAmbientTemperatureWrongCrc)
     uint8_t mockReadVectorData[] = {0xD2, 0x3A, 0x27};
     vector_t mockReadVector = {.data = mockReadVectorData, .size = sizeof(mockReadVectorData)};
 
-    mock().expectOneCall("unihal_i2c_transfer").withPointerParameter("instance", &mockI2c)
+    mock().expectOneCall("unihal_i2c_transfer").withConstPointerParameter("instance", &mockI2c)
                                            .withUnsignedIntParameter("address", MLX90614_DEFAULT_ADDRESS)
                                            .withUnsignedIntParameter("timeout", 100U)
                                            .withParameterOfType("vector_t", "writeVector", &mockWriteVector)
@@ -218,7 +218,7 @@ TEST(MLX90614, setEmissivity)
     uint8_t mockWriteVectorData[] = {0x24, 0x10, 0x27, 0x8A};
     vector_t mockWriteVector = {.data = mockWriteVectorData, .size = sizeof(mockWriteVectorData)};
 
-    mock().expectOneCall("unihal_i2c_transfer").withPointerParameter("instance", &mockI2c)
+    mock().expectOneCall("unihal_i2c_transfer").withConstPointerParameter("instance", &mockI2c)
                                            .withUnsignedIntParameter("address", MLX90614_DEFAULT_ADDRESS)
                                            .withUnsignedIntParameter("timeout", 100U)
                                            .withParameterOfType("vector_t", "writeVector", &mockWriteVector)
@@ -237,7 +237,7 @@ TEST(MLX90614, setEmissivityFail)
     uint8_t mockWriteVectorData[] = {0x24, 0x10, 0x27, 0x8A};
     vector_t mockWriteVector = {.data = mockWriteVectorData, .size = sizeof(mockWriteVectorData)};
 
-    mock().expectOneCall("unihal_i2c_transfer").withPointerParameter("instance", &mockI2c)
+    mock().expectOneCall("unihal_i2c_transfer").withConstPointerParameter("instance", &mockI2c)
                                            .withUnsignedIntParameter("address", MLX90614_DEFAULT_ADDRESS)
                                            .withUnsignedIntParameter("timeout", 100U)
                                            .withParameterOfType("vector_t", "writeVector", &mockWriteVector)

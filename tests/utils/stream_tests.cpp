@@ -16,7 +16,7 @@
 #include <CppUTest/CommandLineTestRunner.h>
 #include <CppUTestExt/MockSupport.h>
 
-#include "stream.h"
+#include "unihal/utils/stream.h"
 
 /******************************************************************************
  Constants and definitions

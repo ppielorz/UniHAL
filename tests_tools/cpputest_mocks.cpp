@@ -1,5 +1,5 @@
 /******************************************************************************
- @file unihal_mocks.c
+ @file cpputest_mocks.c
 
  @brief UniHAL mock for CppUTest framework
  
@@ -14,7 +14,7 @@
 #include <string.h>
 #include <CppUTestExt/MockSupport.h>
 
-#include "unihal.h"
+#include "unihal/unihal.h"
 
 /******************************************************************************
  Constants and definitions
@@ -40,20 +40,21 @@
  Global functions
  ******************************************************************************/
 
-bool unihal_i2c_transfer(UniHAL_i2c_t* instance, uint8_t address, uint32_t timeout, vector_t* writeVector, vector_t* readVector)
+bool unihal_i2c_transfer(const UniHAL_i2c_t* const instance, const uint8_t slaveAddress, const uint32_t timeout,
+                        const vector_t* const writeVector, vector_t* const readVector)
 {
     if(readVector == NULL)
     {
-        mock().actualCall("unihal_i2c_transfer").withPointerParameter("instance", instance)
-            .withUnsignedIntParameter("address", address)
+        mock().actualCall("unihal_i2c_transfer").withConstPointerParameter("instance", instance)
+            .withUnsignedIntParameter("address", slaveAddress)
             .withUnsignedIntParameter("timeout", timeout)
             .withPointerParameter("readVector", readVector)
             .withParameterOfType("vector_t", "writeVector", writeVector);
     }
     else
     {
-        mock().actualCall("unihal_i2c_transfer").withPointerParameter("instance", instance)
-            .withUnsignedIntParameter("address", address)
+        mock().actualCall("unihal_i2c_transfer").withConstPointerParameter("instance", instance)
+            .withUnsignedIntParameter("address", slaveAddress)
             .withUnsignedIntParameter("timeout", timeout)
             .withParameterOfType("vector_t", "writeVector", writeVector)
             .withOutputParameterOfType("vector_t", "readVector", readVector);

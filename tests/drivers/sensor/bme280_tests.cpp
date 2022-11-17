@@ -16,9 +16,9 @@
 #include <CppUTest/CommandLineTestRunner.h>
 #include <CppUTestExt/MockSupport.h>
 
-#include "array.h"
-#include "unihal.h"
-#include "bme280.h"
+#include "unihal/unihal.h"
+#include "unihal/utils/array.h"
+#include "unihal/drivers/sensor/bme280.h"
 
 /******************************************************************************
  Constants and definitions
