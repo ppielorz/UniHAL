@@ -13,9 +13,9 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "unihal.h"
-#include "monogfx.h"
-#include "ssd1675.h"
+#include "unihal/unihal.h"
+#include "unihal/utils/array.h"
+#include "unihal/drivers/display/ssd1675.h"
 
 /******************************************************************************
  Constants and definitions

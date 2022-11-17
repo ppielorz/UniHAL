@@ -18,7 +18,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 
-#include "array.h"
+#include "unihal/utils/array.h"
 
 #ifdef __cplusplus
 extern "C"

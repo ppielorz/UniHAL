@@ -16,7 +16,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "unihal.h"
+#include "unihal/unihal.h"
 
 #ifdef __cplusplus
 extern "C"

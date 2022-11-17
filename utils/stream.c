@@ -15,7 +15,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "stream.h"
+#include "unihal/utils/stream.h"
 
 /******************************************************************************
  Constants and definitions

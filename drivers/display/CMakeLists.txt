@@ -1,9 +1,4 @@
-
-add_subdirectory(display)
-add_subdirectory(sensor)
-
-
-
+target_sources(unihal PRIVATE ssd1306.c ssd1675.c)
 
 #add_library(unihal-drivers  display/ssd1306.c
 #                            display/ssd1675.c

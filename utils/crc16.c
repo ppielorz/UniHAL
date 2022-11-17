@@ -13,7 +13,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "crc16.h"
+#include "unihal/utils/crc16.h"
 
 /******************************************************************************
  Constants and definitions

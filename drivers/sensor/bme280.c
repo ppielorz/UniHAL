@@ -13,10 +13,10 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "array.h"
-#include "stream.h"
-#include "unihal.h"
-#include "bme280.h"
+#include "unihal/unihal.h"
+#include "unihal/utils/array.h"
+#include "unihal/utils/stream.h"
+#include "unihal/drivers/sensor/bme280.h"
 
 /******************************************************************************
  Constants and definitions

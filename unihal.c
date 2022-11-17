@@ -13,7 +13,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "unihal.h"
+#include "unihal/unihal.h"
 
 /******************************************************************************
  Constants and definitions

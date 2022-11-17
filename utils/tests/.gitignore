@@ -1,8 +1,0 @@
-bin/
-objs/
-html/
-coverage.info
-coverage_filtered.info
-core
-*.gcda
-*.gcno

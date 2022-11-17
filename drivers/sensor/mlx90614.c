@@ -13,9 +13,9 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "array.h"
-#include "unihal.h"
-#include "mlx90614.h"
+#include "unihal/unihal.h"
+#include "unihal/utils/array.h"
+#include "unihal/drivers/sensor/mlx90614.h"
 
 /******************************************************************************
  Constants and definitions
