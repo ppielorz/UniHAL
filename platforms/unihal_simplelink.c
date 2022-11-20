@@ -20,7 +20,7 @@
 #include "aon_batmon.h"
 #include "sys_ctrl.h"
 
-#include "unihal.h"
+#include "unihal/unihal.h"
 #include "unihal_simplelink.h"
 
 /******************************************************************************
