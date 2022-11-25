@@ -51,10 +51,17 @@ int main(int ac, char** av)
  Tests
  *****************************************************************************/
 
-TEST_GROUP(monoGFX_invalidation)
+TEST_GROUP(monoGFX_setPixel)
 {
+    monoGFX_t gfx = {0};
+    uint8_t gfxBuffer[64] = {0};
+    uint8_t expectedGfxBuffer[64] = {0};
+
     void setup()
     {
+        memset(&gfx, 0, sizeof(gfx));
+        memset(&gfxBuffer, 0, sizeof(gfxBuffer));
+        memset(&expectedGfxBuffer, 0, sizeof(expectedGfxBuffer));
     }
 
     void teardown()
@@ -65,12 +72,8 @@ TEST_GROUP(monoGFX_invalidation)
     }
 };
 
-TEST(monoGFX_invalidation, setPixel)
+TEST(monoGFX_setPixel, plainSetPixel)
 {
-    monoGFX_t gfx = {0};
-    uint8_t gfxBuffer[64] = {0};
-    uint8_t expectedGfxBuffer[64] = {0};
-
     monoGFX_init(&gfx, 32, 16, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_none);
     MEMCMP_EQUAL(expectedGfxBuffer, gfxBuffer, sizeof(expectedGfxBuffer));
 
@@ -91,12 +94,8 @@ TEST(monoGFX_invalidation, setPixel)
     MEMCMP_EQUAL(expectedGfxBuffer, gfxBuffer, sizeof(expectedGfxBuffer));
 }
 
-TEST(monoGFX_invalidation, setPixelReversedBitOrder)
+TEST(monoGFX_setPixel, reversedBitOrder)
 {
-    monoGFX_t gfx = {0};
-    uint8_t gfxBuffer[64] = {0};
-    uint8_t expectedGfxBuffer[64] = {0};
-
     monoGFX_init(&gfx, 32, 16, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_none);
     gfx.bitReverseOrder = true;
     MEMCMP_EQUAL(expectedGfxBuffer, gfxBuffer, sizeof(expectedGfxBuffer));
@@ -118,12 +117,8 @@ TEST(monoGFX_invalidation, setPixelReversedBitOrder)
     MEMCMP_EQUAL(expectedGfxBuffer, gfxBuffer, sizeof(expectedGfxBuffer));
 }
 
-TEST(monoGFX_invalidation, setPixelRotateClockwise)
+TEST(monoGFX_setPixel, rotateClockwise)
 {
-    monoGFX_t gfx = {0};
-    uint8_t gfxBuffer[64] = {0};
-    uint8_t expectedGfxBuffer[64] = {0};
-
     monoGFX_init(&gfx, 32, 16, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_clockwise);
     MEMCMP_EQUAL(expectedGfxBuffer, gfxBuffer, sizeof(expectedGfxBuffer));
 
@@ -144,12 +139,8 @@ TEST(monoGFX_invalidation, setPixelRotateClockwise)
     MEMCMP_EQUAL(expectedGfxBuffer, gfxBuffer, sizeof(expectedGfxBuffer));
 }
 
-TEST(monoGFX_invalidation, setPixelRotateCounterclockwise)
+TEST(monoGFX_setPixel, rotateCounterclockwise)
 {
-    monoGFX_t gfx = {0};
-    uint8_t gfxBuffer[64] = {0};
-    uint8_t expectedGfxBuffer[64] = {0};
-
     monoGFX_init(&gfx, 32, 16, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_counterclockwise);
     MEMCMP_EQUAL(expectedGfxBuffer, gfxBuffer, sizeof(expectedGfxBuffer));
 
@@ -170,12 +161,8 @@ TEST(monoGFX_invalidation, setPixelRotateCounterclockwise)
     MEMCMP_EQUAL(expectedGfxBuffer, gfxBuffer, sizeof(expectedGfxBuffer));
 }
 
-TEST(monoGFX_invalidation, setPixelRotateHalfTurn)
+TEST(monoGFX_setPixel, rotateHalfTurn)
 {
-    monoGFX_t gfx = {0};
-    uint8_t gfxBuffer[64] = {0};
-    uint8_t expectedGfxBuffer[64] = {0};
-
     monoGFX_init(&gfx, 32, 16, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_halfTurn);
     MEMCMP_EQUAL(expectedGfxBuffer, gfxBuffer, sizeof(expectedGfxBuffer));
 
