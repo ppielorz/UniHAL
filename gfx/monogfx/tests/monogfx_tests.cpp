@@ -182,3 +182,55 @@ TEST(monoGFX_setPixel, rotateHalfTurn)
     expectedGfxBuffer[59] |= 0x02;
     MEMCMP_EQUAL(expectedGfxBuffer, gfxBuffer, sizeof(expectedGfxBuffer));
 }
+
+
+TEST_GROUP(monoGFX_clearPixel)
+{
+    monoGFX_t gfx = {0};
+    uint8_t gfxBuffer[64] = {0};
+    uint8_t expectedGfxBuffer[64] = {0};
+
+    void setup()
+    {
+        memset(&gfx, 0, sizeof(gfx));
+        memset(&gfxBuffer, 0, sizeof(gfxBuffer));
+        memset(&expectedGfxBuffer, 0, sizeof(expectedGfxBuffer));
+    }
+
+    void teardown()
+    {
+        mock().checkExpectations();
+        mock().clear();
+        mock().removeAllComparatorsAndCopiers();
+    }
+};
+
+TEST(monoGFX_clearPixel, plainClearPixel)
+{
+    monoGFX_init(&gfx, 32, 16, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_none);
+    MEMCMP_EQUAL(expectedGfxBuffer, gfxBuffer, sizeof(expectedGfxBuffer));
+
+    monoGFX_setPixel(&gfx, 0, 0);
+    expectedGfxBuffer[0] |= 0x80;
+    MEMCMP_EQUAL(expectedGfxBuffer, gfxBuffer, sizeof(expectedGfxBuffer));
+
+    monoGFX_clearPixel(&gfx, 0, 0);
+    expectedGfxBuffer[0] &= ~0x80;
+    MEMCMP_EQUAL(expectedGfxBuffer, gfxBuffer, sizeof(expectedGfxBuffer));
+}
+
+TEST(monoGFX_clearPixel, reversedBitOrder)
+{
+    monoGFX_init(&gfx, 32, 16, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_none);
+    gfx.bitReverseOrder = true;
+    MEMCMP_EQUAL(expectedGfxBuffer, gfxBuffer, sizeof(expectedGfxBuffer));
+
+    monoGFX_setPixel(&gfx, 0, 0);
+    expectedGfxBuffer[0] |= 0x01;
+    MEMCMP_EQUAL(expectedGfxBuffer, gfxBuffer, sizeof(expectedGfxBuffer));
+
+    monoGFX_clearPixel(&gfx, 0, 0);
+    expectedGfxBuffer[0] &= ~0x01;
+    MEMCMP_EQUAL(expectedGfxBuffer, gfxBuffer, sizeof(expectedGfxBuffer));
+}
+

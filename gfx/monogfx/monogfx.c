@@ -147,19 +147,52 @@ monoGFX_status_t monoGFX_setPixel(const monoGFX_t* const gfx, const size_t xPosi
     return monoGFX_status_success;
 }
 
-void monoGFX_clearPixel(monoGFX_t* gfx, size_t x, size_t y)
+monoGFX_status_t monoGFX_clearPixel(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition)
 {
-    (void) gfx;
-    (void) x;
-    (void) y;
+    size_t xPositionRotated = xPosition;
+    size_t yPositionRotated = yPosition;
+
+    switch(gfx->rotation)
+    {
+        case monoGFX_rotation_none:
+            break;
+
+        case monoGFX_rotation_clockwise:
+            xPositionRotated = gfx->xSizeBuffer - yPosition - 1;
+            yPositionRotated = xPosition;
+            break;
+
+        case monoGFX_rotation_counterclockwise:
+            xPositionRotated = yPosition;
+            yPositionRotated = gfx->ySizeBuffer - xPosition - 1;
+            break;
+
+        case monoGFX_rotation_halfTurn:
+            xPositionRotated = gfx->xSizeBuffer - xPosition - 1;
+            yPositionRotated = gfx->ySizeBuffer - yPosition - 1;
+            break;
+
+        default:
+            //TODO assert
+            break;
 }
 
-uint8_t monoGFX_getPixel(monoGFX_t* gfx, size_t xPosition, size_t yPosition)
+    size_t offset = xPositionRotated / 8 + yPositionRotated * ((gfx->xSizeBuffer + 7) / 8);
+    if(offset < gfx->bufferSize)
 {
-    uint8_t glyph = gfx->buffer[xPosition + yPosition / 8 * gfx->xSize];
-    if(glyph & (0x80 >> (xPosition % 8)))
+        if(gfx->bitReverseOrder)
     {
-        return 0;
+            gfx->buffer[offset] &= ~(0x01 << (xPositionRotated % 8));
+        }
+        else
+        {
+            gfx->buffer[offset] &= ~(0x80 >> (xPositionRotated % 8));
+        }
+    }
+
+    return monoGFX_status_success;
+}
+
     }
     
     return 255;
