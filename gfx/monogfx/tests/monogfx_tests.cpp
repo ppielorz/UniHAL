@@ -72,6 +72,36 @@ TEST_GROUP(monoGFX_setPixel)
     }
 };
 
+TEST(monoGFX_setPixel, nullPointer)
+{
+    monoGFX_init(&gfx, 32, 16, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_none);
+    MEMCMP_EQUAL(expectedGfxBuffer, gfxBuffer, sizeof(expectedGfxBuffer));
+
+    monoGFX_status_t status = monoGFX_setPixel(NULL, 0, 0);
+
+    LONGS_EQUAL(monoGFX_status_nullPointer, status);
+}
+
+TEST(monoGFX_setPixel, xAxisExceeded)
+{
+    monoGFX_init(&gfx, 32, 16, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_none);
+    MEMCMP_EQUAL(expectedGfxBuffer, gfxBuffer, sizeof(expectedGfxBuffer));
+
+    monoGFX_status_t status = monoGFX_setPixel(&gfx, 32, 0);
+
+    LONGS_EQUAL(monoGFX_status_xAxisExceeded, status);
+}
+
+TEST(monoGFX_setPixel, yAxisExceeded)
+{
+    monoGFX_init(&gfx, 32, 16, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_none);
+    MEMCMP_EQUAL(expectedGfxBuffer, gfxBuffer, sizeof(expectedGfxBuffer));
+
+    monoGFX_status_t status = monoGFX_setPixel(&gfx, 0, 16);
+
+    LONGS_EQUAL(monoGFX_status_yAxisExceeded, status);
+}
+
 TEST(monoGFX_setPixel, plainSetPixel)
 {
     monoGFX_init(&gfx, 32, 16, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_none);
@@ -204,6 +234,36 @@ TEST_GROUP(monoGFX_clearPixel)
         mock().removeAllComparatorsAndCopiers();
     }
 };
+
+TEST(monoGFX_clearPixel, nullPointer)
+{
+    monoGFX_init(&gfx, 32, 16, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_none);
+    MEMCMP_EQUAL(expectedGfxBuffer, gfxBuffer, sizeof(expectedGfxBuffer));
+
+    monoGFX_status_t status = monoGFX_clearPixel(NULL, 0, 0);
+
+    LONGS_EQUAL(monoGFX_status_nullPointer, status);
+}
+
+TEST(monoGFX_clearPixel, xAxisExceeded)
+{
+    monoGFX_init(&gfx, 32, 16, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_none);
+    MEMCMP_EQUAL(expectedGfxBuffer, gfxBuffer, sizeof(expectedGfxBuffer));
+
+    monoGFX_status_t status = monoGFX_clearPixel(&gfx, 32, 0);
+
+    LONGS_EQUAL(monoGFX_status_xAxisExceeded, status);
+}
+
+TEST(monoGFX_clearPixel, yAxisExceeded)
+{
+    monoGFX_init(&gfx, 32, 16, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_none);
+    MEMCMP_EQUAL(expectedGfxBuffer, gfxBuffer, sizeof(expectedGfxBuffer));
+
+    monoGFX_status_t status = monoGFX_clearPixel(&gfx, 0, 16);
+
+    LONGS_EQUAL(monoGFX_status_yAxisExceeded, status);
+}
 
 TEST(monoGFX_clearPixel, plainClearPixel)
 {

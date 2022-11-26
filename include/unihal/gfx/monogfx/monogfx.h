@@ -35,7 +35,8 @@ typedef enum
     monoGFX_status_invalidRotation = 2U,
     monoGFX_status_bufferTooSmall = 3U,
     monoGFX_status_xAxisExceeded = 4U,
-    monoGFX_status_invalidThickness = 5U
+    monoGFX_status_yAxisExceeded = 5U,
+    monoGFX_status_invalidThickness = 6U
 } monoGFX_status_t;
 
 typedef enum
