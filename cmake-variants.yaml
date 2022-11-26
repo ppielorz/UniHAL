@@ -1,0 +1,23 @@
+buildType:
+  default: release
+  choices:
+    debug:
+      short: Debug
+      long: Emit debug information
+      buildType: Debug
+    release:
+      short: Release
+      long: Optimize generated code
+      buildType: Release
+
+coverage:
+  default: disable
+  choices:
+    enable:
+      short: Enable coverage
+      long: Enable code coverage
+      settings:
+        ENABLE_COVERAGE: yes
+    disable:
+      short: Disable coverage
+      long: Disable code coverage
