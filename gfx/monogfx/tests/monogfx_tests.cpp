@@ -11,6 +11,7 @@
  Includes
  *****************************************************************************/
 #include <cstring>
+#include <time.h>
 
 #include <CppUTest/TestHarness.h>
 #include <CppUTest/CommandLineTestRunner.h>
@@ -35,11 +36,21 @@
  *****************************************************************************/
 
 /******************************************************************************
+ Local function prototypes
+ *****************************************************************************/
+static void setPixelBenchmark();
+static void clearPixelBenchmark();
+static void getPixelBenchmark();
+
+/******************************************************************************
  Global functions
  ******************************************************************************/
 
 int main(int ac, char** av)
 {
+    setPixelBenchmark();
+    clearPixelBenchmark();
+    getPixelBenchmark();
     return CommandLineTestRunner::RunAllTests(ac, av);
 }
 
@@ -335,7 +346,70 @@ TEST(monoGFX_getPixel, plainGetPixel)
     CHECK_FALSE(pixelSet);
 }
 
+/******************************************************************************
+ Tests - benchmark
+ *****************************************************************************/
 
+static void setPixelBenchmark()
+{
+    monoGFX_t gfx = {0};
+    uint8_t gfxBuffer[64] = {0};
+    monoGFX_init(&gfx, 32, 16, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_none);
+
+    clock_t startTime = clock();
+    for(size_t i = 0U; i < 1000000; i++)
+    {
+        monoGFX_setPixel(&gfx, 0, 0);
+        monoGFX_setPixel(&gfx, 1, 1);
+        monoGFX_setPixel(&gfx, 2, 2);
+        monoGFX_setPixel(&gfx, 10, 0);
+        monoGFX_setPixel(&gfx, 0, 10);
+        monoGFX_setPixel(&gfx, 15, 15);
+    }
+    clock_t endTime = clock();
+    printf("setPixelBenchmark time: %lu us\n", endTime - startTime);
+}
+
+static void clearPixelBenchmark()
+{
+    monoGFX_t gfx = {0};
+    uint8_t gfxBuffer[64] = {0};
+    monoGFX_init(&gfx, 32, 16, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_none);
+
+    clock_t startTime = clock();
+    for(size_t i = 0U; i < 1000000; i++)
+    {
+        monoGFX_clearPixel(&gfx, 0, 0);
+        monoGFX_clearPixel(&gfx, 1, 1);
+        monoGFX_clearPixel(&gfx, 2, 2);
+        monoGFX_clearPixel(&gfx, 10, 0);
+        monoGFX_clearPixel(&gfx, 0, 10);
+        monoGFX_clearPixel(&gfx, 15, 15);
+    }
+    clock_t endTime = clock();
+    printf("clearPixelBenchmark time: %lu us\n", endTime - startTime);
+}
+
+static void getPixelBenchmark()
+{
+    monoGFX_t gfx = {0};
+    uint8_t gfxBuffer[64] = {0};
+    bool pixelSet = false;
+    monoGFX_init(&gfx, 32, 16, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_none);
+
+    clock_t startTime = clock();
+    for(size_t i = 0U; i < 1000000; i++)
+    {
+        monoGFX_getPixel(&gfx, 0, 0, &pixelSet);
+        monoGFX_getPixel(&gfx, 1, 1, &pixelSet);
+        monoGFX_getPixel(&gfx, 2, 2, &pixelSet);
+        monoGFX_getPixel(&gfx, 10, 0, &pixelSet);
+        monoGFX_getPixel(&gfx, 0, 10, &pixelSet);
+        monoGFX_getPixel(&gfx, 15, 15, &pixelSet);
+    }
+    clock_t endTime = clock();
+    printf("getPixelBenchmark time: %lu us\n", endTime - startTime);
+}
 
 
 
@@ -345,32 +419,6 @@ TEST(monoGFX_getPixel, plainGetPixel)
 
 
 /*
-#include <time.h>
-TEST(monoGFX_setPixel, aaa)
-{
-    LONGS_EQUAL(monoGFX_status_success, monoGFX_init(&gfx, 32, 16, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_halfTurn);
-    MEMCMP_EQUAL(expectedGfxBuffer, gfxBuffer, sizeof(expectedGfxBuffer));
-
-    clock_t startTime = clock();
-
-    for(size_t i = 0U; i < 1000000; i++)
-    {
-        monoGFX_setPixel(&gfx, 0, 0));
-        monoGFX_setPixel(&gfx, 1, 0));
-        monoGFX_setPixel(&gfx, 2, 0));
-        monoGFX_setPixel(&gfx, 3, 0));
-        monoGFX_setPixel(&gfx, 4, 0));
-        monoGFX_setPixel(&gfx, 5, 0));
-        monoGFX_setPixel(&gfx, 6, 0));
-        monoGFX_setPixel(&gfx, 7, 0));
-        monoGFX_setPixel(&gfx, 8, 0));
-        monoGFX_setPixel(&gfx, 9, 0));
-    }
-
-    clock_t endTime = clock();
-    printf("bench time: %lu us\n", endTime - startTime);
-}
-
 
 void printAscii(const monoGFX_t* const gfx)
 {
