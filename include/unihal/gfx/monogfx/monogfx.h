@@ -36,7 +36,8 @@ typedef enum
     monoGFX_status_bufferTooSmall = 3U,
     monoGFX_status_xAxisExceeded = 4U,
     monoGFX_status_yAxisExceeded = 5U,
-    monoGFX_status_invalidThickness = 6U
+    monoGFX_status_invalidThickness = 6U,
+    monoGFX_status_bufferOverflow = 7U /* internal error */
 } monoGFX_status_t;
 
 typedef enum
