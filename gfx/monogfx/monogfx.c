@@ -175,56 +175,32 @@ monoGFX_status_t monoGFX_clearPixel(const monoGFX_t* const gfx, const size_t xPo
     return status;
 }
 
-uint8_t monoGFX_getPixel(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition)
+monoGFX_status_t monoGFX_getPixel(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition, bool* const pixelSet)
 {
+    CHECK_AND_RETURN_STATUS(gfx != NULL, monoGFX_status_nullPointer);
+    CHECK_AND_RETURN_STATUS(xPosition < gfx->xSize, monoGFX_status_xAxisExceeded);
+    CHECK_AND_RETURN_STATUS(yPosition < gfx->ySize, monoGFX_status_yAxisExceeded);
+    CHECK_AND_RETURN_STATUS(pixelSet != NULL, monoGFX_status_nullPointer);
+
     size_t xPositionRotated = xPosition;
     size_t yPositionRotated = yPosition;
-
-    switch(gfx->rotation)
-    {
-        case monoGFX_rotation_none:
-            break;
-
-        case monoGFX_rotation_clockwise:
-            xPositionRotated = gfx->xSizeBuffer - yPosition - 1;
-            yPositionRotated = xPosition;
-            break;
-
-        case monoGFX_rotation_counterclockwise:
-            xPositionRotated = yPosition;
-            yPositionRotated = gfx->ySizeBuffer - xPosition - 1;
-            break;
-
-        case monoGFX_rotation_halfTurn:
-            xPositionRotated = gfx->xSizeBuffer - xPosition - 1;
-            yPositionRotated = gfx->ySizeBuffer - yPosition - 1;
-            break;
-
-        default:
-            //TODO assert
-            break;
-}
+    monoGFX_status_t status = applyRotations(gfx, xPosition, yPosition, &xPositionRotated, &yPositionRotated);
+    CHECK_AND_RETURN_STATUS(status == monoGFX_status_success, status);
 
     size_t offset = xPositionRotated / 8 + yPositionRotated * ((gfx->xSizeBuffer + 7) / 8);
     if(offset < gfx->bufferSize)
-{
-        if(gfx->bitReverseOrder)
     {
-            if(gfx->buffer[offset] & (0x01 << (xPositionRotated % 8)))
-            {
-                return 255;
-            }
+        if(gfx->bitReverseOrder)
+        {
+            *pixelSet = gfx->buffer[offset] & (0x01 << (xPositionRotated % 8));
         }
         else
         {
-            if(gfx->buffer[offset] & (0x80 >> (xPositionRotated % 8)))
-            {
-                return 255;
+            *pixelSet = gfx->buffer[offset] & (0x80 >> (xPositionRotated % 8));
         }
     }
-}
 
-    return 0U;
+    return monoGFX_status_success;
 }
 
 void monoGFX_drawLine(monoGFX_t* gfx, size_t xStart, size_t yStart, size_t xEnd, size_t yEnd)

@@ -101,7 +101,7 @@ extern monoGFX_status_t monoGFX_drawVLine(const monoGFX_t* const gfx, const size
 extern void monoGFX_drawHLine(monoGFX_t* gfx, size_t yPosition, size_t thickness);
 extern monoGFX_status_t monoGFX_setPixel(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition);
 extern monoGFX_status_t monoGFX_clearPixel(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition);
-extern uint8_t monoGFX_getPixel(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition);
+extern monoGFX_status_t monoGFX_getPixel(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition, bool* const pixelSet);
 extern void monoGFX_drawLine(monoGFX_t* gfx, size_t xStart, size_t yStart, size_t xEnd, size_t yEnd);
 extern void monoGFX_putChar(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition, const GFXfont* const gfxFont, const char ch);
 extern void monoGFX_print(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition, const GFXfont* const gfxFont, const char* const string);
