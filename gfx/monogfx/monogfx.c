@@ -21,6 +21,7 @@
 #define CHECK_AND_RETURN_STATUS(condition, failStatus) if(!(condition)) { return failStatus; }
 #define IS_ROTATED_BY_90_DEG(gfx) (gfx->rotation == monoGFX_rotation_clockwise || gfx->rotation == monoGFX_rotation_counterclockwise)
 #define BUFFER_OFFSET(xPositionRotated, yPositionRotated, xSizeBuffer) (xPositionRotated / 8 + yPositionRotated * ((xSizeBuffer + 7) / 8))
+#define PIXEL_BITMASK(bitReverseOrder, xPositionRotated) ((bitReverseOrder) ? (0x01 << (xPositionRotated % 8)) : (0x80 >> (xPositionRotated % 8)))
 
 /******************************************************************************
  Local variables
@@ -134,15 +135,7 @@ monoGFX_status_t monoGFX_setPixel(const monoGFX_t* const gfx, const size_t xPosi
     CHECK_AND_RETURN_STATUS(status == monoGFX_status_success, status);
     size_t offset = BUFFER_OFFSET(xPositionRotated, yPositionRotated, gfx->xSizeBuffer);
     CHECK_AND_RETURN_STATUS(offset < gfx->bufferSize, monoGFX_status_bufferOverflow);
-
-    if(gfx->bitReverseOrder)
-    {
-        gfx->buffer[offset] |= 0x01 << (xPositionRotated % 8);
-    }
-    else
-    {
-        gfx->buffer[offset] |= 0x80 >> (xPositionRotated % 8);
-    }
+    gfx->buffer[offset] |= PIXEL_BITMASK(gfx->bitReverseOrder, xPositionRotated);
 
     return status;
 }
@@ -159,15 +152,7 @@ monoGFX_status_t monoGFX_clearPixel(const monoGFX_t* const gfx, const size_t xPo
     CHECK_AND_RETURN_STATUS(status == monoGFX_status_success, status);
     size_t offset = BUFFER_OFFSET(xPositionRotated, yPositionRotated, gfx->xSizeBuffer);
     CHECK_AND_RETURN_STATUS(offset < gfx->bufferSize, monoGFX_status_bufferOverflow);
-    
-    if(gfx->bitReverseOrder)
-    {
-        gfx->buffer[offset] &= ~(0x01 << (xPositionRotated % 8));
-    }
-    else
-    {
-        gfx->buffer[offset] &= ~(0x80 >> (xPositionRotated % 8));
-    }
+    gfx->buffer[offset] &= ~PIXEL_BITMASK(gfx->bitReverseOrder, xPositionRotated);
 
     return status;
 }
@@ -185,15 +170,7 @@ monoGFX_status_t monoGFX_getPixel(const monoGFX_t* const gfx, const size_t xPosi
     CHECK_AND_RETURN_STATUS(status == monoGFX_status_success, status);
     size_t offset = BUFFER_OFFSET(xPositionRotated, yPositionRotated, gfx->xSizeBuffer);
     CHECK_AND_RETURN_STATUS(offset < gfx->bufferSize, monoGFX_status_bufferOverflow);
-
-    if(gfx->bitReverseOrder)
-    {
-        *pixelSet = gfx->buffer[offset] & (0x01 << (xPositionRotated % 8));
-    }
-    else
-    {
-        *pixelSet = gfx->buffer[offset] & (0x80 >> (xPositionRotated % 8));
-    }
+    *pixelSet = gfx->buffer[offset] & PIXEL_BITMASK(gfx->bitReverseOrder, xPositionRotated);
 
     return monoGFX_status_success;
 }
