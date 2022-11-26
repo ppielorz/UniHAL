@@ -175,6 +175,10 @@ monoGFX_status_t monoGFX_clearPixel(const monoGFX_t* const gfx, const size_t xPo
     return status;
 }
 
+uint8_t monoGFX_getPixel(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition)
+{
+    size_t xPositionRotated = xPosition;
+    size_t yPositionRotated = yPosition;
 
     switch(gfx->rotation)
     {
@@ -206,20 +210,21 @@ monoGFX_status_t monoGFX_clearPixel(const monoGFX_t* const gfx, const size_t xPo
 {
         if(gfx->bitReverseOrder)
     {
-            gfx->buffer[offset] &= ~(0x01 << (xPositionRotated % 8));
+            if(gfx->buffer[offset] & (0x01 << (xPositionRotated % 8)))
+            {
+                return 255;
+            }
         }
         else
         {
-            gfx->buffer[offset] &= ~(0x80 >> (xPositionRotated % 8));
+            if(gfx->buffer[offset] & (0x80 >> (xPositionRotated % 8)))
+            {
+                return 255;
         }
     }
-
-    return monoGFX_status_success;
 }
 
-    }
-    
-    return 255;
+    return 0U;
 }
 
 void monoGFX_drawLine(monoGFX_t* gfx, size_t xStart, size_t yStart, size_t xEnd, size_t yEnd)
@@ -245,10 +250,10 @@ void monoGFX_drawLine(monoGFX_t* gfx, size_t xStart, size_t yStart, size_t xEnd,
     }
 }
 
-void monoGFX_putChar(monoGFX_t* gfx, size_t xPosition, size_t yPosition, const GFXfont* gfxFont, uint8_t ch)
+void monoGFX_putChar(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition, const GFXfont* const gfxFont, const char ch)
 {
-    ch -= gfxFont->first;
-    GFXglyph *glyph = &gfxFont->glyph[ch];
+    //ch -= gfxFont->first;
+    GFXglyph *glyph = &gfxFont->glyph[ch - gfxFont->first];
     uint8_t *bitmap = gfxFont->bitmap;
 
     uint16_t bo = glyph->bitmapOffset;
@@ -318,7 +323,7 @@ void monoGFX_putChar(monoGFX_t* gfx, size_t xPosition, size_t yPosition, const G
 
 }
 
-void monoGFX_print(monoGFX_t* gfx, size_t xPosition, size_t yPosition, const GFXfont* gfxFont, uint8_t* string)
+void monoGFX_print(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition, const GFXfont* const gfxFont, const char* const string)
 {
     //DU_ASSERT(gfx != NULL);
     //DU_ASSERT(gfx->xSize > xPosition);
@@ -327,18 +332,20 @@ void monoGFX_print(monoGFX_t* gfx, size_t xPosition, size_t yPosition, const GFX
 
     size_t x = xPosition;
     size_t y = yPosition;
+    //size_t length = ;
 
-    while(*string != 0U)
+    for(size_t position = 0U; position < strlen(string); position++)
+    //while(*string != 0U)
     {
-        uint8_t bitmapWidth = gfxFont->glyph[*string - gfxFont->first].xAdvance;
+        const char character = string[position];
+        uint8_t bitmapWidth = gfxFont->glyph[character - gfxFont->first].xAdvance;
         if((x + bitmapWidth) > gfx->xSize)
         {
             y += gfxFont->yAdvance;
             x = 0;
         }
-        monoGFX_putChar(gfx, x, y, gfxFont, *string);
+        monoGFX_putChar(gfx, x, y, gfxFont, character);
         x += bitmapWidth;
-        string++;
     }
 
 }
