@@ -28,6 +28,7 @@ extern "C"
 /******************************************************************************
  Constants and definitions
  *****************************************************************************/
+#define MONOGFX_BUFFER_SIZE(xSize, ySize) (((ySize + (8 - 1)) / 8 ) * xSize)
 typedef enum
 {
     monoGFX_status_success = 0U,

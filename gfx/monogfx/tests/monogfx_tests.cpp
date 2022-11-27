@@ -41,6 +41,7 @@
 static void setPixelBenchmark();
 static void clearPixelBenchmark();
 static void getPixelBenchmark();
+static void printBenchmark();
 
 /******************************************************************************
  Global functions
@@ -51,6 +52,8 @@ int main(int ac, char** av)
     setPixelBenchmark();
     clearPixelBenchmark();
     getPixelBenchmark();
+    printBenchmark();
+
     return CommandLineTestRunner::RunAllTests(ac, av);
 }
 
@@ -409,6 +412,23 @@ static void getPixelBenchmark()
     }
     clock_t endTime = clock();
     printf("getPixelBenchmark time: %lu us\n", endTime - startTime);
+}
+
+static void printBenchmark()
+{
+    monoGFX_t gfx = {0};
+    uint8_t gfxBuffer[MONOGFX_BUFFER_SIZE(3200, 1600)] = {0};
+    bool pixelSet = false;
+    extern GFXfont FreeSans18pt7b;
+    monoGFX_init(&gfx, 3200, 1600, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_none);
+
+    clock_t startTime = clock();
+    for(size_t i = 0U; i < 10000; i++)
+    {
+        monoGFX_print(&gfx, 40, 40, &FreeSans18pt7b, "testString123");
+    }
+    clock_t endTime = clock();
+    printf("printBenchmark time: %lu us\n", endTime - startTime);
 }
 
 
