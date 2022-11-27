@@ -23,6 +23,33 @@
 #define BUFFER_OFFSET(xPositionRotated, yPositionRotated, xSizeBuffer) (xPositionRotated / 8 + yPositionRotated * ((xSizeBuffer + 7) / 8))
 #define PIXEL_BITMASK(bitReverseOrder, xPositionRotated) ((bitReverseOrder) ? (0x01 << (xPositionRotated % 8)) : (0x80 >> (xPositionRotated % 8)))
 
+/**
+ * @brief Converts xPosition according to actual rotation.
+ * 
+ * @param rotation Actual rotation.
+ * @param xSizeBuffer Size of X axis in the buffer.
+ * @param xPosition Original position in X axis.
+ * @param yPosition Original position in Y axis.
+ * 
+ * @pre xPosition and yPosition shall be checked for being "in bounds" before calling this macro.
+ * @pre rotation shall be checked for being "in bounds" before calling this macro.
+ */
+#define APPLY_X_POSITION_ROTATION(rotation, xSizeBuffer, xPosition, yPosition) (rotation == monoGFX_rotation_none ? xPosition : (rotation == monoGFX_rotation_clockwise ? (xSizeBuffer - yPosition - 1) : (rotation == monoGFX_rotation_counterclockwise ? yPosition : (xSizeBuffer - xPosition - 1))))
+
+/**
+ * @brief Converts xPosition according to actual rotation.
+ * 
+ * @param rotation Actual rotation.
+ * @param ySizeBuffer Size of Y axis in the buffer.
+ * @param xPosition Original position in X axis.
+ * @param yPosition Original position in Y axis.
+ * 
+ * @pre xPosition and yPosition shall be checked for being "in bounds" before calling this macro.
+ * @pre rotation shall be checked for being "in bounds" before calling this macro.
+ */
+#define APPLY_Y_POSITION_ROTATION(rotation, ySizeBuffer, xPosition, yPosition) (rotation == monoGFX_rotation_none ? yPosition : (rotation == monoGFX_rotation_clockwise ? xPosition : (rotation == monoGFX_rotation_counterclockwise ? (ySizeBuffer - xPosition - 1) : (ySizeBuffer - yPosition - 1))))
+
+
 /******************************************************************************
  Local variables
  *****************************************************************************/
@@ -30,26 +57,6 @@
 /******************************************************************************
  Local function prototypes
  *****************************************************************************/
-
-/**
- * @brief Converts xPosition and yPosition according to actual rotation.
- * 
- * @param gfx Pointer to monoGFX struct.
- * @param xPosition Original position in X axis.
- * @param yPosition Original position in Y axis.
- * @param xPositionRotated Pointer to variable where rotated xPosition will be stored.
- * @param yPositionRotated Pointer to variable where rotated yPosition will be stored.
- * 
- * @return monoGFX_status_t Convertion status.
- * @retval monoGFX_status_success Conversion success.
- * @retval monoGFX_status_invalidRotation Rotation value in monoGFX struct is incorrect (corrupted struct).
- * @retval monoGFX_status_nullPointer NULL pointer provided.
- * 
- * @pre xPosition and yPosition shall be checked for being "in bounds" before 
- *      calling this function.
- */
-static monoGFX_status_t applyRotations(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition,
-                size_t* const xPositionRotated, size_t* const yPositionRotated);
 
 /******************************************************************************
  Public Functions
@@ -128,16 +135,15 @@ monoGFX_status_t monoGFX_setPixel(const monoGFX_t* const gfx, const size_t xPosi
     CHECK_AND_RETURN_STATUS(gfx != NULL, monoGFX_status_nullPointer);
     CHECK_AND_RETURN_STATUS(xPosition < gfx->xSize, monoGFX_status_xAxisExceeded);
     CHECK_AND_RETURN_STATUS(yPosition < gfx->ySize, monoGFX_status_yAxisExceeded);
+    CHECK_AND_RETURN_STATUS(gfx->rotation < monoGFX_rotation_count, monoGFX_status_invalidRotation);
 
-    size_t xPositionRotated = xPosition;
-    size_t yPositionRotated = yPosition;
-    monoGFX_status_t status = applyRotations(gfx, xPosition, yPosition, &xPositionRotated, &yPositionRotated);
-    CHECK_AND_RETURN_STATUS(status == monoGFX_status_success, status);
+    size_t xPositionRotated = APPLY_X_POSITION_ROTATION(gfx->rotation, gfx->xSizeBuffer, xPosition, yPosition);
+    size_t yPositionRotated = APPLY_Y_POSITION_ROTATION(gfx->rotation, gfx->ySizeBuffer, xPosition, yPosition);
     size_t offset = BUFFER_OFFSET(xPositionRotated, yPositionRotated, gfx->xSizeBuffer);
     CHECK_AND_RETURN_STATUS(offset < gfx->bufferSize, monoGFX_status_bufferOverflow);
     gfx->buffer[offset] |= PIXEL_BITMASK(gfx->bitReverseOrder, xPositionRotated);
 
-    return status;
+    return monoGFX_status_success;
 }
 
 monoGFX_status_t monoGFX_clearPixel(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition)
@@ -145,16 +151,15 @@ monoGFX_status_t monoGFX_clearPixel(const monoGFX_t* const gfx, const size_t xPo
     CHECK_AND_RETURN_STATUS(gfx != NULL, monoGFX_status_nullPointer);
     CHECK_AND_RETURN_STATUS(xPosition < gfx->xSize, monoGFX_status_xAxisExceeded);
     CHECK_AND_RETURN_STATUS(yPosition < gfx->ySize, monoGFX_status_yAxisExceeded);
+    CHECK_AND_RETURN_STATUS(gfx->rotation < monoGFX_rotation_count, monoGFX_status_invalidRotation);
 
-    size_t xPositionRotated = xPosition;
-    size_t yPositionRotated = yPosition;
-    monoGFX_status_t status = applyRotations(gfx, xPosition, yPosition, &xPositionRotated, &yPositionRotated);
-    CHECK_AND_RETURN_STATUS(status == monoGFX_status_success, status);
+    size_t xPositionRotated = APPLY_X_POSITION_ROTATION(gfx->rotation, gfx->xSizeBuffer, xPosition, yPosition);
+    size_t yPositionRotated = APPLY_Y_POSITION_ROTATION(gfx->rotation, gfx->ySizeBuffer, xPosition, yPosition);
     size_t offset = BUFFER_OFFSET(xPositionRotated, yPositionRotated, gfx->xSizeBuffer);
     CHECK_AND_RETURN_STATUS(offset < gfx->bufferSize, monoGFX_status_bufferOverflow);
     gfx->buffer[offset] &= ~PIXEL_BITMASK(gfx->bitReverseOrder, xPositionRotated);
 
-    return status;
+    return monoGFX_status_success;
 }
 
 monoGFX_status_t monoGFX_getPixel(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition, bool* const pixelSet)
@@ -162,12 +167,11 @@ monoGFX_status_t monoGFX_getPixel(const monoGFX_t* const gfx, const size_t xPosi
     CHECK_AND_RETURN_STATUS(gfx != NULL, monoGFX_status_nullPointer);
     CHECK_AND_RETURN_STATUS(xPosition < gfx->xSize, monoGFX_status_xAxisExceeded);
     CHECK_AND_RETURN_STATUS(yPosition < gfx->ySize, monoGFX_status_yAxisExceeded);
+    CHECK_AND_RETURN_STATUS(gfx->rotation < monoGFX_rotation_count, monoGFX_status_invalidRotation);
     CHECK_AND_RETURN_STATUS(pixelSet != NULL, monoGFX_status_nullPointer);
 
-    size_t xPositionRotated = xPosition;
-    size_t yPositionRotated = yPosition;
-    monoGFX_status_t status = applyRotations(gfx, xPosition, yPosition, &xPositionRotated, &yPositionRotated);
-    CHECK_AND_RETURN_STATUS(status == monoGFX_status_success, status);
+    size_t xPositionRotated = APPLY_X_POSITION_ROTATION(gfx->rotation, gfx->xSizeBuffer, xPosition, yPosition);
+    size_t yPositionRotated = APPLY_Y_POSITION_ROTATION(gfx->rotation, gfx->ySizeBuffer, xPosition, yPosition);
     size_t offset = BUFFER_OFFSET(xPositionRotated, yPositionRotated, gfx->xSizeBuffer);
     CHECK_AND_RETURN_STATUS(offset < gfx->bufferSize, monoGFX_status_bufferOverflow);
     *pixelSet = gfx->buffer[offset] & PIXEL_BITMASK(gfx->bitReverseOrder, xPositionRotated);
@@ -300,38 +304,3 @@ void monoGFX_print(const monoGFX_t* const gfx, const size_t xPosition, const siz
 /******************************************************************************
  Local Functions
  *****************************************************************************/
-
-static monoGFX_status_t applyRotations(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition,
-                size_t* const xPositionRotated, size_t* const yPositionRotated)
-{
-    CHECK_AND_RETURN_STATUS(gfx != NULL, monoGFX_status_nullPointer);
-    CHECK_AND_RETURN_STATUS(xPositionRotated != NULL, monoGFX_status_nullPointer);
-    CHECK_AND_RETURN_STATUS(yPositionRotated != NULL, monoGFX_status_nullPointer);
-
-    switch(gfx->rotation)
-    {
-        case monoGFX_rotation_none:
-            break;
-
-        case monoGFX_rotation_clockwise:
-            *xPositionRotated = gfx->xSizeBuffer - yPosition - 1;
-            *yPositionRotated = xPosition;
-            break;
-
-        case monoGFX_rotation_counterclockwise:
-            *xPositionRotated = yPosition;
-            *yPositionRotated = gfx->ySizeBuffer - xPosition - 1;
-            break;
-
-        case monoGFX_rotation_halfTurn:
-            *xPositionRotated = gfx->xSizeBuffer - xPosition - 1;
-            *yPositionRotated = gfx->ySizeBuffer - yPosition - 1;
-            break;
-
-        default:
-            return monoGFX_status_invalidRotation;
-            break;
-    }
-
-    return monoGFX_status_success;
-}
