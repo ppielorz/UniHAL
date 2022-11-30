@@ -29,6 +29,7 @@ extern "C"
  Constants and definitions
  *****************************************************************************/
 #define MONOGFX_BUFFER_SIZE(xSize, ySize) (((ySize + (8 - 1)) / 8 ) * xSize)
+#define MONOGFX_FIRST_ASCII_CHARACTER (' ')
 typedef enum
 {
     monoGFX_status_success = 0U,
@@ -38,7 +39,8 @@ typedef enum
     monoGFX_status_xAxisExceeded = 4U,
     monoGFX_status_yAxisExceeded = 5U,
     monoGFX_status_invalidThickness = 6U,
-    monoGFX_status_bufferOverflow = 7U /* internal error */
+    monoGFX_status_bufferOverflow = 7U, /* internal error */
+    monoGFX_status_unknownCharacter = 8U 
 } monoGFX_status_t;
 
 typedef enum
@@ -50,6 +52,27 @@ typedef enum
 
     monoGFX_rotation_count
 } monoGFX_rotation_t;
+
+typedef struct
+{
+    /*const*/ size_t bitmapOffset;
+    /*const*/ uint8_t xAdvance;
+    /*const*/ uint8_t xOffset;
+    /*const*/ uint8_t yOffset;
+    /*const*/ uint8_t width;
+    /*const*/ uint8_t height;
+    /*const*/ uint8_t pitch;
+} monoGFX_glyph_t;
+
+
+typedef struct
+{
+    /*const*/ uint8_t* bitmap;
+    /*const*/ size_t bitmapSize;
+    /*const*/ monoGFX_glyph_t* const glyphs;
+    /*const*/ uint8_t yAdvance;
+} monoGFX_font_t;
+
 
 typedef struct
 {
@@ -106,7 +129,9 @@ extern monoGFX_status_t monoGFX_clearPixel(const monoGFX_t* const gfx, const siz
 extern monoGFX_status_t monoGFX_getPixel(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition, bool* const pixelSet);
 extern void monoGFX_drawLine(monoGFX_t* gfx, size_t xStart, size_t yStart, size_t xEnd, size_t yEnd);
 extern void monoGFX_putChar(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition, const GFXfont* const gfxFont, const char ch);
+extern monoGFX_status_t monoGFX_putCharNew(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition, const monoGFX_font_t* const font, const char character);
 extern void monoGFX_print(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition, const GFXfont* const gfxFont, const char* const string);
+extern monoGFX_status_t monoGFX_printNew(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition, const monoGFX_font_t* const font, const char* const string);
 #ifdef __cplusplus
 }
 #endif

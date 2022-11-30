@@ -275,6 +275,31 @@ void monoGFX_putChar(const monoGFX_t* const gfx, const size_t xPosition, const s
 
 }
 
+monoGFX_status_t monoGFX_putCharNew(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition, const monoGFX_font_t* const font, const char character)
+{
+    CHECK_AND_RETURN_STATUS(gfx != NULL, monoGFX_status_nullPointer);
+    CHECK_AND_RETURN_STATUS(xPosition < gfx->xSize, monoGFX_status_xAxisExceeded);
+    CHECK_AND_RETURN_STATUS(yPosition < gfx->ySize, monoGFX_status_yAxisExceeded);
+    CHECK_AND_RETURN_STATUS(font != NULL, monoGFX_status_nullPointer);
+    CHECK_AND_RETURN_STATUS(character >= MONOGFX_FIRST_ASCII_CHARACTER, monoGFX_status_unknownCharacter);
+
+    const monoGFX_glyph_t* glyph = &font->glyphs[character - MONOGFX_FIRST_ASCII_CHARACTER];
+
+    for(size_t y = 0U; y < glyph->height; y++)
+    {
+        for(size_t x = 0U; x < glyph->width; x++)
+        {
+            const uint8_t part = font->bitmap[glyph->bitmapOffset + glyph->pitch * y + x / 8];
+            if(part & (1 << x % 8))
+            {
+                monoGFX_setPixel(gfx, xPosition + x + glyph->xOffset, yPosition + y + glyph->yOffset);
+            }
+        }
+    }
+
+    return monoGFX_status_success;
+}
+
 void monoGFX_print(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition, const GFXfont* const gfxFont, const char* const string)
 {
     //DU_ASSERT(gfx != NULL);
@@ -300,6 +325,35 @@ void monoGFX_print(const monoGFX_t* const gfx, const size_t xPosition, const siz
         x += bitmapWidth;
     }
 
+}
+
+monoGFX_status_t monoGFX_printNew(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition, const monoGFX_font_t* const font, const char* const string)
+{
+    CHECK_AND_RETURN_STATUS(gfx != NULL, monoGFX_status_nullPointer);
+    CHECK_AND_RETURN_STATUS(xPosition < gfx->xSize, monoGFX_status_xAxisExceeded);
+    CHECK_AND_RETURN_STATUS(yPosition < gfx->ySize, monoGFX_status_yAxisExceeded);
+    CHECK_AND_RETURN_STATUS(font != NULL, monoGFX_status_nullPointer);
+    CHECK_AND_RETURN_STATUS(string != NULL, monoGFX_status_nullPointer);
+
+    size_t x = xPosition;
+    size_t y = yPosition;
+    //size_t length = ;
+
+    for(size_t position = 0U; position < strlen(string); position++)
+    //while(*string != 0U)
+    {
+        const char character = string[position];
+        uint8_t bitmapWidth = font->glyphs[character - MONOGFX_FIRST_ASCII_CHARACTER].xAdvance;
+        /*if((x + bitmapWidth) > gfx->xSize)
+        {
+            y += gfxFont->yAdvance;
+            x = 0;
+        }*/
+        monoGFX_putCharNew(gfx, x, y, font, character);
+        x += bitmapWidth;
+    }
+
+    return monoGFX_status_success;
 }
 /******************************************************************************
  Local Functions
