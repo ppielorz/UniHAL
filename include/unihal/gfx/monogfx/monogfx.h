@@ -57,11 +57,10 @@ typedef struct
 {
     /*const*/ size_t bitmapOffset;
     /*const*/ uint8_t xAdvance;
-    /*const*/ uint8_t xOffset;
-    /*const*/ uint8_t yOffset;
+    /*const*/ int8_t xOffset;
+    /*const*/ int8_t yOffset;
     /*const*/ uint8_t width;
     /*const*/ uint8_t height;
-    /*const*/ uint8_t pitch;
 } monoGFX_glyph_t;
 
 

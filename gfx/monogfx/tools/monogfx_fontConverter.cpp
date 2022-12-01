@@ -21,7 +21,7 @@
 #include FT_FREETYPE_H
 
 #include "unihal/gfx/monogfx/monogfx.h"
-#include "monogfx_consolePrinter.h"
+#include "monogfx_printers.h"
 
 /******************************************************************************
  Constants and definitions
@@ -32,7 +32,7 @@ const std::string asciiToPrint = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKL
  Local variables
  *****************************************************************************/
 static uint8_t bitmapBuffer[UINT16_MAX];
-static monoGFX_glyph_t glyphsBuffer['~' - ' '];
+static monoGFX_glyph_t glyphsBuffer[95];
 static monoGFX_font_t testFont = 
 {
     .bitmap = bitmapBuffer,
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 {
     FT_Library library;
     FT_Face face;
-    const auto fontPath = "/usr/share/fonts/truetype/freefont/FreeMono.ttf";
+    const auto fontPath = "/usr/share/fonts/truetype/freefont/FreeSans.ttf";
 
     try
     {
@@ -66,6 +66,17 @@ int main(int argc, char *argv[])
         {
             convertSingleGlyph(face, character);
         }
+        std::cout << "Final bitmap size: " << std::dec << testFont.bitmapSize << std::endl;
+        monoGFX_t gfx = {0};
+        uint8_t gfxBuffer[MONOGFX_BUFFER_SIZE(2000, 100)] = {0};
+        extern GFXfont FreeSans9pt7b;
+        assert(monoGFX_status_success == monoGFX_init(&gfx, 2000, 100, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_none));
+        assert(monoGFX_status_success == monoGFX_printNew(&gfx, 0, 0, &testFont, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"));
+        //assert(monoGFX_status_success == monoGFX_printNew(&gfx, 0, 0, &testFont, "~"));
+        monoGFX_print(&gfx, 0, 50, &FreeSans9pt7b, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+        //monoGFX_print(&gfx, 0, 50, &FreeSans9pt7b, "~");
+        
+        monoGFX_pngPrinter(&gfx, "/home/ppielorz/Drzemlik/source/unihal/gfx/monogfx/test.png");
     }
     catch(const std::exception& e)
     {
@@ -97,10 +108,10 @@ void init(FT_Library& library, FT_Face& face, const std::string& fontPath)
 
     ftStatus = FT_Set_Char_Size(
           face,    /* handle to face object         */
-          0,       /* char_width in 1/64 of points  */
-          8*64,   /* char_height in 1/64 of points */
-          300,     /* horizontal device resolution  */
-          300 );   /* vertical device resolution    */
+          9*64,       /* char_width in 1/64 of points  */
+          /*9*64*/0,   /* char_height in 1/64 of points */
+          150,     /* horizontal device resolution  */
+          0 );   /* vertical device resolution    */
     if (ftStatus)
     {
         throw std::runtime_error("FT_Set_Char_Size error: " + std::to_string(ftStatus));
@@ -115,7 +126,7 @@ static void convertSingleGlyph(FT_Face& face, const char character)
     auto ftStatus = FT_Load_Glyph(
           face,          /* handle to face object */
           glyphIndex,   /* glyph index           */
-          FT_LOAD_DEFAULT );  /* load flags, see below */
+          FT_LOAD_TARGET_MONO );  /* load flags, see below */
     if (ftStatus)
     {
         throw std::runtime_error("FT_New_Face error: " + std::to_string(ftStatus));
@@ -129,30 +140,34 @@ static void convertSingleGlyph(FT_Face& face, const char character)
 
     monoGFX_glyph_t* testGlyph = &testFont.glyphs[character - MONOGFX_FIRST_ASCII_CHARACTER];
     testGlyph->bitmapOffset = testFont.bitmapSize;
-    testGlyph->xAdvance = (uint8_t) (face->glyph->metrics.horiAdvance / 64);
-    testGlyph->xOffset = (uint8_t) (face->glyph->metrics.horiBearingX / 64);
+    testGlyph->xAdvance = (int8_t) (face->glyph->metrics.horiAdvance / 64);
+    testGlyph->xOffset = (int8_t) (face->glyph->metrics.horiBearingX / 64);
     //testGlyph->yOffset = (uint8_t) (face->glyph->metrics.height / 64) - bitmap.rows;
     //testGlyph->yOffset = (uint8_t) (face->glyph->metrics.vertBearingY / 64);
     testGlyph->yOffset = (uint8_t) ((face->glyph->metrics.vertAdvance - face->glyph->metrics.horiBearingY) / 64);
     testGlyph->width = (uint8_t) bitmap.width;
     testGlyph->height = (uint8_t) bitmap.rows;
-    testGlyph->pitch = (uint8_t) bitmap.pitch;
 
-    for(auto row = 0U; row < bitmap.rows; row++)
-    {
-        for(auto column = 0U; column < bitmap.pitch; column++)
-        {
-            testFont.bitmap[testFont.bitmapSize++] = reverseByte(bitmap.buffer[row * bitmap.pitch + column]);
-        }
-    }
+
     std::cout << "Rendering character '" << character << " " \
                 << "'bitmapOffset: "    << std::setw(4) << std::to_string(testGlyph->bitmapOffset) << " " \
                 << "xAdvance: "         << std::setw(2) << std::to_string(testGlyph->xAdvance) << " " \
                 << "xOffset: "          << std::setw(2) << std::to_string(testGlyph->xOffset) << " " \
                 << "yOffset: "          << std::setw(2) << std::to_string(testGlyph->yOffset) << " " \
                 << "width: "            << std::setw(2) << std::to_string(testGlyph->width) << " " \
-                << "height: "           << std::setw(2) << std::to_string(testGlyph->height) << " " \
-                << "pitch: "            << std::setw(1) << std::to_string(testGlyph->pitch) << std::endl;
+                << "height: "           << std::setw(2) << std::to_string(testGlyph->height) << std::endl;
+
+    for(auto row = 0U; row < bitmap.rows; row++)
+    {
+        for(auto column = 0U; column < (bitmap.width + 7) / 8; column++)
+        {
+            testFont.bitmap[testFont.bitmapSize] = reverseByte(bitmap.buffer[row * bitmap.pitch + column]);
+            printf("%lu:0x%02X(% 3u) ", testFont.bitmapSize, testFont.bitmap[testFont.bitmapSize], testFont.bitmap[testFont.bitmapSize]);
+            testFont.bitmapSize++;
+            //std::cout << "0x" << sbitmap.buffer[row * bitmap.pitch + column] << " ";
+        }
+        std::cout << std::endl;
+    }
 }
 
 static uint8_t reverseByte(const uint8_t x)

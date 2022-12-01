@@ -289,7 +289,7 @@ monoGFX_status_t monoGFX_putCharNew(const monoGFX_t* const gfx, const size_t xPo
     {
         for(size_t x = 0U; x < glyph->width; x++)
         {
-            const uint8_t part = font->bitmap[glyph->bitmapOffset + glyph->pitch * y + x / 8];
+            const uint8_t part = font->bitmap[glyph->bitmapOffset + (glyph->width + 7) / 8 * y + x / 8];
             if(part & (1 << x % 8))
             {
                 monoGFX_setPixel(gfx, xPosition + x + glyph->xOffset, yPosition + y + glyph->yOffset);
