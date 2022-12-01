@@ -149,25 +149,34 @@ static void convertSingleGlyph(FT_Face& face, const char character)
     testGlyph->height = (uint8_t) bitmap.rows;
 
 
-    std::cout << "Rendering character '" << character << " " \
-                << "'bitmapOffset: "    << std::setw(4) << std::to_string(testGlyph->bitmapOffset) << " " \
-                << "xAdvance: "         << std::setw(2) << std::to_string(testGlyph->xAdvance) << " " \
-                << "xOffset: "          << std::setw(2) << std::to_string(testGlyph->xOffset) << " " \
-                << "yOffset: "          << std::setw(2) << std::to_string(testGlyph->yOffset) << " " \
-                << "width: "            << std::setw(2) << std::to_string(testGlyph->width) << " " \
-                << "height: "           << std::setw(2) << std::to_string(testGlyph->height) << std::endl;
+    std::cout << "Rendering '"      << character << "' " \
+                << "bitmapOffset: " << std::setw(4) << std::to_string(testGlyph->bitmapOffset) << " " \
+                << "xAdvance: "     << std::setw(2) << std::to_string(testGlyph->xAdvance) << " " \
+                << "xOffset: "      << std::setw(2) << std::to_string(testGlyph->xOffset) << " " \
+                << "yOffset: "      << std::setw(2) << std::to_string(testGlyph->yOffset) << " " \
+                << "width: "        << std::setw(2) << std::to_string(testGlyph->width) << " " \
+                << "height: "       << std::setw(2) << std::to_string(testGlyph->height) << std::endl;
 
     for(auto row = 0U; row < bitmap.rows; row++)
     {
-        for(auto column = 0U; column < (bitmap.width + 7) / 8; column++)
+        for(auto column = 0U; column < bitmap.width; column++)
         {
-            testFont.bitmap[testFont.bitmapSize] = reverseByte(bitmap.buffer[row * bitmap.pitch + column]);
-            printf("%lu:0x%02X(% 3u) ", testFont.bitmapSize, testFont.bitmap[testFont.bitmapSize], testFont.bitmap[testFont.bitmapSize]);
-            testFont.bitmapSize++;
-            //std::cout << "0x" << sbitmap.buffer[row * bitmap.pitch + column] << " ";
+            size_t fontBitmapByteOffset = testGlyph->bitmapOffset + (bitmap.width * row + column) / 8;
+            uint8_t fontBitmapBitOffset = (bitmap.width * row + column) % 8;
+            size_t sourceByteOffset = row * bitmap.pitch + column / 8;
+            uint8_t sourceByte = bitmap.buffer[sourceByteOffset];
+            uint8_t sourceBitPosition = 7 - column % 8;
+            bool bitSet = (1 << sourceBitPosition) & sourceByte;
+            //printf("row: %u, column: %u, fontBitmapByteOffset: %lu, fontBitmapBitOffset: %u, sourceByteOffset: %lu, sourceBitPosition: %u, sourceByte: %02X, actual bit %s\n", 
+            //row, column, fontBitmapByteOffset, fontBitmapBitOffset, sourceByteOffset, sourceBitPosition, sourceByte, bitSet ? "set" : "not set");
+
+            if(bitSet)
+            {
+                testFont.bitmap[fontBitmapByteOffset] |= (1 << fontBitmapBitOffset);
+            }
         }
-        std::cout << std::endl;
     }
+    testFont.bitmapSize += bitmap.rows * bitmap.width / 8 + (bitmap.width % 8 + 7) / 8;
 }
 
 static uint8_t reverseByte(const uint8_t x)
