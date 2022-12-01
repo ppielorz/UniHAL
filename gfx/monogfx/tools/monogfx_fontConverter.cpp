@@ -12,6 +12,8 @@
  *****************************************************************************/
 
 #include <iostream>
+#include <ostream>
+#include <fstream>
 #include <iomanip>
 #include <cstdlib>
 #include <vector>
@@ -32,14 +34,8 @@ const std::string asciiToPrint = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKL
  Local variables
  *****************************************************************************/
 static uint8_t bitmapBuffer[UINT16_MAX];
-static monoGFX_glyph_t glyphsBuffer[95];
-static monoGFX_font_t testFont = 
-{
-    .bitmap = bitmapBuffer,
-    .bitmapSize = 0U,
-    .glyphs = glyphsBuffer,
-    .yAdvance = 40
-};
+static size_t bitmapBufferSize = 0U;
+static std::ostringstream glyphsStream;
 
 /******************************************************************************
  Local function prototypes
@@ -57,26 +53,41 @@ int main(int argc, char *argv[])
     FT_Library library;
     FT_Face face;
     const auto fontPath = "/usr/share/fonts/truetype/freefont/FreeSans.ttf";
+    std::fstream convertedFont ("/home/ppielorz/Drzemlik/source/unihal/gfx/monogfx/output.txt", std::fstream::out);
 
     try
     {
         std::cout << "Converting font " << fontPath << std::endl;
         init(library, face, fontPath);
+
+        glyphsStream << "const static monoGFX_glyph_t glyphs[] =" << std::endl << "{" << std::endl;
         for(const char& character : asciiToPrint) 
         {
             convertSingleGlyph(face, character);
         }
-        std::cout << "Final bitmap size: " << std::dec << testFont.bitmapSize << std::endl;
-        monoGFX_t gfx = {0};
-        uint8_t gfxBuffer[MONOGFX_BUFFER_SIZE(2000, 100)] = {0};
-        extern GFXfont FreeSans9pt7b;
-        assert(monoGFX_status_success == monoGFX_init(&gfx, 2000, 100, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_none));
-        assert(monoGFX_status_success == monoGFX_printNew(&gfx, 0, 0, &testFont, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"));
-        //assert(monoGFX_status_success == monoGFX_printNew(&gfx, 0, 0, &testFont, "~"));
-        monoGFX_print(&gfx, 0, 50, &FreeSans9pt7b, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
-        //monoGFX_print(&gfx, 0, 50, &FreeSans9pt7b, "~");
-        
-        monoGFX_pngPrinter(&gfx, "/home/ppielorz/Drzemlik/source/unihal/gfx/monogfx/test.png");
+        glyphsStream << "};" << std::endl << std::endl;
+
+        std::cout << "Final bitmap size: " << std::dec << bitmapBufferSize << std::endl;
+
+        convertedFont << "#include \"unihal/gfx/monogfx/monogfx.h\"" << std::endl << std::endl;
+        convertedFont << "static const uint8_t bitmapBuffer[] =" << std::endl << "{" << std::endl << "    ";
+        for(auto i = 0U; i < bitmapBufferSize; i++)
+        {
+            convertedFont << "0x" << std::setfill('0') << std::setw(2) << std::hex << (int) bitmapBuffer[i] << ",";
+            if((i + 1) % 8 != 0)
+            {
+                convertedFont << " ";
+            }
+            else
+            {
+                convertedFont << "\n    ";
+            }
+        }
+        convertedFont << std::endl << "};" << std::endl << std::endl;
+        convertedFont << glyphsStream.str();
+        convertedFont << "const monoGFX_font_t testFont = {bitmapBuffer, " << std::dec << (int) bitmapBufferSize;
+        convertedFont << ", glyphs, 20};" << std::endl; //TODO 20 yAdvance
+
     }
     catch(const std::exception& e)
     {
@@ -138,30 +149,35 @@ static void convertSingleGlyph(FT_Face& face, const char character)
 
     const FT_Bitmap& bitmap = face->glyph->bitmap;
 
-    monoGFX_glyph_t* testGlyph = &testFont.glyphs[character - MONOGFX_FIRST_ASCII_CHARACTER];
-    testGlyph->bitmapOffset = testFont.bitmapSize;
-    testGlyph->xAdvance = (int8_t) (face->glyph->metrics.horiAdvance / 64);
-    testGlyph->xOffset = (int8_t) (face->glyph->metrics.horiBearingX / 64);
-    //testGlyph->yOffset = (uint8_t) (face->glyph->metrics.height / 64) - bitmap.rows;
-    //testGlyph->yOffset = (uint8_t) (face->glyph->metrics.vertBearingY / 64);
-    testGlyph->yOffset = (uint8_t) ((face->glyph->metrics.vertAdvance - face->glyph->metrics.horiBearingY) / 64);
-    testGlyph->width = (uint8_t) bitmap.width;
-    testGlyph->height = (uint8_t) bitmap.rows;
+    const size_t bitmapOffset = bitmapBufferSize;
+    const uint8_t xAdvance = (int8_t) (face->glyph->metrics.horiAdvance / 64);
+    const int8_t xOffset = (int8_t) (face->glyph->metrics.horiBearingX / 64);
+    const int8_t yOffset = (uint8_t) ((face->glyph->metrics.vertAdvance - face->glyph->metrics.horiBearingY) / 64);
+    const uint8_t width = (uint8_t) bitmap.width;
+    const uint8_t height = (uint8_t) bitmap.rows;
+
+    glyphsStream << "    {" << (int) bitmapOffset;
+    glyphsStream << ", " << (int) xAdvance;
+    glyphsStream << ", " << (int) xOffset;
+    glyphsStream << ", " << (int) yOffset;
+    glyphsStream << ", " << (int) width;
+    glyphsStream << ", " << (int) height;
+    glyphsStream << "}," << std::endl;
 
 
-    std::cout << "Rendering '"      << character << "' " \
-                << "bitmapOffset: " << std::setw(4) << std::to_string(testGlyph->bitmapOffset) << " " \
-                << "xAdvance: "     << std::setw(2) << std::to_string(testGlyph->xAdvance) << " " \
-                << "xOffset: "      << std::setw(2) << std::to_string(testGlyph->xOffset) << " " \
-                << "yOffset: "      << std::setw(2) << std::to_string(testGlyph->yOffset) << " " \
-                << "width: "        << std::setw(2) << std::to_string(testGlyph->width) << " " \
-                << "height: "       << std::setw(2) << std::to_string(testGlyph->height) << std::endl;
+    std::cout   << "Rendering '"    << character << "' " \
+                << "bitmapOffset: " << std::setw(4) << std::to_string(bitmapOffset) << " " \
+                << "xAdvance: "     << std::setw(2) << std::to_string(xAdvance) << " " \
+                << "xOffset: "      << std::setw(2) << std::to_string(xOffset) << " " \
+                << "yOffset: "      << std::setw(2) << std::to_string(yOffset) << " " \
+                << "width: "        << std::setw(2) << std::to_string(width) << " " \
+                << "height: "       << std::setw(2) << std::to_string(height) << std::endl;
 
     for(auto row = 0U; row < bitmap.rows; row++)
     {
         for(auto column = 0U; column < bitmap.width; column++)
         {
-            size_t fontBitmapByteOffset = testGlyph->bitmapOffset + (bitmap.width * row + column) / 8;
+            size_t fontBitmapByteOffset = bitmapOffset + (bitmap.width * row + column) / 8;
             uint8_t fontBitmapBitOffset = (bitmap.width * row + column) % 8;
             size_t sourceByteOffset = row * bitmap.pitch + column / 8;
             uint8_t sourceByte = bitmap.buffer[sourceByteOffset];
@@ -172,11 +188,11 @@ static void convertSingleGlyph(FT_Face& face, const char character)
 
             if(bitSet)
             {
-                testFont.bitmap[fontBitmapByteOffset] |= (1 << fontBitmapBitOffset);
+                bitmapBuffer[fontBitmapByteOffset] |= (1 << fontBitmapBitOffset);
             }
         }
     }
-    testFont.bitmapSize += bitmap.rows * bitmap.width / 8 + (bitmap.width % 8 + 7) / 8;
+    bitmapBufferSize += bitmap.rows * bitmap.width / 8 + (bitmap.width % 8 + 7) / 8;
 }
 
 static uint8_t reverseByte(const uint8_t x)

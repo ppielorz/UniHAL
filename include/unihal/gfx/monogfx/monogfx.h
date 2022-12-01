@@ -55,21 +55,21 @@ typedef enum
 
 typedef struct
 {
-    /*const*/ size_t bitmapOffset;
-    /*const*/ uint8_t xAdvance;
-    /*const*/ int8_t xOffset;
-    /*const*/ int8_t yOffset;
-    /*const*/ uint8_t width;
-    /*const*/ uint8_t height;
+    const size_t bitmapOffset;
+    const uint8_t xAdvance;
+    const int8_t xOffset;
+    const int8_t yOffset;
+    const uint8_t width;
+    const uint8_t height;
 } monoGFX_glyph_t;
 
 
 typedef struct
 {
-    /*const*/ uint8_t* bitmap;
-    /*const*/ size_t bitmapSize;
-    /*const*/ monoGFX_glyph_t* const glyphs;
-    /*const*/ uint8_t yAdvance;
+    const uint8_t* bitmap;
+    const size_t bitmapSize;
+    const monoGFX_glyph_t* const glyphs;
+    const uint8_t yAdvance;
 } monoGFX_font_t;
 
 
