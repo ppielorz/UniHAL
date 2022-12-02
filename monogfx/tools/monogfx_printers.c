@@ -86,7 +86,6 @@ void monoGFX_pngPrinter(const monoGFX_t* const gfx, const char* const filename)
         return;
     }
 
-    int code = 0;
     FILE *fp = NULL;
     png_structp png_ptr = NULL;
     png_infop info_ptr = NULL;
@@ -97,7 +96,6 @@ void monoGFX_pngPrinter(const monoGFX_t* const gfx, const char* const filename)
     if (fp == NULL) 
     {
         fprintf(stderr, "Could not open file %s for writing\n", filename);
-        code = 1;
         goto finalise;
     }
 
@@ -105,7 +103,6 @@ void monoGFX_pngPrinter(const monoGFX_t* const gfx, const char* const filename)
    png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
    if (png_ptr == NULL) {
       fprintf(stderr, "Could not allocate write struct\n");
-      code = 1;
       goto finalise;
    }
 
@@ -113,14 +110,12 @@ void monoGFX_pngPrinter(const monoGFX_t* const gfx, const char* const filename)
    info_ptr = png_create_info_struct(png_ptr);
    if (info_ptr == NULL) {
       fprintf(stderr, "Could not allocate info struct\n");
-      code = 1;
       goto finalise;
    }
 
    // Setup Exception handling
    if (setjmp(png_jmpbuf(png_ptr))) {
       fprintf(stderr, "Error during png creation\n");
-      code = 1;
       goto finalise;
    }
 
@@ -156,9 +151,6 @@ void monoGFX_pngPrinter(const monoGFX_t* const gfx, const char* const filename)
    if (info_ptr != NULL) png_free_data(png_ptr, info_ptr, PNG_FREE_ALL, -1);
    if (png_ptr != NULL) png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
    if (row != NULL) free(row);
-
-   return code;
-
 }
 
 /******************************************************************************
