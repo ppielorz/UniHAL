@@ -1,8 +1,6 @@
 add_executable(monoGFX_fontConverter monogfx_fontConverter.cpp)
 
 target_link_libraries(monoGFX_fontConverter
-    PRIVATE unihal
-    PRIVATE monoGFX_printers
     PRIVATE freetype
 )
 
