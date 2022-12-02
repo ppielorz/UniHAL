@@ -18,6 +18,7 @@
 #include <CppUTestExt/MockSupport.h>
 
 #include "unihal/gfx/monogfx/monogfx.h"
+#include "../tools/monogfx_printers.h"
 
 /******************************************************************************
  Constants and definitions
@@ -357,20 +358,26 @@ static void setPixelBenchmark()
 {
     monoGFX_t gfx = {0};
     uint8_t gfxBuffer[64] = {0};
-    monoGFX_init(&gfx, 32, 16, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_none);
+    clock_t summaryTime = 0U;
 
-    clock_t startTime = clock();
-    for(size_t i = 0U; i < 1000000; i++)
+    for(size_t rotation = 0U; rotation < monoGFX_rotation_count; rotation++)
     {
-        monoGFX_setPixel(&gfx, 0, 0);
-        monoGFX_setPixel(&gfx, 1, 1);
-        monoGFX_setPixel(&gfx, 2, 2);
-        monoGFX_setPixel(&gfx, 10, 0);
-        monoGFX_setPixel(&gfx, 0, 10);
-        monoGFX_setPixel(&gfx, 15, 15);
+        monoGFX_init(&gfx, 32, 16, gfxBuffer, sizeof(gfxBuffer), static_cast<monoGFX_rotation_t>(rotation));
+
+        clock_t startTime = clock();
+        for(size_t i = 0U; i < 1000000; i++)
+        {
+            monoGFX_setPixel(&gfx, 0, 0);
+            monoGFX_setPixel(&gfx, 1, 1);
+            monoGFX_setPixel(&gfx, 2, 2);
+            monoGFX_setPixel(&gfx, 10, 0);
+            monoGFX_setPixel(&gfx, 0, 10);
+            monoGFX_setPixel(&gfx, 15, 15);
+        }
+        clock_t endTime = clock();
+        summaryTime += endTime - startTime;
     }
-    clock_t endTime = clock();
-    printf("setPixelBenchmark time: %lu us\n", endTime - startTime);
+    printf("setPixelBenchmark time: %lu us\n", summaryTime);
 }
 
 static void clearPixelBenchmark()
@@ -419,14 +426,15 @@ static void printBenchmark()
     monoGFX_t gfx = {0};
     uint8_t gfxBuffer[MONOGFX_BUFFER_SIZE(3200, 1600)] = {0};
     bool pixelSet = false;
-    extern GFXfont FreeSans18pt7b;
-    monoGFX_init(&gfx, 3200, 1600, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_none);
+    extern GFXfont FreeSans9pt7b;
+    monoGFX_init(&gfx, 120, 40, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_none);
 
     clock_t startTime = clock();
     for(size_t i = 0U; i < 10000; i++)
     {
-        monoGFX_print(&gfx, 40, 40, &FreeSans18pt7b, "testString123");
+        monoGFX_print(&gfx, 0, 0, &FreeSans9pt7b, "testString123");
     }
     clock_t endTime = clock();
+    monoGFX_pngPrinter(&gfx, "/home/ppielorz/Drzemlik/source/unihal/gfx/monogfx/printBenchmark.png");
     printf("printBenchmark time: %lu us\n", endTime - startTime);
 }
