@@ -284,18 +284,18 @@ monoGFX_status_t monoGFX_putCharNew(const monoGFX_t* const gfx, const size_t xPo
     CHECK_AND_RETURN_STATUS(character >= MONOGFX_FIRST_ASCII_CHARACTER, monoGFX_status_unknownCharacter);
 
     const monoGFX_glyph_t* glyph = &font->glyphs[character - MONOGFX_FIRST_ASCII_CHARACTER];
+    const uint8_t* glyphBitmap = &font->bitmap[glyph->bitmapOffset];
+    size_t bitNumber = 0U;
 
     for(size_t y = 0U; y < glyph->height; y++)
     {
         for(size_t x = 0U; x < glyph->width; x++)
         {
-            size_t fontBitmapByteOffset = glyph->bitmapOffset + (glyph->width * y + x) / 8;
-            uint8_t fontBitmapBitOffset = (glyph->width * y + x) % 8;
-            const uint8_t part = font->bitmap[fontBitmapByteOffset];
-            if(part & (1 << fontBitmapBitOffset))
+            if(*(glyphBitmap + bitNumber / 8) & (1 << bitNumber % 8))
             {
                 monoGFX_setPixel(gfx, xPosition + x + glyph->xOffset, yPosition + y + glyph->yOffset);
             }
+            bitNumber++;
         }
     }
 
