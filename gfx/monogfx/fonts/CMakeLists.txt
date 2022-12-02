@@ -1,1 +1,2 @@
-target_sources(unihal PRIVATE freesans_12pt7.c freesans_24pt7.c freesans_18pt7.c freesans_9pt7.c)
+FILE(GLOB FONTS *.c)
+target_sources(unihal PRIVATE ${FONTS})

@@ -63,7 +63,6 @@ typedef struct
     const uint8_t height;
 } monoGFX_glyph_t;
 
-
 typedef struct
 {
     const uint8_t* bitmap;
@@ -71,7 +70,6 @@ typedef struct
     const monoGFX_glyph_t* const glyphs;
     const uint8_t yAdvance;
 } monoGFX_font_t;
-
 
 typedef struct
 {
@@ -84,35 +82,6 @@ typedef struct
     bool bitReverseOrder;
     monoGFX_rotation_t rotation;
 } monoGFX_t;
-
-
-/*typedef struct
-{
-    uint8_t height;
-    uint8_t bitmapWidth[95];
-    const uint8_t* bitmapAddr[95];
-} monoGFX_Font_t;
-
-*/
-
-/// Font data stored PER GLYPH
-typedef struct {
-  uint16_t bitmapOffset; ///< Pointer into GFXfont->bitmap
-  uint8_t width;         ///< Bitmap dimensions in pixels
-  uint8_t height;        ///< Bitmap dimensions in pixels
-  uint8_t xAdvance;      ///< Distance to advance cursor (x axis)
-  int8_t xOffset;        ///< X dist from cursor pos to UL corner
-  int8_t yOffset;        ///< Y dist from cursor pos to UL corner
-} GFXglyph;
-
-/// Data stored for FONT AS A WHOLE
-typedef struct {
-  uint8_t *bitmap;  ///< Glyph bitmaps, concatenated
-  GFXglyph *glyph;  ///< Glyph array
-  uint16_t first;   ///< ASCII extents (first char)
-  uint16_t last;    ///< ASCII extents (last char)
-  uint8_t yAdvance; ///< Newline distance (y axis)
-} GFXfont;
 
 /******************************************************************************
  Function Prototypes
@@ -127,10 +96,8 @@ extern monoGFX_status_t monoGFX_setPixel(const monoGFX_t* const gfx, const size_
 extern monoGFX_status_t monoGFX_clearPixel(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition);
 extern monoGFX_status_t monoGFX_getPixel(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition, bool* const pixelSet);
 extern void monoGFX_drawLine(monoGFX_t* gfx, size_t xStart, size_t yStart, size_t xEnd, size_t yEnd);
-extern void monoGFX_putChar(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition, const GFXfont* const gfxFont, const char ch);
-extern monoGFX_status_t monoGFX_putCharNew(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition, const monoGFX_font_t* const font, const char character);
-extern void monoGFX_print(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition, const GFXfont* const gfxFont, const char* const string);
-extern monoGFX_status_t monoGFX_printNew(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition, const monoGFX_font_t* const font, const char* const string);
+extern monoGFX_status_t monoGFX_putChar(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition, const monoGFX_font_t* const font, const char character);
+extern monoGFX_status_t monoGFX_print(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition, const monoGFX_font_t* const font, const char* const string);
 #ifdef __cplusplus
 }
 #endif
