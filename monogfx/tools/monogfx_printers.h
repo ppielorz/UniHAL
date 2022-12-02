@@ -17,7 +17,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "unihal/gfx/monogfx/monogfx.h"
+#include "unihal/monogfx/monogfx.h"
 
 #ifdef __cplusplus
 extern "C"

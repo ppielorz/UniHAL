@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
         glyphsStream << "};" << std::endl << std::endl;
 
         std::fstream convertedFont (convertedFontPath.c_str(), std::fstream::out);
-        convertedFont << "#include \"unihal/gfx/monogfx/monogfx.h\"" << std::endl << std::endl;
+        convertedFont << "#include \"unihal/monogfx/monogfx.h\"" << std::endl << std::endl;
         convertedFont << "static const uint8_t bitmapBuffer[" << std::dec << bitmapBufferSize << "] =" << std::endl << "{" << std::endl << "    ";
         for(auto i = 0U; i < bitmapBufferSize; i++)
         {

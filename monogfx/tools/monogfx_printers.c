@@ -19,7 +19,7 @@
 //#include <libpng16/pngconf.h>
 //#include <libpng16/pnglibconf.h>
 
-#include "unihal/gfx/monogfx/monogfx.h"
+#include "unihal/monogfx/monogfx.h"
 #include "monogfx_printers.h"
 
 /******************************************************************************

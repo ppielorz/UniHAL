@@ -13,7 +13,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "unihal/gfx/monogfx/monogfx.h"
+#include "unihal/monogfx/monogfx.h"
 
 /******************************************************************************
  Constants and definitions
