@@ -426,13 +426,13 @@ static void printBenchmark()
     monoGFX_t gfx = {0};
     uint8_t gfxBuffer[MONOGFX_BUFFER_SIZE(3200, 1600)] = {0};
     bool pixelSet = false;
-    extern GFXfont FreeSans9pt7b;
+    extern monoGFX_font_t monoGFX_FreeMono_9pt;
     monoGFX_init(&gfx, 120, 40, gfxBuffer, sizeof(gfxBuffer), monoGFX_rotation_none);
 
     clock_t startTime = clock();
     for(size_t i = 0U; i < 10000; i++)
     {
-        monoGFX_print(&gfx, 0, 0, &FreeSans9pt7b, "testString123");
+        monoGFX_print(&gfx, 0, 0, &monoGFX_FreeMono_9pt, "testString123");
     }
     clock_t endTime = clock();
     monoGFX_pngPrinter(&gfx, "/home/ppielorz/Drzemlik/source/unihal/gfx/monogfx/printBenchmark.png");

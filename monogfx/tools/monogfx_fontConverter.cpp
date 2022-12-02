@@ -15,10 +15,8 @@
 #include <ostream>
 #include <fstream>
 #include <iomanip>
-#include <cstdlib>
-#include <vector>
 #include <string>
-#include <assert.h>
+#include <algorithm>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -36,14 +34,15 @@ static size_t bitmapBufferSize = 0U;
 static std::ostringstream glyphsStream;
 
 static int fontSize;
-static std::string fontPath;
-static std::string targetDirectory;
+static std::string fontName;
+static std::string sourceFontPath;
+static std::string convertedFontPath;
 
 /******************************************************************************
  Local function prototypes
  *****************************************************************************/
 static void checkArgs(const int argc, const char* const argv[]);
-static void init(FT_Library& library, FT_Face& face, const std::string& fontPath);
+static void init(FT_Library& library, FT_Face& face, const std::string& sourceFontPath);
 static void convertSingleGlyph(FT_Face& face, const char character);
 
 /******************************************************************************
@@ -58,20 +57,18 @@ int main(int argc, char* argv[])
     try
     {
         checkArgs(argc, argv);
-        std::cout << "Converting font " << fontPath << " to directory " << targetDirectory << std::endl;
+        //std::cout << "Converting font " << sourceFontPath << " to " << convertedFontPath << " with size " << fontSize << std::endl;
 
-        init(library, face, fontPath);
+        init(library, face, sourceFontPath);
 
-        glyphsStream << "const static monoGFX_glyph_t glyphs[] =" << std::endl << "{" << std::endl;
+        glyphsStream << "static const monoGFX_glyph_t glyphs[] =" << std::endl << "{" << std::endl;
         for(const char& character : asciiToPrint) 
         {
             convertSingleGlyph(face, character);
         }
         glyphsStream << "};" << std::endl << std::endl;
 
-        std::cout << "Final bitmap size: " << std::dec << bitmapBufferSize << std::endl;
-
-        std::fstream convertedFont (targetDirectory + "/monogfx_font_" + face->family_name + "_" + std::to_string(fontSize) + "pt.c", std::fstream::out);
+        std::fstream convertedFont (convertedFontPath.c_str(), std::fstream::out);
         convertedFont << "#include \"unihal/gfx/monogfx/monogfx.h\"" << std::endl << std::endl;
         convertedFont << "static const uint8_t bitmapBuffer[" << std::dec << bitmapBufferSize << "] =" << std::endl << "{" << std::endl << "    ";
         for(auto i = 0U; i < bitmapBufferSize; i++)
@@ -84,7 +81,7 @@ int main(int argc, char* argv[])
         }
         convertedFont << std::endl << "};" << std::endl << std::endl;
         convertedFont << glyphsStream.str();
-        convertedFont << "const monoGFX_font_t testFont = {bitmapBuffer, " << std::dec << (int) bitmapBufferSize;
+        convertedFont << "const monoGFX_font_t monoGFX_" << std::dec << fontName << "_" << fontSize << "pt = {bitmapBuffer, " << (int) bitmapBufferSize;
         convertedFont << ", glyphs, 20};" << std::endl; //TODO 20 yAdvance
 
     }
@@ -102,9 +99,9 @@ int main(int argc, char* argv[])
  *****************************************************************************/
 static void checkArgs(const int argc, const char* const argv[])
 {
-    if (argc != 4)
+    if (argc != 5)
     {
-        throw std::runtime_error("Wrong arguments, usage: ./monoGFX_fontConverter size fontPath targetDirectory");
+        throw std::runtime_error("Wrong arguments, usage: ./monoGFX_fontConverter size fontName sourceFontPath convertedFontPath");
     }
 
     std::istringstream fontSizeStream(argv[1]);
@@ -118,11 +115,12 @@ static void checkArgs(const int argc, const char* const argv[])
         throw std::runtime_error("Font size shall be between 8 and 40");
     }
 
-    fontPath.assign(argv[2]);
-    targetDirectory.assign(argv[3]);
+    fontName.assign(argv[2]);
+    sourceFontPath.assign(argv[3]);
+    convertedFontPath.assign(argv[4]);
 }
 
-static void init(FT_Library& library, FT_Face& face, const std::string& fontPath)
+static void init(FT_Library& library, FT_Face& face, const std::string& sourceFontPath)
 {
     auto ftStatus = FT_Init_FreeType(&library);
     if (ftStatus)
@@ -130,12 +128,11 @@ static void init(FT_Library& library, FT_Face& face, const std::string& fontPath
         throw std::runtime_error("FT_Init_FreeType error: " + std::to_string(ftStatus));
     }
 
-    ftStatus = FT_New_Face(library, fontPath.c_str(), 0, &face);
+    ftStatus = FT_New_Face(library, sourceFontPath.c_str(), 0, &face);
     if (ftStatus)
     {
         throw std::runtime_error("FT_New_Face error: " + std::to_string(ftStatus));
     }
-    std::cout << "Font family name: " << face->family_name << std::endl;
 
     ftStatus = FT_Set_Char_Size(face, fontSize * 64, 0, 150, 0);
     if (ftStatus)
@@ -169,14 +166,6 @@ static void convertSingleGlyph(FT_Face& face, const char character)
 
     glyphsStream << "/* " << character << " */ {" << (int) bitmapOffset << ", " << (int) xAdvance << ", " << (int) xOffset << ", " << (int) yOffset;
     glyphsStream << ", " << (int) width << ", " << (int) height << "}," << std::endl;
-
-    std::cout   << "Rendering '"    << character << "' " \
-                << "bitmapOffset: " << std::setw(4) << std::to_string(bitmapOffset) << " " \
-                << "xAdvance: "     << std::setw(2) << std::to_string(xAdvance) << " " \
-                << "xOffset: "      << std::setw(2) << std::to_string(xOffset) << " " \
-                << "yOffset: "      << std::setw(2) << std::to_string(yOffset) << " " \
-                << "width: "        << std::setw(2) << std::to_string(width) << " " \
-                << "height: "       << std::setw(2) << std::to_string(height) << std::endl;
 
     for(auto row = 0U; row < bitmap.rows; row++)
     {

@@ -13,7 +13,7 @@ add_subdirectory(utils)
 add_subdirectory(tests_tools)
 
 if(ENABLE_COVERAGE)
-    target_link_libraries(unihal gcov)
+    target_link_libraries(unihal PRIVATE gcov)
     target_compile_options(unihal PRIVATE -fprofile-arcs -ftest-coverage)
     add_custom_target(unihal_coverage
         COMMAND lcov --quiet --capture --directory ${CMAKE_BINARY_DIR} --output-file ${CMAKE_BINARY_DIR}/coverage.info
