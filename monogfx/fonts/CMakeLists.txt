@@ -1,7 +1,3 @@
-add_library(monoGFX_fonts OBJECT)
-target_include_directories(monoGFX_fonts PRIVATE ${CMAKE_SOURCE_DIR}/include)
-target_link_libraries(unihal PRIVATE monoGFX_fonts)
-
 set(FONT_SIZES 9 12 18 24)
 set(FONTS FreeMono FreeMonoBoldOblique FreeSans FreeSansBoldOblique FreeSerif FreeSerifBoldItalic FreeMonoBold
             FreeMonoOblique FreeSansBold FreeSansOblique FreeSerifBold FreeSerifItalic)
@@ -14,6 +10,11 @@ foreach(font ${FONTS})
             COMMAND monoGFX_fontConverter ${fontSize} ${font} ${sourceFontPath} ${convertedFontPath}
             DEPENDS monoGFX_fontConverter
         )
-        target_sources(monoGFX_fonts PRIVATE ${convertedFontPath})
+        list(APPEND convertedFonts ${convertedFontPath})
     endforeach()
 endforeach()
+
+add_custom_target(monoGFX_fonts ALL DEPENDS ${convertedFonts})
+
+file(GLOB fonts *.c)
+target_sources(unihal PRIVATE ${fonts})
