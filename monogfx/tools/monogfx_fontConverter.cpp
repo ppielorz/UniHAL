@@ -184,5 +184,5 @@ static void convertSingleGlyph(FT_Face& face, const char character)
             }
         }
     }
-    bitmapBufferSize += bitmap.rows * bitmap.width / 8 + (bitmap.width % 8 + 7) / 8;
+    bitmapBufferSize += (bitmap.rows * bitmap.width + 7) / 8;
 }
