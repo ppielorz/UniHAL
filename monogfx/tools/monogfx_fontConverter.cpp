@@ -17,6 +17,7 @@
 #include <iomanip>
 #include <string>
 #include <algorithm>
+#include <cstdint>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -25,6 +26,53 @@
  Constants and definitions
  *****************************************************************************/
 const std::string asciiToPrint = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+
+class FontConverterGlyph
+{
+    public:
+    FontConverterGlyph(const char character, const int8_t xAdvance, const int8_t xOffset, 
+                        const int8_t yOffset, const uint8_t width, const uint8_t height):
+        m_bitmap((height * width + 7) / 8, 0), m_character(character), m_xAdvance(xAdvance), m_xOffset(xOffset), 
+        m_yOffset(yOffset), m_width(width), m_height(height), m_actualBitPosition(0U)
+    {
+    }
+
+    void setNextBit(const bool bit)
+    {
+        if(bit)
+        {
+            m_bitmap[m_actualBitPosition / 8] |= 1 << m_actualBitPosition % 8;
+        }
+        m_actualBitPosition++;
+    }
+
+    bool operator==(const FontConverterGlyph& compared)
+    {
+        return compared.m_character == this->m_character;
+    }
+
+    public://private:
+        std::vector<uint8_t> m_bitmap;
+        const char m_character;
+        const int8_t m_xAdvance;
+        const int8_t m_xOffset;
+        const int8_t m_yOffset;
+        const uint8_t m_width;
+        const uint8_t m_height;
+        size_t m_actualBitPosition;
+};
+
+class FontConverter
+{
+    public:
+        void insertGlyph(FontConverterGlyph& glyph)
+        {
+            m_glyphs.push_back(glyph);
+        }
+
+    public:
+        std::vector<FontConverterGlyph> m_glyphs;
+};
 
 /******************************************************************************
  Local variables
@@ -37,6 +85,8 @@ static int fontSize;
 static std::string fontName;
 static std::string sourceFontPath;
 static std::string convertedFontPath;
+
+static FontConverter fontConverter;
 
 /******************************************************************************
  Local function prototypes
@@ -83,6 +133,45 @@ int main(int argc, char* argv[])
         convertedFont << glyphsStream.str();
         convertedFont << "const monoGFX_font_t monoGFX_" << std::dec << fontName << "_" << fontSize << "pt = {bitmapBuffer, " << (int) bitmapBufferSize;
         convertedFont << ", glyphs, 20};" << std::endl; //TODO 20 yAdvance
+
+        for(auto& glyph: fontConverter.m_glyphs)
+        {
+            std::cout << glyph.m_character << ": ";
+            for(const auto& byte: glyph.m_bitmap)
+            {
+                std::cout << std::setfill('0') << std::setw(2) << std::hex << (int) byte;
+            }
+            std::cout << ". ";
+
+            for(auto& testedGlyph: fontConverter.m_glyphs)
+            {
+                if(glyph == testedGlyph)
+                {
+                    continue;
+                }
+
+                size_t overlapping = 0U;
+                for(size_t i = 1U; i < std::min(glyph.m_bitmap.size(), testedGlyph.m_bitmap.size()); i++)
+                {
+                    std::vector<uint8_t> glyphBitmapSubrange(glyph.m_bitmap.begin(), glyph.m_bitmap.begin() + i);
+                    std::vector<uint8_t> testedGlyphBitmapSubrange(testedGlyph.m_bitmap.end() - i, testedGlyph.m_bitmap.end());
+                    if(glyphBitmapSubrange == testedGlyphBitmapSubrange)
+                    {
+                        overlapping = i;
+                        //break;
+                    }
+                }
+                if(overlapping > 1U)
+                {
+                    std::cout << "overlapping " << overlapping << " bytes with character " << testedGlyph.m_character << ", ";
+                }
+            }
+            for(const auto& byte: glyph.m_bitmap)
+            {
+                //std::cout << std::setfill('0') << std::setw(2) << std::hex << (int) byte;
+            }
+            std::cout << std::endl;
+        }
 
     }
     catch(const std::exception& e)
@@ -164,6 +253,8 @@ static void convertSingleGlyph(FT_Face& face, const char character)
     const uint8_t width = (uint8_t) bitmap.width;
     const uint8_t height = (uint8_t) bitmap.rows;
 
+    FontConverterGlyph glyph(character, xAdvance, xOffset, yOffset, width, height);
+
     glyphsStream << "/* " << character << " */ {" << (int) bitmapOffset << ", " << (int) xAdvance << ", " << (int) xOffset << ", " << (int) yOffset;
     glyphsStream << ", " << (int) width << ", " << (int) height << "}," << std::endl;
 
@@ -177,6 +268,7 @@ static void convertSingleGlyph(FT_Face& face, const char character)
             uint8_t sourceByte = bitmap.buffer[sourceByteOffset];
             uint8_t sourceBitPosition = 7 - column % 8;
             bool bitSet = (1 << sourceBitPosition) & sourceByte;
+            glyph.setNextBit(bitSet);
 
             if(bitSet)
             {
@@ -184,5 +276,6 @@ static void convertSingleGlyph(FT_Face& face, const char character)
             }
         }
     }
+    fontConverter.insertGlyph(glyph);
     bitmapBufferSize += (bitmap.rows * bitmap.width + 7) / 8;
 }
