@@ -79,11 +79,11 @@ static BME280_status_t getMode(BME280_t* instance, BME280_mode_t* mode);
 static BME280_status_t resetDevice(BME280_t* instance);
 static BME280_status_t waitForConversion(BME280_t* instance);
 static BME280_status_t getCalibrationData(BME280_t* instance);
-static BME280_status_t getRawData(BME280_t* instance, int16_t* rawHumidity, int32_t* rawTemperature, int32_t* rawPressure);
+static BME280_status_t getRawData(BME280_t* instance, int32_t* rawHumidity, int32_t* rawTemperature, int32_t* rawPressure);
 static bool i2cWrite(BME280_t* instance, uint8_t address, uint8_t data);
 static int32_t compensateTemperature(BME280_t* instance, int32_t rawTemperature);
 static uint32_t compensatePressure(BME280_t* instance, int32_t rawPressure);
-static uint32_t compensateHumidity(BME280_t* instance, int16_t rawHumidity);
+static uint32_t compensateHumidity(BME280_t* instance, int32_t rawHumidity);
 /******************************************************************************
  Global functions
  ******************************************************************************/
@@ -185,7 +185,7 @@ BME280_status_t bme280_getMeasurements(BME280_t* instance, int32_t* temperature,
     //DU_ASSERT(pressure != NULL);
     //DU_ASSERT(humidity != NULL);
 
-    int16_t rawHumidity = 0;
+    int32_t rawHumidity = 0;
     int32_t rawTemperature = 0;
     int32_t rawPressure = 0;
     BME280_status_t status = BME280_status_ok;
@@ -389,7 +389,7 @@ static BME280_status_t getCalibrationData(BME280_t* instance)
     return BME280_status_ok;
 }
 
-static BME280_status_t getRawData(BME280_t* instance, int16_t* rawHumidity, int32_t* rawTemperature, int32_t* rawPressure)
+static BME280_status_t getRawData(BME280_t* instance, int32_t* rawHumidity, int32_t* rawTemperature, int32_t* rawPressure)
 {
     //DU_ASSERT(instance != NULL);
     //DU_ASSERT(rawHumidity != NULL);
@@ -462,7 +462,7 @@ static uint32_t compensatePressure(BME280_t* instance, int32_t rawPressure)
 
 // Returns humidity in %RH as unsigned 32 bit integer in Q22.10 format (22 integer and 10 fractional bits).
 // Output value of “47445” represents 47445/1024 = 46.333 %RH
-static uint32_t compensateHumidity(BME280_t* instance, int16_t rawHumidity)
+static uint32_t compensateHumidity(BME280_t* instance, int32_t rawHumidity)
 {
     int32_t var = instance->fineTemperature - 76800;
     var = ((((rawHumidity << 14) - (instance->calibrationData.H4 << 20) - (instance->calibrationData.H5 * var)) + 16384) >> 15)
