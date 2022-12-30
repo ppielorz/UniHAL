@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.19)
 
 project(UniHAL VERSION 1.0.0 DESCRIPTION "Universal HAL layer")
 include(CTest)
@@ -10,6 +10,7 @@ target_compile_options(unihal PRIVATE -Wall -Wextra -Wpedantic -Werror)
 add_subdirectory(drivers)
 add_subdirectory(monogfx)
 add_subdirectory(utils)
+add_subdirectory(platforms)
 add_subdirectory(tests_tools)
 
 if(ENABLE_COVERAGE)

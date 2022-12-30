@@ -1,5 +1,5 @@
 /******************************************************************************
- @file unihal_simplelink.c
+ @file unihal_cc13xx_cc26xx.c
 
  @brief UniHAL Simplelink implementation definitions
 
@@ -15,13 +15,13 @@
 
 #include <ti/drivers/I2C.h>
 #include <ti/drivers/SPI.h>
-#include <ti/drivers/PIN.h>
+#include <ti/drivers/GPIO.h>
 
 #include "aon_batmon.h"
 #include "sys_ctrl.h"
 
 #include "unihal/unihal.h"
-#include "unihal_simplelink.h"
+#include "unihal_cc13xx_cc26xx.h"
 
 /******************************************************************************
  Constants and definitions
@@ -31,7 +31,7 @@
 
 typedef struct
 {
-    PIN_Id pinId;
+    //PIN_Id pinId;
     UniHAL_gpio_interruptHandlerFp_t fxn;
     void* arg;
 } gpioInterruptEntry_t;
@@ -47,14 +47,14 @@ typedef struct
 /******************************************************************************
  Local variables
  *****************************************************************************/
-static PIN_Handle pin = {0};
-static PIN_State pinState = {0};
+//static PIN_Handle pin = {0};
+//static PIN_State pinState = {0};
 static gpioInterruptEntry_t gpioInterruptTable[8] = {};
 
 /******************************************************************************
  Local function prototypes
  *****************************************************************************/
-static void pinIntHandler(PIN_Handle handle, PIN_Id pinId);
+//static void pinIntHandler(PIN_Handle handle, PIN_Id pinId);
 
 /******************************************************************************
  Global functions
@@ -64,13 +64,11 @@ static void pinIntHandler(PIN_Handle handle, PIN_Id pinId);
 
 extern bool unihal_init(void)
 {
-    const PIN_Config pinList[1] = {PIN_TERMINATE};
-    pin = PIN_open(&pinState, pinList);
     bool status = true;
 
     AONBatMonEnable();
 
-    if(pin == NULL)
+    /*if(pin == NULL)
     {
         status = false;
     }
@@ -80,7 +78,7 @@ extern bool unihal_init(void)
         {
             status = false;
         }
-    }
+    }*/
 
     return status;
 }
@@ -89,15 +87,15 @@ extern bool unihal_gpio_init(UniHAL_gpio_t* const instance)
 {
     //DU_ASSERT(instance != NULL);
 
-    PIN_Status status = PIN_add(pin, SIMPLELINK_PIN_ID(instance) | PIN_GPIO_OUTPUT_DIS);
+    /*PIN_Status status = PIN_add(pin, SIMPLELINK_PIN_ID(instance) | PIN_GPIO_OUTPUT_DIS);
 
-    return (PIN_SUCCESS == status);
+    return (PIN_SUCCESS == status);*/return false;
 }
 
 extern bool unihal_gpio_configureInput(UniHAL_gpio_t* const instance, const UniHAL_gpio_pull_t pull)
 {
     //DU_ASSERT(instance != NULL);
-    PIN_Config pinConfig = SIMPLELINK_PIN_ID(instance) | PIN_INPUT_EN;
+    /*PIN_Config pinConfig = SIMPLELINK_PIN_ID(instance) | PIN_INPUT_EN;
     bool status = true;
 
     switch (pull)
@@ -125,14 +123,14 @@ extern bool unihal_gpio_configureInput(UniHAL_gpio_t* const instance, const UniH
         }
     }
 
-    return status;
+    return status;*/return false;
 }
 
 extern bool unihal_gpio_configureOutput(UniHAL_gpio_t* const instance, const UniHAL_gpio_value_t outputValue,
                                     const UniHAL_gpio_outputType_t outputType)
 {
     //DU_ASSERT(instance != NULL);
-    PIN_Config pinConfig = SIMPLELINK_PIN_ID(instance) | PIN_GPIO_OUTPUT_EN;
+    /*PIN_Config pinConfig = SIMPLELINK_PIN_ID(instance) | PIN_GPIO_OUTPUT_EN;
     bool status = true;
 
     switch (outputValue)
@@ -174,21 +172,21 @@ extern bool unihal_gpio_configureOutput(UniHAL_gpio_t* const instance, const Uni
         }
     }
 
-    return status;
+    return status;*/return false;
 }
 
 extern bool unihal_gpio_deinit(UniHAL_gpio_t* const instance)
 {
     //DU_ASSERT(instance != NULL);
     //PIN_Status status = PIN_remove(pin, instance->index);
-    return true;
+    /*return true;*/return false;
 }
 
 
 extern bool unihal_gpio_registerInterrupt(UniHAL_gpio_t* const instance, const UniHAL_gpio_interrupt_t type, 
                 void (*handler)(void* const arg), void* const arg)
 {
-    size_t gpioInterruptEntry = 0U;
+    /*size_t gpioInterruptEntry = 0U;
     bool status = true;
     //UniHAL_gpio_interrupt_disabled = 0,
     PIN_Config pinConfig = SIMPLELINK_PIN_ID(instance);
@@ -234,13 +232,13 @@ extern bool unihal_gpio_registerInterrupt(UniHAL_gpio_t* const instance, const U
         status = false;
     }
 
-    return status;
+    return status;*/return false;
 }
 
 extern bool unihal_gpio_write(const UniHAL_gpio_t* const instance, const UniHAL_gpio_value_t outputValue)
 {
     //DU_ASSERT(instance != NULL);
-    bool status = true;
+    /*bool status = true;
     uint32_t value = 0;
 
     switch (outputValue)
@@ -265,12 +263,12 @@ extern bool unihal_gpio_write(const UniHAL_gpio_t* const instance, const UniHAL_
         }
     }
 
-    return status;
+    return status;*/return false;
 }
 
 extern UniHAL_gpio_value_t unihal_gpio_read(const UniHAL_gpio_t* const instance)
 {
-    return PIN_getInputValue(SIMPLELINK_PIN_ID(instance));
+    /*return PIN_getInputValue(SIMPLELINK_PIN_ID(instance));*/return false;
 }
 
 /*bool unihal_i2c_init(UniHAL_i2c_t* instance)
@@ -331,6 +329,7 @@ bool unihal_i2c_readMem(const UniHAL_i2c_t* const instance, const uint8_t slaveA
             break;
 
         default:
+            break;
             //DU_ASSERT(false);
     }
 
@@ -388,7 +387,7 @@ uint32_t unihal_getMicroTickCount(void)
  Local Functions
  *****************************************************************************/
 
-static void pinIntHandler(PIN_Handle handle, PIN_Id pinId)
+/*static void pinIntHandler(PIN_Handle handle, PIN_Id pinId)
 {
     size_t gpioInterruptEntry = 0U;
         //TODO ARRAY_LEN
@@ -400,4 +399,4 @@ static void pinIntHandler(PIN_Handle handle, PIN_Id pinId)
             break;
         }
     }
-}
+}*/

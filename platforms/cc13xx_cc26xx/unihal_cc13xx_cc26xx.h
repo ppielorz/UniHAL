@@ -1,5 +1,5 @@
 /******************************************************************************
- @file unihal_simplelink.h
+ @file unihal_cc13xx_cc26xx.h
 
  @brief UniHAL Simplelink implementation declarations
 
@@ -20,8 +20,8 @@
 
 #include <ti/drivers/I2C.h>
 #include <ti/drivers/SPI.h>
-#include <ti/drivers/PIN.h>
-#include <ti/drivers/UART.h>
+#include <ti/drivers/GPIO.h>
+#include <ti/drivers/UART2.h>
 #include <ti/drivers/NVS.h>
 
 #ifdef __cplusplus
@@ -52,7 +52,7 @@ typedef struct
 
 typedef struct
 {
-    UART_Params params;
+    UART2_Params params;
     uint8_t index;
 } UniHAL_SimpleLink_uartStruct_t;
 

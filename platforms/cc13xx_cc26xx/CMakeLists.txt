@@ -1,0 +1,3 @@
+add_library(unihal_cc13xx_cc26xx INTERFACE)
+target_sources(unihal_cc13xx_cc26xx INTERFACE unihal_cc13xx_cc26xx.c)
+target_include_directories(unihal_cc13xx_cc26xx INTERFACE .)
