@@ -67,6 +67,8 @@ extern bool unihal_init(void)
     bool status = true;
 
     AONBatMonEnable();
+    GPIO_init();
+
 
     /*if(pin == NULL)
     {
@@ -89,25 +91,26 @@ extern bool unihal_gpio_init(UniHAL_gpio_t* const instance)
 
     /*PIN_Status status = PIN_add(pin, SIMPLELINK_PIN_ID(instance) | PIN_GPIO_OUTPUT_DIS);
 
-    return (PIN_SUCCESS == status);*/return false;
+    return (PIN_SUCCESS == status);*/return true;
 }
 
 extern bool unihal_gpio_configureInput(UniHAL_gpio_t* const instance, const UniHAL_gpio_pull_t pull)
 {
     //DU_ASSERT(instance != NULL);
-    /*PIN_Config pinConfig = SIMPLELINK_PIN_ID(instance) | PIN_INPUT_EN;
+
+    GPIO_PinConfig pinConfig = GPIO_CFG_INPUT;
     bool status = true;
 
     switch (pull)
     {
     case UniHAL_gpio_pull_noPull:
-        pinConfig |= PIN_NOPULL;
+        pinConfig |= GPIO_CFG_IN_NOPULL;
         break;
     case UniHAL_gpio_pull_pullDown:
-        pinConfig |= PIN_PULLDOWN;
+        pinConfig |= GPIO_CFG_IN_PD;
         break;
     case UniHAL_gpio_pull_pullUp:
-        pinConfig |= PIN_PULLUP;
+        pinConfig |= GPIO_CFG_IN_PU;
         break;
 
     default:
@@ -116,30 +119,30 @@ extern bool unihal_gpio_configureInput(UniHAL_gpio_t* const instance, const UniH
 
     if(status)
     {
-        PIN_Status pinStatus = PIN_setConfig(pin, PIN_BM_ALL, pinConfig);
-        if(pinStatus != PIN_SUCCESS)
+        int_fast16_t setConfigStatus = GPIO_setConfig(((UniHAL_SimpleLink_gpioStruct_t*)instance->obj)->index, pinConfig);
+        if(setConfigStatus != GPIO_STATUS_SUCCESS)
         {
             status = false;
         }
     }
 
-    return status;*/return false;
+    return status;
 }
 
 extern bool unihal_gpio_configureOutput(UniHAL_gpio_t* const instance, const UniHAL_gpio_value_t outputValue,
                                     const UniHAL_gpio_outputType_t outputType)
 {
     //DU_ASSERT(instance != NULL);
-    /*PIN_Config pinConfig = SIMPLELINK_PIN_ID(instance) | PIN_GPIO_OUTPUT_EN;
+    GPIO_PinConfig pinConfig = GPIO_CFG_OUTPUT;
     bool status = true;
 
     switch (outputValue)
     {
     case UniHAL_gpio_value_low:
-        pinConfig |= PIN_GPIO_LOW;
+        pinConfig |= GPIO_CFG_OUT_LOW;
         break;
     case UniHAL_gpio_value_high:
-        pinConfig |= PIN_GPIO_HIGH;
+        pinConfig |= GPIO_CFG_OUT_HIGH;
         break;
 
     default:
@@ -149,13 +152,10 @@ extern bool unihal_gpio_configureOutput(UniHAL_gpio_t* const instance, const Uni
     switch (outputType)
     {
     case UniHAL_gpio_outputType_pushPull:
-        pinConfig |= PIN_PUSHPULL;
+        pinConfig |= GPIO_CFG_OUT_STD;
         break;
     case UniHAL_gpio_outputType_openDrain:
-        pinConfig |= PIN_OPENDRAIN;
-        break;
-    case UniHAL_gpio_outputType_openSource:
-        pinConfig |= PIN_OPENSOURCE;
+        pinConfig |= GPIO_CFG_OUT_OD_NOPULL;
         break;
 
     default:
@@ -165,14 +165,14 @@ extern bool unihal_gpio_configureOutput(UniHAL_gpio_t* const instance, const Uni
 
     if(status)
     {
-        PIN_Status pinStatus = PIN_setConfig(pin, PIN_BM_ALL, pinConfig);
-        if(pinStatus != PIN_SUCCESS)
+        int_fast16_t setConfigStatus = GPIO_setConfig(((UniHAL_SimpleLink_gpioStruct_t*)instance->obj)->index, pinConfig);
+        if(setConfigStatus != GPIO_STATUS_SUCCESS)
         {
             status = false;
         }
     }
 
-    return status;*/return false;
+    return status;
 }
 
 extern bool unihal_gpio_deinit(UniHAL_gpio_t* const instance)
@@ -238,37 +238,13 @@ extern bool unihal_gpio_registerInterrupt(UniHAL_gpio_t* const instance, const U
 extern bool unihal_gpio_write(const UniHAL_gpio_t* const instance, const UniHAL_gpio_value_t outputValue)
 {
     //DU_ASSERT(instance != NULL);
-    /*bool status = true;
-    uint32_t value = 0;
-
-    switch (outputValue)
-    {
-    case UniHAL_gpio_value_low:
-        value = 0;
-        break;
-    case UniHAL_gpio_value_high:
-        value = 1;
-        break;
-
-    default:
-        status = false;
-    }
-
-    if(status)
-    {
-        PIN_Status pinStatus = PIN_setOutputValue(pin, SIMPLELINK_PIN_ID(instance), value);
-        if(pinStatus != PIN_SUCCESS)
-        {
-            status = false;
-        }
-    }
-
-    return status;*/return false;
+    GPIO_write(((UniHAL_SimpleLink_gpioStruct_t*)instance->obj)->index, (unsigned int) outputValue);
+    return true;
 }
 
 extern UniHAL_gpio_value_t unihal_gpio_read(const UniHAL_gpio_t* const instance)
 {
-    /*return PIN_getInputValue(SIMPLELINK_PIN_ID(instance));*/return false;
+    return (UniHAL_gpio_value_t) GPIO_read(((UniHAL_SimpleLink_gpioStruct_t*)instance->obj)->index);
 }
 
 /*bool unihal_i2c_init(UniHAL_i2c_t* instance)
