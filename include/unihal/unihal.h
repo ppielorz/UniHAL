@@ -67,7 +67,6 @@ typedef enum
 {
     UniHAL_gpio_outputType_pushPull = 0,
     UniHAL_gpio_outputType_openDrain = 1,
-    UniHAL_gpio_outputType_openSource = 2,
 
     UniHAL_gpio_outputType_count
 } UniHAL_gpio_outputType_t;
