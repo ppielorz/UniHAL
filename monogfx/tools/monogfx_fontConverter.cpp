@@ -95,6 +95,14 @@ class FontConverter
             m_glyphs.push_back(glyph);
         }
 
+        std::ostringstream getFontHeader(void) const
+        {
+            std::ostringstream fontHeader;
+            fontHeader << "#include \"unihal/monogfx/monogfx.h\"" << std::endl << std::endl;
+
+            return fontHeader;
+        }
+
         std::ostringstream getFontBitmap(void) const
         {
             std::ostringstream fontBitmap;
@@ -190,7 +198,7 @@ int main(int argc, char* argv[])
         fontConverter.finalizeFont();
 
         std::fstream convertedFont (convertedFontPath.c_str(), std::fstream::out);
-        convertedFont << "#include \"unihal/monogfx/monogfx.h\"" << std::endl << std::endl;
+        convertedFont << fontConverter.getFontHeader().str();
         convertedFont << fontConverter.getFontBitmap().str();
         convertedFont << fontConverter.getGlyphsMeta().str();
         convertedFont << fontConverter.getFontMeta().str();
