@@ -53,14 +53,6 @@ class FontConverterGlyph
         return compared.m_character == this->m_character;
     }
 
-    std::ostringstream getGlyphMeta(void) const
-    {
-        std::ostringstream glyphMeta;
-        glyphMeta << "/* " << m_character << " */ {" << (int) m_bitmapOffset << ", " << (int) m_xAdvance << ", " << (int) m_xOffset << ", " << (int) m_yOffset;
-        glyphMeta << ", " << (int) m_width << ", " << (int) m_height << "}," << std::endl;
-        return glyphMeta;
-    }
-
     size_t getBitmapSize() const
     {
         return m_bitmap.size();
@@ -72,6 +64,14 @@ class FontConverterGlyph
     }
 
     private:
+        std::ostringstream getGlyphMeta(void) const
+        {
+            std::ostringstream glyphMeta;
+            glyphMeta << "/* " << m_character << " */ {" << (int) m_bitmapOffset << ", " << (int) m_xAdvance << ", " << (int) m_xOffset << ", " << (int) m_yOffset;
+            glyphMeta << ", " << (int) m_width << ", " << (int) m_height << "}," << std::endl;
+            return glyphMeta;
+        }
+
         std::vector<uint8_t> m_bitmap;
         const char m_character;
         const int8_t m_xAdvance;
@@ -86,15 +86,36 @@ class FontConverterGlyph
 class FontConverter
 {
     public:
+        FontConverter(const std::string fontName, const size_t fontSize): m_fontName(fontName), m_fontSize(fontSize)
+        {
+        }
+
         void insertGlyph(FontConverterGlyph& glyph)
         {
             m_glyphs.push_back(glyph);
         }
 
-        std::vector<FontConverterGlyph> getGlyphs() const
+        std::ostringstream getGlyphsMeta(void) const
         {
-            return m_glyphs;
+            std::ostringstream glyphsMeta;
+            glyphsMeta << "static const monoGFX_glyph_t glyphs[] =" << std::endl << "{" << std::endl;
+            for(auto& glyph: m_glyphs)
+            {
+                glyphsMeta << glyph.getGlyphMeta().str();
+            }
+            glyphsMeta << "};" << std::endl << std::endl;
+            return glyphsMeta;
         }
+
+        std::ostringstream getFontMeta(void) const
+        {
+            std::ostringstream fontMeta;
+            fontMeta << "const monoGFX_font_t monoGFX_" << std::dec << m_fontName << "_" << m_fontSize << "pt = {bitmapBuffer, " << (int) m_fontBitmap.size();
+            fontMeta << ", glyphs, 20};" << std::endl; //TODO 20 yAdvance
+            return fontMeta;
+
+        }
+
 
         std::vector<uint8_t> getFontBitmap() const
         {
@@ -103,7 +124,7 @@ class FontConverter
 
         void finalizeFont()
         {
-            for(FontConverterGlyph& glyph: m_glyphs)
+            for(auto& glyph: m_glyphs)
             {
                 glyph.setBitmapOffset(m_fontBitmap.size());
                 m_fontBitmap.insert(m_fontBitmap.end(), glyph.m_bitmap.begin(), glyph.m_bitmap.end());
@@ -113,6 +134,8 @@ class FontConverter
     private:
         std::vector<FontConverterGlyph> m_glyphs;
         std::vector<uint8_t> m_fontBitmap;
+        const std::string m_fontName;
+        const size_t m_fontSize;
 };
 
 /******************************************************************************
@@ -123,14 +146,12 @@ static std::string fontName;
 static std::string sourceFontPath;
 static std::string convertedFontPath;
 
-static FontConverter fontConverter;
-
 /******************************************************************************
  Local function prototypes
  *****************************************************************************/
 static void checkArgs(const int argc, const char* const argv[]);
 static void init(FT_Library& library, FT_Face& face, const std::string& sourceFontPath);
-static void convertSingleGlyph(FT_Face& face, const char character);
+static void convertSingleGlyph(FontConverter& fontConverter, FT_Face& face, const char character);
 
 /******************************************************************************
  Public Functions
@@ -144,13 +165,14 @@ int main(int argc, char* argv[])
     try
     {
         checkArgs(argc, argv);
+        FontConverter fontConverter(fontName, fontSize);
         //std::cout << "Converting font " << sourceFontPath << " to " << convertedFontPath << " with size " << fontSize << std::endl;
 
         init(library, face, sourceFontPath);
 
         for(const char& character : asciiToPrint) 
         {
-            convertSingleGlyph(face, character);
+            convertSingleGlyph(fontConverter, face, character);
         }
         fontConverter.finalizeFont();
 
@@ -169,17 +191,9 @@ int main(int argc, char* argv[])
         }
         convertedFont << std::endl << "};" << std::endl << std::endl;
 
-        /* Print glyphs metadata. */
-        convertedFont << "static const monoGFX_glyph_t glyphs[] =" << std::endl << "{" << std::endl;
-        for(auto& glyph: fontConverter.getGlyphs())
-        {
-            convertedFont << glyph.getGlyphMeta().str();
-        }
-        convertedFont << "};" << std::endl << std::endl;
+        convertedFont << fontConverter.getGlyphsMeta().str();
+        convertedFont << fontConverter.getFontMeta().str();
 
-        /* Print font metadata. */
-        convertedFont << "const monoGFX_font_t monoGFX_" << std::dec << fontName << "_" << fontSize << "pt = {bitmapBuffer, " << (int) fontConverter.getFontBitmap().size();
-        convertedFont << ", glyphs, 20};" << std::endl; //TODO 20 yAdvance
 /*
         for(auto& glyph: fontConverter.m_glyphs)
         {
@@ -277,7 +291,7 @@ static void init(FT_Library& library, FT_Face& face, const std::string& sourceFo
     }
 }
 
-static void convertSingleGlyph(FT_Face& face, const char character)
+static void convertSingleGlyph(FontConverter& fontConverter, FT_Face& face, const char character)
 {
     FT_UInt glyphIndex = FT_Get_Char_Index(face, character);
     auto ftStatus = FT_Load_Glyph(face, glyphIndex, FT_LOAD_TARGET_MONO);
