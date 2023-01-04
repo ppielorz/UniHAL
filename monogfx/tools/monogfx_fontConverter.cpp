@@ -95,6 +95,25 @@ class FontConverter
             m_glyphs.push_back(glyph);
         }
 
+        std::ostringstream getFontBitmap(void) const
+        {
+            std::ostringstream fontBitmap;
+            fontBitmap << "static const uint8_t bitmapBuffer[" << m_fontBitmap.size() << "] =" << std::endl << "{" << std::endl << "    ";
+            auto i = 0U;
+            for(auto bitmapByte: m_fontBitmap)
+            {
+                fontBitmap << "0x" << std::setfill('0') << std::setw(2) << std::hex << (int) bitmapByte << ",";
+                if(((i + 1) % 16) == 0)
+                {
+                    fontBitmap << "\n    ";
+                }
+                i++;
+            }
+            fontBitmap << std::endl << "};" << std::endl << std::endl;
+
+            return fontBitmap;
+        }
+
         std::ostringstream getGlyphsMeta(void) const
         {
             std::ostringstream glyphsMeta;
@@ -114,12 +133,6 @@ class FontConverter
             fontMeta << ", glyphs, 20};" << std::endl; //TODO 20 yAdvance
             return fontMeta;
 
-        }
-
-
-        std::vector<uint8_t> getFontBitmap() const
-        {
-            return m_fontBitmap;
         }
 
         void finalizeFont()
@@ -178,19 +191,7 @@ int main(int argc, char* argv[])
 
         std::fstream convertedFont (convertedFontPath.c_str(), std::fstream::out);
         convertedFont << "#include \"unihal/monogfx/monogfx.h\"" << std::endl << std::endl;
-        convertedFont << "static const uint8_t bitmapBuffer[" << fontConverter.getFontBitmap().size() << "] =" << std::endl << "{" << std::endl << "    ";
-        auto i = 0U;
-        for(auto bitmapByte: fontConverter.getFontBitmap())
-        {
-            convertedFont << "0x" << std::setfill('0') << std::setw(2) << std::hex << (int) bitmapByte << ",";
-            if(((i + 1) % 16) == 0)
-            {
-                convertedFont << "\n    ";
-            }
-            i++;
-        }
-        convertedFont << std::endl << "};" << std::endl << std::endl;
-
+        convertedFont << fontConverter.getFontBitmap().str();
         convertedFont << fontConverter.getGlyphsMeta().str();
         convertedFont << fontConverter.getFontMeta().str();
 
