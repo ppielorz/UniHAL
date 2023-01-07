@@ -104,13 +104,13 @@ extern bool unihal_gpio_configureInput(UniHAL_gpio_t* const instance, const UniH
     switch (pull)
     {
     case UniHAL_gpio_pull_noPull:
-        pinConfig |= GPIO_CFG_IN_NOPULL;
+        pinConfig = GPIO_CFG_IN_NOPULL;
         break;
     case UniHAL_gpio_pull_pullDown:
-        pinConfig |= GPIO_CFG_IN_PD;
+        pinConfig = GPIO_CFG_IN_PD;
         break;
     case UniHAL_gpio_pull_pullUp:
-        pinConfig |= GPIO_CFG_IN_PU;
+        pinConfig = GPIO_CFG_IN_PU;
         break;
 
     default:
