@@ -48,6 +48,7 @@ typedef enum
     SSD1675_status_dcPinWriteError = 16U,
     SSD1675_status_spiCommunicationError = 17U,
     SSD1675_status_timeout = 18U,
+    SSD1675_status_wrongRamContentOptionValue = 19U,
 } SSD1675_status_t;
 
 typedef struct

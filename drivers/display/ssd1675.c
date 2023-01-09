@@ -49,9 +49,11 @@
 #define ANALOG_BLOCK_CONTROL_VALUE 0x54
 #define DIGITAL_BLOCK_CONTROL_VALUE 0x3B
 
-#define HW_RESET_TIMESPAN_US    10000
-#define SW_RESET_TIMESPAN_US    20000
-#define SW_RESET_TIMEOUT_MS     300
+#define HW_RESET_TIMESPAN_US            10000
+#define SW_RESET_TIMESPAN_US            20000
+#define SW_RESET_TIMEOUT_MS             300
+#define MASTER_ACTIVATION_TIMEOUT_MS    200
+#define MASTER_ACTIVATION_TIMESPAN_US   1000
 
 /******************************************************************************
  External Variables
@@ -71,9 +73,10 @@
 static SSD1675_status_t sendCommand(const SSD1675_t* const display, const uint8_t command);
 static SSD1675_status_t sendData(const SSD1675_t* const display, const uint8_t data);
 static SSD1675_status_t initDisplay(const SSD1675_t* const display);
+static SSD1675_status_t setRamContentOption(const SSD1675_t* const display, const uint8_t bwRamOption, const uint8_t redRamOption);
 static SSD1675_status_t hwReset(const SSD1675_t* const display);
 static SSD1675_status_t swReset(const SSD1675_t* const display);
-static SSD1675_status_t waitForBusyFlag(const SSD1675_t* const display, const uint32_t delayMs, const uint32_t pollTimespanUs);
+static SSD1675_status_t waitForBusyFlag(const SSD1675_t* const display, const uint32_t timeoutMs, const uint32_t pollTimespanUs);
 static SSD1675_status_t enterSleep(const SSD1675_t* const display);
 static SSD1675_status_t setCursor(const SSD1675_t* const display, const uint8_t x, const uint16_t y);
 
@@ -206,15 +209,12 @@ static SSD1675_status_t initDisplay(const SSD1675_t* const display)
     CHECK_AND_RETURN_IF_ERROR(sendCommand(display, REG_DIGITAL_BLOCK_CONTROL));
     CHECK_AND_RETURN_IF_ERROR(sendData(display, DIGITAL_BLOCK_CONTROL_VALUE));
 
-    CHECK_AND_RETURN_IF_ERROR(sendCommand(display, REG_DISPLAY_UPDATE_CONTROL_1));
-    CHECK_AND_RETURN_IF_ERROR(sendData(display, (DISPLAY_UPDATE_CONTROL_1_RAM_INVERSE << DISPLAY_UPDATE_CONTROL_1_BW_RAM_OFFSET)
-                                       | (DISPLAY_UPDATE_CONTROL_1_RAM_INVERSE << DISPLAY_UPDATE_CONTROL_1_RED_RAM_OFFSET)));
+    CHECK_AND_RETURN_IF_ERROR(setRamContentOption(display, DISPLAY_UPDATE_CONTROL_1_RAM_INVERSE, DISPLAY_UPDATE_CONTROL_1_RAM_INVERSE));
 
     sendCommand(display, 0x22);
     sendData(display, 0xB0);
     sendCommand(display, 0x20);
-
-    //while(unihal_gpio_read(display->bsy) == UniHAL_gpio_value_high);
+    CHECK_AND_RETURN_IF_ERROR(waitForBusyFlag(display, MASTER_ACTIVATION_TIMEOUT_MS, MASTER_ACTIVATION_TIMESPAN_US));
 
     sendCommand(display, 0x01);
     //sendData(display, 0xD3);
@@ -235,6 +235,25 @@ static SSD1675_status_t initDisplay(const SSD1675_t* const display)
     sendData(display, 0x00);
     sendData(display, display->ySize % UINT8_MAX); //RAM Y-address end at 00H
     sendData(display, display->ySize / UINT8_MAX);
+
+    return SSD1675_status_ok;
+}
+
+static SSD1675_status_t setRamContentOption(const SSD1675_t* const display, const uint8_t bwRamOption, const uint8_t redRamOption)
+{
+    SSD1675_status_t ret = SSD1675_status_ok;
+
+    CHECK_AND_RETURN_STATUS(display != NULL, SSD1675_status_nullPointer);
+    CHECK_AND_RETURN_STATUS(bwRamOption == DISPLAY_UPDATE_CONTROL_1_RAM_NORMAL || 
+                            bwRamOption == DISPLAY_UPDATE_CONTROL_1_RAM_BYPASS_0 || 
+                            bwRamOption == DISPLAY_UPDATE_CONTROL_1_RAM_INVERSE, SSD1675_status_wrongRamContentOptionValue);
+    CHECK_AND_RETURN_STATUS(redRamOption == DISPLAY_UPDATE_CONTROL_1_RAM_NORMAL || 
+                            redRamOption == DISPLAY_UPDATE_CONTROL_1_RAM_BYPASS_0 || 
+                            redRamOption == DISPLAY_UPDATE_CONTROL_1_RAM_INVERSE, SSD1675_status_wrongRamContentOptionValue);
+
+    CHECK_AND_RETURN_IF_ERROR(sendCommand(display, REG_DISPLAY_UPDATE_CONTROL_1));
+    CHECK_AND_RETURN_IF_ERROR(sendData(display, 
+                            (bwRamOption << DISPLAY_UPDATE_CONTROL_1_BW_RAM_OFFSET) | (redRamOption << DISPLAY_UPDATE_CONTROL_1_RED_RAM_OFFSET)));
 
     return SSD1675_status_ok;
 }
@@ -265,7 +284,7 @@ static SSD1675_status_t swReset(const SSD1675_t* const display)
     return ret;
 }
 
-static SSD1675_status_t waitForBusyFlag(const SSD1675_t* const display, const uint32_t delayMs, const uint32_t pollTimespanUs)
+static SSD1675_status_t waitForBusyFlag(const SSD1675_t* const display, const uint32_t timeoutMs, const uint32_t pollTimespanUs)
 {
     uint32_t timeoutTicksStart;
 
@@ -274,7 +293,7 @@ static SSD1675_status_t waitForBusyFlag(const SSD1675_t* const display, const ui
     timeoutTicksStart = unihal_getTickCount();
     while(unihal_gpio_read(display->bsy) == UniHAL_gpio_value_high)
     {
-        if((unihal_getTickCount() - timeoutTicksStart) > delayMs)
+        if((unihal_getTickCount() - timeoutTicksStart) > timeoutMs)
         {
             return SSD1675_status_timeout;
         }
@@ -307,7 +326,6 @@ static SSD1675_status_t setCursor(const SSD1675_t* const display, const uint8_t 
     CHECK_AND_RETURN_STATUS(x < display->xSize, SSD1675_status_widthTooLarge);
     CHECK_AND_RETURN_STATUS(y < display->ySize, SSD1675_status_heightTooLarge);
 
-    CHECK_AND_RETURN_IF_ERROR(sendCommand(display, REG_DISPLAY_UPDATE_CONTROL_1));
     CHECK_AND_RETURN_IF_ERROR(sendCommand(display, REG_RAM_X_ADDRESS));
     CHECK_AND_RETURN_IF_ERROR(sendData(display, x / 8));
 
