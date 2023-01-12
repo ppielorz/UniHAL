@@ -67,8 +67,51 @@ class FontConverterGlyph
         std::ostringstream getGlyphMeta(void) const
         {
             std::ostringstream glyphMeta;
-            glyphMeta << "/* " << m_character << " */ {" << (int) m_bitmapOffset << ", " << (int) m_xAdvance << ", " << (int) m_xOffset << ", " << (int) m_yOffset;
-            glyphMeta << ", " << (int) m_width << ", " << (int) m_height << "}," << std::endl;
+
+            glyphMeta << "/********************" << std::endl;
+            glyphMeta << " *  " << "Character: '" << m_character << "', X advance: " << (int) m_xAdvance << std::endl;
+            glyphMeta << " *  " << "X offset: " << (int) m_xOffset << ", Y offset: " << (int) m_yOffset << std::endl;
+            glyphMeta << " *  " << "X size: " << (int) m_width << ", Y size: " << (int) m_height << std::endl;
+
+            size_t bitNumber = 0U;
+            for(size_t yPosition = 0U; yPosition < m_height; yPosition++)
+            {
+                glyphMeta << " *  ";
+                for(int8_t xOffset = 0U; xOffset < m_xOffset; xOffset++)
+                {
+                    glyphMeta << " ";
+                }
+
+                for(size_t xPosition = 0U; xPosition < m_width; xPosition++)
+                {
+                    size_t byteOffset = bitNumber / 8;
+                    size_t bitOffset = (1 << bitNumber % 8);
+                    
+                    if(m_bitmap[byteOffset] & bitOffset)
+                    {
+                        glyphMeta << '#';
+                    }
+                    else
+                    {
+                        glyphMeta << ' ';
+                    }
+                    bitNumber++;
+                }
+                
+                for(int8_t xFill = 0U; xFill < (m_xAdvance - m_width); xFill++)
+                {
+                    glyphMeta << " ";
+                }
+
+                glyphMeta << std::endl;
+            }
+            glyphMeta << " ********************/" << std::endl;
+
+
+
+            glyphMeta << "{" << (int) m_bitmapOffset << ", " << (int) m_xAdvance << ", " << (int) m_xOffset << ", " << (int) m_yOffset;
+            glyphMeta << ", " << (int) m_width << ", " << (int) m_height << "}," << std::endl << std::endl;
+
             return glyphMeta;
         }
 
@@ -131,6 +174,7 @@ class FontConverter
                 glyphsMeta << glyph.getGlyphMeta().str();
             }
             glyphsMeta << "};" << std::endl << std::endl;
+
             return glyphsMeta;
         }
 
@@ -139,8 +183,8 @@ class FontConverter
             std::ostringstream fontMeta;
             fontMeta << "const monoGFX_font_t monoGFX_" << std::dec << m_fontName << "_" << m_fontSize << "pt = {bitmapBuffer, " << (int) m_fontBitmap.size();
             fontMeta << ", glyphs, 20};" << std::endl; //TODO 20 yAdvance
-            return fontMeta;
 
+            return fontMeta;
         }
 
         void finalizeFont()
