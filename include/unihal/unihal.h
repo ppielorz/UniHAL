@@ -87,6 +87,7 @@ typedef struct
      */
     void* obj;
     UniHAL_gpio_interruptHandlerFp_t irqHandler;
+    void* irqArg;
 
 } UniHAL_gpio_t;
 

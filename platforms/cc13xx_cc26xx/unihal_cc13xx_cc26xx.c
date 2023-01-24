@@ -27,14 +27,7 @@
  Constants and definitions
  *****************************************************************************/
 
-#define SIMPLELINK_PIN_ID(instance) ((UniHAL_SimpleLink_gpioStruct_t*) instance->obj)->index
-
-typedef struct
-{
-    //PIN_Id pinId;
-    UniHAL_gpio_interruptHandlerFp_t fxn;
-    void* arg;
-} gpioInterruptEntry_t;
+#define GPIO_INDEX(instance) ((UniHAL_SimpleLink_gpioStruct_t*) instance->obj)->index
 
 /******************************************************************************
  External Variables
@@ -47,14 +40,11 @@ typedef struct
 /******************************************************************************
  Local variables
  *****************************************************************************/
-//static PIN_Handle pin = {0};
-//static PIN_State pinState = {0};
-static gpioInterruptEntry_t gpioInterruptTable[8] = {};
 
 /******************************************************************************
  Local function prototypes
  *****************************************************************************/
-//static void pinIntHandler(PIN_Handle handle, PIN_Id pinId);
+static void interruptHandler(uint_least8_t index);
 
 /******************************************************************************
  Global functions
@@ -119,7 +109,7 @@ extern bool unihal_gpio_configureInput(UniHAL_gpio_t* const instance, const UniH
 
     if(status)
     {
-        int_fast16_t setConfigStatus = GPIO_setConfig(((UniHAL_SimpleLink_gpioStruct_t*)instance->obj)->index, pinConfig);
+        int_fast16_t setConfigStatus = GPIO_setConfig(GPIO_INDEX(instance), pinConfig);
         if(setConfigStatus != GPIO_STATUS_SUCCESS)
         {
             status = false;
@@ -165,7 +155,7 @@ extern bool unihal_gpio_configureOutput(UniHAL_gpio_t* const instance, const Uni
 
     if(status)
     {
-        int_fast16_t setConfigStatus = GPIO_setConfig(((UniHAL_SimpleLink_gpioStruct_t*)instance->obj)->index, pinConfig);
+        int_fast16_t setConfigStatus = GPIO_setConfig(GPIO_INDEX(instance), pinConfig);
         if(setConfigStatus != GPIO_STATUS_SUCCESS)
         {
             status = false;
@@ -177,29 +167,26 @@ extern bool unihal_gpio_configureOutput(UniHAL_gpio_t* const instance, const Uni
 
 extern bool unihal_gpio_deinit(UniHAL_gpio_t* const instance)
 {
-    //DU_ASSERT(instance != NULL);
-    //PIN_Status status = PIN_remove(pin, instance->index);
-    /*return true;*/return false;
+    return true;
 }
 
 
 extern bool unihal_gpio_registerInterrupt(UniHAL_gpio_t* const instance, const UniHAL_gpio_interrupt_t type, 
                 void (*handler)(void* const arg), void* const arg)
 {
-    /*size_t gpioInterruptEntry = 0U;
+    GPIO_PinConfig pinConfig = GPIO_CFG_IN_INT_NONE;
+    uint_least8_t index = GPIO_INDEX(instance);
     bool status = true;
-    //UniHAL_gpio_interrupt_disabled = 0,
-    PIN_Config pinConfig = SIMPLELINK_PIN_ID(instance);
     switch (type)
     {
     case UniHAL_gpio_interrupt_falling:
-        pinConfig |= PIN_IRQ_NEGEDGE;
+        pinConfig = GPIO_CFG_IN_INT_FALLING;
         break;
     case UniHAL_gpio_interrupt_rising:
-        pinConfig |= PIN_IRQ_POSEDGE;
+        pinConfig = GPIO_CFG_IN_INT_RISING;
         break;
     case UniHAL_gpio_interrupt_both:
-        pinConfig |= PIN_IRQ_BOTHEDGES;
+        pinConfig = GPIO_CFG_IN_INT_BOTH_EDGES;
         break;
 
     default:
@@ -208,43 +195,27 @@ extern bool unihal_gpio_registerInterrupt(UniHAL_gpio_t* const instance, const U
 
     if(status)
     {
-        PIN_Status pinStatus = PIN_setConfig(pin, PIN_BM_IRQ, pinConfig);
-        if(pinStatus != PIN_SUCCESS)
-        {
-            status = false;
-        }
+        instance->irqHandler = handler;
+        instance->irqArg = arg;
+        GPIO_setCallback(index, interruptHandler);
+        GPIO_setUserArg(index, instance);
+        GPIO_setInterruptConfig(index, pinConfig);
+        GPIO_enableInt(index);
     }
 
-    //TODO ARRAY_LEN
-    for(; gpioInterruptEntry < sizeof(gpioInterruptTable)/sizeof(gpioInterruptTable[0]); gpioInterruptEntry++)
-    {
-        if(0U == gpioInterruptTable[gpioInterruptEntry].pinId)
-        {
-            gpioInterruptTable[gpioInterruptEntry].pinId = SIMPLELINK_PIN_ID(instance);
-            gpioInterruptTable[gpioInterruptEntry].fxn = handler;
-            gpioInterruptTable[gpioInterruptEntry].arg = arg;
-            break;
-        }
-    }
-
-    if(sizeof(gpioInterruptTable)/sizeof(gpioInterruptTable[0]) == gpioInterruptEntry)
-    {
-        status = false;
-    }
-
-    return status;*/return false;
+    return status;
 }
 
 extern bool unihal_gpio_write(const UniHAL_gpio_t* const instance, const UniHAL_gpio_value_t outputValue)
 {
     //DU_ASSERT(instance != NULL);
-    GPIO_write(((UniHAL_SimpleLink_gpioStruct_t*)instance->obj)->index, (unsigned int) outputValue);
+    GPIO_write(GPIO_INDEX(instance), (unsigned int) outputValue);
     return true;
 }
 
 extern UniHAL_gpio_value_t unihal_gpio_read(const UniHAL_gpio_t* const instance)
 {
-    return (UniHAL_gpio_value_t) GPIO_read(((UniHAL_SimpleLink_gpioStruct_t*)instance->obj)->index);
+    return (UniHAL_gpio_value_t) GPIO_read(GPIO_INDEX(instance));
 }
 
 /*bool unihal_i2c_init(UniHAL_i2c_t* instance)
@@ -363,16 +334,11 @@ uint32_t unihal_getMicroTickCount(void)
  Local Functions
  *****************************************************************************/
 
-/*static void pinIntHandler(PIN_Handle handle, PIN_Id pinId)
+static void interruptHandler(uint_least8_t index)
 {
-    size_t gpioInterruptEntry = 0U;
-        //TODO ARRAY_LEN
-    for(; gpioInterruptEntry < sizeof(gpioInterruptTable)/sizeof(gpioInterruptTable[0]); gpioInterruptEntry++)
+    const UniHAL_gpio_t* const instance = (const UniHAL_gpio_t* const) GPIO_getUserArg(index);
+    if(instance->irqHandler)
     {
-        if(pinId == gpioInterruptTable[gpioInterruptEntry].pinId)
-        {
-            gpioInterruptTable[gpioInterruptEntry].fxn(gpioInterruptTable[gpioInterruptEntry].arg);
-            break;
-        }
+        instance->irqHandler(instance->irqArg);
     }
-}*/
+}
