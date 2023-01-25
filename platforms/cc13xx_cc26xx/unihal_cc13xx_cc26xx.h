@@ -22,7 +22,7 @@
 #include <ti/drivers/SPI.h>
 #include <ti/drivers/GPIO.h>
 #include <ti/drivers/UART2.h>
-#include <ti/drivers/NVS.h>
+#include <ti/drivers/Timer.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -55,6 +55,12 @@ typedef struct
     UART2_Params params;
     uint8_t index;
 } UniHAL_SimpleLink_uartStruct_t;
+
+typedef struct
+{
+    Timer_Handle handle;
+    uint8_t index;
+} UniHAL_SimpleLink_timerStruct_t;
 
 /******************************************************************************
  Function Prototypes

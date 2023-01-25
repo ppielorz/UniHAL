@@ -129,6 +129,15 @@ typedef struct
 
 } UniHAL_uart_t;
 
+typedef struct
+{
+    /*!
+     * @brief Hardware specific driver object.
+     */
+    void* obj;
+
+} UniHAL_timer_t;
+
 /******************************************************************************
  Function Prototypes
  *****************************************************************************/
@@ -188,6 +197,11 @@ extern uint32_t unihal_getVoltage(void);
 extern uint32_t unihal_getTickCount(void);
 extern uint32_t unihal_getMicroTickCount(void);
 
+extern bool unihal_timer_init(UniHAL_timer_t* const instance, const uint32_t periodUs, const bool oneShot, void (*handler)(void* const arg), void* const arg);
+extern bool unihal_timer_deinit(UniHAL_timer_t* const instance);
+extern bool unihal_timer_start(UniHAL_timer_t* const instance);
+extern bool unihal_timer_stop(UniHAL_timer_t* const instance);
+extern bool unihal_timer_setPeriod(UniHAL_timer_t* const instance, const uint32_t periodUs);
 
 #ifdef __cplusplus
 }

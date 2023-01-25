@@ -29,6 +29,14 @@
 
 #define GPIO_INDEX(instance) ((UniHAL_SimpleLink_gpioStruct_t*) instance->obj)->index
 
+typedef struct
+{
+    Timer_Handle handle;
+    void (*handler)(void* const arg);
+    void* arg;
+} timerInterruptHandlerEntry_t;
+
+
 /******************************************************************************
  External Variables
  *****************************************************************************/
@@ -40,11 +48,13 @@
 /******************************************************************************
  Local variables
  *****************************************************************************/
+static timerInterruptHandlerEntry_t timerInterruptHandlers[8];
 
 /******************************************************************************
  Local function prototypes
  *****************************************************************************/
 static void interruptHandler(uint_least8_t index);
+static void timerHandler(Timer_Handle handle, int_fast16_t status);
 
 /******************************************************************************
  Global functions
@@ -58,6 +68,7 @@ extern bool unihal_init(void)
 
     AONBatMonEnable();
     GPIO_init();
+    Timer_init();
 
 
     /*if(pin == NULL)
@@ -342,6 +353,61 @@ uint32_t unihal_getMicroTickCount(void)
     return Clock_getTicks() * Clock_tickPeriod;
 }
 
+extern bool unihal_timer_init(UniHAL_timer_t* const instance, const uint32_t periodUs, const bool oneShot, void (*handler)(void* const arg), void* const arg)
+{
+
+    UniHAL_SimpleLink_timerStruct_t* timerStruct = (UniHAL_SimpleLink_timerStruct_t*) instance->obj;
+
+    Timer_Params params;
+    Timer_Params_init(&params);
+    params.periodUnits = Timer_PERIOD_US;
+    params.period = periodUs;
+    params.timerMode  = oneShot ? Timer_ONESHOT_CALLBACK : Timer_CONTINUOUS_CALLBACK;
+    params.timerCallback = timerHandler;
+    timerStruct->handle = Timer_open(timerStruct->index, &params);
+
+    timerInterruptHandlers[timerStruct->index].handle = timerStruct->handle;
+    timerInterruptHandlers[timerStruct->index].handler = handler;
+    timerInterruptHandlers[timerStruct->index].arg = arg;
+
+    if(NULL == timerStruct->handle)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+bool unihal_timer_deinit(UniHAL_timer_t* const instance)
+{
+    Timer_close(((UniHAL_SimpleLink_timerStruct_t*) instance->obj)->handle);
+    return true;
+}
+
+bool unihal_timer_start(UniHAL_timer_t* const instance)
+{
+    if(Timer_STATUS_SUCCESS != Timer_start(((UniHAL_SimpleLink_timerStruct_t*) instance->obj)->handle))
+    {
+        return false;
+    }
+    return true;
+}
+
+bool unihal_timer_stop(UniHAL_timer_t* const instance)
+{
+    Timer_stop(((UniHAL_SimpleLink_timerStruct_t*) instance->obj)->handle);
+    return true;
+}
+
+bool unihal_timer_setPeriod(UniHAL_timer_t* const instance, const uint32_t periodUs)
+{
+    if(Timer_STATUS_SUCCESS != Timer_setPeriod(((UniHAL_SimpleLink_timerStruct_t*) instance->obj)->handle, Timer_PERIOD_US, periodUs))
+    {
+        return false;
+    }
+    return true;
+}
+
 /******************************************************************************
  Local Functions
  *****************************************************************************/
@@ -352,5 +418,17 @@ static void interruptHandler(uint_least8_t index)
     if(instance->irqHandler)
     {
         instance->irqHandler(instance->irqArg);
+    }
+}
+
+static void timerHandler(Timer_Handle handle, int_fast16_t status)
+{
+    for(size_t entry = 0U; entry < ARRAY_LEN(timerInterruptHandlers); entry++)
+    {
+        if(timerInterruptHandlers[entry].handle == handle)
+        {
+            timerInterruptHandlers[entry].handler(timerInterruptHandlers[entry].arg);
+            break;
+        }
     }
 }
