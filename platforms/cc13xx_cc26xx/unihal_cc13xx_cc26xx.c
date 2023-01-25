@@ -206,6 +206,18 @@ extern bool unihal_gpio_registerInterrupt(UniHAL_gpio_t* const instance, const U
     return status;
 }
 
+bool unihal_gpio_enableInterrupt(UniHAL_gpio_t* const instance)
+{
+    GPIO_enableInt(GPIO_INDEX(instance));
+    return true;
+}
+
+bool unihal_gpio_disableInterrupt(UniHAL_gpio_t* const instance)
+{
+    GPIO_disableInt(GPIO_INDEX(instance));
+    return true;
+}
+
 extern bool unihal_gpio_write(const UniHAL_gpio_t* const instance, const UniHAL_gpio_value_t outputValue)
 {
     //DU_ASSERT(instance != NULL);
