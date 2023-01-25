@@ -140,14 +140,17 @@ extern void unihal_reboot(void);
 
 extern bool unihal_gpio_init(UniHAL_gpio_t* const instance);
 extern bool unihal_gpio_deinit(UniHAL_gpio_t* const instance);
-extern bool unihal_gpio_registerInterrupt(UniHAL_gpio_t* const instance, const UniHAL_gpio_interrupt_t type, void (*handler)(void* const arg), void* const arg);
-extern bool unihal_gpio_clearInterrupt(UniHAL_gpio_t* const instance);
-extern bool unihal_gpio_write(const UniHAL_gpio_t* const instance, const UniHAL_gpio_value_t outputValue);
-extern UniHAL_gpio_value_t unihal_gpio_read(const UniHAL_gpio_t* const instance);
 
 extern bool unihal_gpio_configureInput(UniHAL_gpio_t* const instance, const UniHAL_gpio_pull_t pull);
 extern bool unihal_gpio_configureOutput(UniHAL_gpio_t* const instance, const UniHAL_gpio_value_t outputValue,
                                     const UniHAL_gpio_outputType_t outputType);
+
+extern bool unihal_gpio_registerInterrupt(UniHAL_gpio_t* const instance, const UniHAL_gpio_interrupt_t type, void (*handler)(void* const arg), void* const arg);
+extern bool unihal_gpio_enableInterrupt(UniHAL_gpio_t* const instance);
+extern bool unihal_gpio_disableInterrupt(UniHAL_gpio_t* const instance);
+
+extern bool unihal_gpio_write(const UniHAL_gpio_t* const instance, const UniHAL_gpio_value_t outputValue);
+extern UniHAL_gpio_value_t unihal_gpio_read(const UniHAL_gpio_t* const instance);
 
 extern bool unihal_spi_init(UniHAL_spi_t* const instance, void* const obj, UniHAL_gpio_t* const mosiGpio, UniHAL_gpio_t* const misoGpio, UniHAL_gpio_t* const sckGpio);
 
