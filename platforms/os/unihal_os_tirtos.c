@@ -48,7 +48,7 @@ bool unihalos_swTimer_init(UniHALos_swTimer_t* const instance, const uint32_t pe
     }
     UniHALos_TIRTOS_timerStruct_t* timer = (UniHALos_TIRTOS_timerStruct_t*) instance->obj;
     Clock_Params_init(&timer->params);
-    timer->params.arg       = arg;
+    timer->params.arg       = (uintptr_t) arg;
     timer->params.startFlag = false;
     timer->params.period    = oneShot ? 0 : periodUs / Clock_tickPeriod;
     timer->handle = Clock_construct(&timer->clock, (Clock_FuncPtr)handler, periodUs / Clock_tickPeriod, &timer->params);

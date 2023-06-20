@@ -259,7 +259,7 @@ bool unihal_i2c_transfer(const UniHAL_i2c_t* const instance, const uint8_t slave
     I2C_Handle i2cHandle = I2C_open(i2cStruct->index, &i2cStruct->params);
 
     I2C_Transaction transaction = {};
-    transaction.slaveAddress = slaveAddress;
+    transaction.targetAddress = slaveAddress;
     if (readVector != NULL)
     {
         transaction.readBuf = readVector->data;
@@ -314,7 +314,7 @@ bool unihal_spi_transfer(const UniHAL_spi_t* const instance, const size_t dataLe
 
     SPI_Transaction spiTransaction = {0};
     spiTransaction.rxBuf = readBuffer;
-    spiTransaction.txBuf = writeBuffer;
+    spiTransaction.txBuf = (void*) writeBuffer;
     spiTransaction.count = dataLen;
     status = SPI_transfer(spiHandle, &spiTransaction);
     SPI_close(spiHandle);
