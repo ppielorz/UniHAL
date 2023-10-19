@@ -1,14 +1,14 @@
 /******************************************************************************
- @file unihal_os.h
+ @file unihal_os_freertos.h
 
- @brief UniHAL OS declaration
+ @brief UniHALos implementation declarations for FreeRTOS.
 
  @author Paweł Pielorz (pawel.pielorz@gmail.com)
 
  *****************************************************************************/
 
-#ifndef _UNIHAL_OS_H_
-#define _UNIHAL_OS_H_
+#ifndef _UNIHAL_OS_FREERTOS_H_
+#define _UNIHAL_OS_FREERTOS_H_
 
 
 /******************************************************************************
@@ -17,6 +17,11 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
+
+#include <FreeRTOS.h>
+#include <timers.h>
+
+#include "unihal/unihal_os.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -27,31 +32,18 @@ extern "C"
  Constants and definitions
  *****************************************************************************/
 
-#define UNIHALOS_SWTIMER_OBJECT_SIZE 48
-typedef void (*UniHALos_swTimer_callbackFp_t)(void* arg);
-
 typedef struct
 {
-    /*!
-     * @brief OS specific driver object.
-     */
-    uint8_t obj[UNIHALOS_SWTIMER_OBJECT_SIZE];
-
-
-} UniHALos_swTimer_t;
+    StaticTimer_t timer;
+    TimerHandle_t timerHandle;
+} UniHALos_FreeRTOS_timerStruct_t;
 
 /******************************************************************************
  Function Prototypes
  *****************************************************************************/
 
-extern bool unihalos_swTimer_init(UniHALos_swTimer_t* const instance, const uint32_t periodUs, const bool oneShot, UniHALos_swTimer_callbackFp_t callback, void* const arg);
-extern bool unihalos_swTimer_deinit(UniHALos_swTimer_t* const instance);
-extern bool unihalos_swTimer_start(UniHALos_swTimer_t* const instance);
-extern bool unihalos_swTimer_stop(UniHALos_swTimer_t* const instance);
-extern bool unihalos_swTimer_setPeriod(UniHALos_swTimer_t* const instance, const uint32_t periodUs);
-
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _UNIHAL_OS_H_ */
+#endif /* _UNIHAL_OS_FREERTOS_H_ */

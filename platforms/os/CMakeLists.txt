@@ -1,3 +1,7 @@
 add_library(unihal_os_tirtos INTERFACE)
 target_sources(unihal_os_tirtos INTERFACE unihal_os_tirtos.c)
 target_include_directories(unihal_os_tirtos INTERFACE .)
+
+add_library(unihal_os_freertos INTERFACE)
+target_sources(unihal_os_freertos INTERFACE unihal_os_freertos.c)
+target_include_directories(unihal_os_freertos INTERFACE .)

@@ -19,6 +19,7 @@
 /******************************************************************************
  Constants and definitions
  *****************************************************************************/
+_Static_assert(sizeof(UniHALos_TIRTOS_timerStruct_t) <= sizeof(UniHALos_swTimer_t), "UniHAL OS UniHALos_swTimer_t struct not big enough!");
 
 /******************************************************************************
  External Variables
