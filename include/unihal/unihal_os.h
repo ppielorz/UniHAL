@@ -44,6 +44,19 @@ typedef struct
  Function Prototypes
  *****************************************************************************/
 
+/*!
+ * @brief Returns actual tick count in miliseconds.
+ * 
+ * @details Returned value can overflow and maximum value can vary between HAL
+ * implementations.
+ * 
+ * @return Actual tick count in miliseconds.
+ */
+extern uint32_t unihalos_getTickCount(void);
+
+extern void unihalos_sleep(const uint32_t seconds);
+extern void unihalos_usleep(const uint32_t microseconds);
+
 extern bool unihalos_swTimer_init(UniHALos_swTimer_t* const instance, const uint32_t periodUs, const bool oneShot, UniHALos_swTimer_callbackFp_t callback, void* const arg);
 extern bool unihalos_swTimer_deinit(UniHALos_swTimer_t* const instance);
 extern bool unihalos_swTimer_start(UniHALos_swTimer_t* const instance);

@@ -143,8 +143,6 @@ typedef struct
  *****************************************************************************/
 
 extern bool unihal_init(void);
-extern void unihal_sleep(const uint32_t seconds);
-extern void unihal_usleep(const uint32_t microseconds);
 extern void unihal_reboot(void);
 
 extern bool unihal_gpio_init(UniHAL_gpio_t* const instance);
@@ -185,17 +183,6 @@ extern bool unihal_i2c_readMem(const UniHAL_i2c_t* const instance, const uint8_t
                         const uint16_t memoryAddress, const uint8_t memoryAddressSize, uint8_t* const data, const size_t dataLen);
 
 extern uint32_t unihal_getVoltage(void);
-
-/*!
- * @brief Returns actual tick count in miliseconds.
- * 
- * @details Returned value can overflow and maximum value can vary between HAL
- * implementations.
- * 
- * @return Actual tick count in miliseconds.
- */
-extern uint32_t unihal_getTickCount(void);
-extern uint32_t unihal_getMicroTickCount(void);
 
 extern bool unihal_timer_init(UniHAL_timer_t* const instance, const uint32_t periodUs, const bool oneShot, void (*handler)(void* const arg), void* const arg);
 extern bool unihal_timer_deinit(UniHAL_timer_t* const instance);

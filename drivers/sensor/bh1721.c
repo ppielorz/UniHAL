@@ -14,6 +14,7 @@
 #include <string.h>
 
 #include "unihal/unihal.h"
+#include "unihal/unihal_os.h"
 #include "unihal/utils/array.h"
 #include "unihal/drivers/sensor/bh1721.h"
 
@@ -69,7 +70,7 @@ bool bh1721_init(BH1721_t* instance, UniHAL_i2c_t* i2cDriver, UniHAL_gpio_t* rst
     {
         return false;
     }
-    unihal_usleep(10);
+    unihalos_usleep(10);
     if (!unihal_gpio_write(instance->rst, UniHAL_gpio_value_high))
     {
         return false;
@@ -95,7 +96,7 @@ uint16_t bh1721_readIlluminance(BH1721_t* instance)
         return 0U;
     }
 
-    unihal_usleep(180000);
+    unihalos_usleep(180000);
 
     bool status = true;
     uint16_t illuminance = 0U;

@@ -14,6 +14,7 @@
 #include <string.h>
 
 #include "unihal/unihal.h"
+#include "unihal/unihal_os.h"
 #include "unihal/utils/array.h"
 #include "unihal/drivers/display/ssd1306.h"
 
@@ -222,7 +223,7 @@ static SSD1306_status_t reset(const SSD1306_t* const display)
     CHECK_AND_RETURN_STATUS(display != NULL, SSD1306_status_nullPointer);
 
     CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->rst, UniHAL_gpio_value_low) == true, SSD1306_status_rstPinWriteError);
-    unihal_usleep(5000);
+    unihalos_usleep(5000);
     CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->rst, UniHAL_gpio_value_high) == true, SSD1306_status_rstPinWriteError);
 
     return SSD1306_status_ok;

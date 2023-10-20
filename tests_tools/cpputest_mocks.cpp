@@ -84,9 +84,9 @@ bool unihal_spi_transfer(UniHAL_spi_t* instance, size_t dataLen, uint8_t* writeB
     return mock().boolReturnValue();
 }
 
-void unihal_usleep(uint32_t microseconds)
+void unihalos_usleep(uint32_t microseconds)
 {
-    mock().actualCall("unihal_usleep").withUnsignedIntParameter("microseconds", microseconds);
+    mock().actualCall("unihalos_usleep").withUnsignedIntParameter("microseconds", microseconds);
 }
 
 bool unihal_gpio_init(UniHAL_gpio_t* instance)

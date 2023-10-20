@@ -322,16 +322,6 @@ bool unihal_spi_transfer(const UniHAL_spi_t* const instance, const size_t dataLe
     return status;
 }
 
-#include <ti/sysbios/knl/Task.h>
-void unihal_usleep(const uint32_t microseconds)
-{
-    Task_sleep(microseconds / 10);
-}
-
-void unihal_sleep(const uint32_t seconds)
-{
-    Task_sleep(seconds * 1000 * 100);
-}
 void unihal_reboot(void)
 {
     SysCtrlSystemReset();
@@ -340,17 +330,6 @@ void unihal_reboot(void)
 uint32_t unihal_getVoltage(void)
 {
     return (AONBatMonBatteryVoltageGet() * 125) >> 5;
-}
-
-#include <ti/sysbios/knl/Clock.h>
-uint32_t unihal_getTickCount(void)
-{
-    return Clock_getTicks() * Clock_tickPeriod / 1000;
-}
-
-uint32_t unihal_getMicroTickCount(void)
-{
-    return Clock_getTicks() * Clock_tickPeriod;
 }
 
 extern bool unihal_timer_init(UniHAL_timer_t* const instance, const uint32_t periodUs, const bool oneShot, void (*handler)(void* const arg), void* const arg)

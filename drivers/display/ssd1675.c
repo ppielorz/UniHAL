@@ -14,6 +14,7 @@
 #include <string.h>
 
 #include "unihal/unihal.h"
+#include "unihal/unihal_os.h"
 #include "unihal/utils/array.h"
 #include "unihal/drivers/display/ssd1675.h"
 
@@ -141,7 +142,7 @@ SSD1675_status_t ssd1675_refresh(SSD1675_t* const display)
 
     sendCommand(display, 0x22);
     sendData(display, 0xB1);
-    //unihal_usleep(100000);
+    //unihalos_usleep(100000);
     setCursor(display, 0, 0);
 
     CHECK_AND_RETURN_IF_ERROR(setCursor(display, 0, 0));
@@ -171,7 +172,7 @@ SSD1675_status_t ssd1675_refresh(SSD1675_t* const display)
 
     sendCommand(display, 0x22);
     sendData(display, 0xC7);
-    //unihal_usleep(100000);
+    //unihalos_usleep(100000);
     sendCommand(display, 0x20);
     CHECK_AND_RETURN_IF_ERROR(waitForBusyFlag(display, DISPLAY_REFRESH_TIMEOUT_MS, DISPLAY_REFRESH_TIMESPAN_US));
 
@@ -237,7 +238,7 @@ static SSD1675_status_t initDisplay(const SSD1675_t* const display)
     CHECK_AND_RETURN_IF_ERROR(sendData(display, 0x00));
     CHECK_AND_RETURN_IF_ERROR(sendData(display, 0x00));
     CHECK_AND_RETURN_IF_ERROR(waitForBusyFlag(display, TEMPERATURE_SENSOR_COMMUNICATION_TIMEOUT_MS, TEMPERATURE_SENSOR_COMMUNICATION_TIMESPAN_US));
-    unihal_usleep(100000);
+    unihalos_usleep(100000);
     
     /* Select pointer for temperature register. */
     CHECK_AND_RETURN_IF_ERROR(sendCommand(display, 0x1C));
@@ -299,11 +300,11 @@ static SSD1675_status_t hwReset(const SSD1675_t* const display)
     CHECK_AND_RETURN_STATUS(display != NULL, SSD1675_status_nullPointer);
 
     CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->rst, UniHAL_gpio_value_high) == true, SSD1675_status_rstPinWriteError);
-    unihal_usleep(HW_RESET_TIMESPAN_US);
+    unihalos_usleep(HW_RESET_TIMESPAN_US);
     CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->rst, UniHAL_gpio_value_low) == true, SSD1675_status_rstPinWriteError);
-    unihal_usleep(HW_RESET_TIMESPAN_US);
+    unihalos_usleep(HW_RESET_TIMESPAN_US);
     CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->rst, UniHAL_gpio_value_high) == true, SSD1675_status_rstPinWriteError);
-    unihal_usleep(HW_RESET_TIMESPAN_US);
+    unihalos_usleep(HW_RESET_TIMESPAN_US);
 
     return SSD1675_status_ok;
 }
@@ -326,14 +327,14 @@ static SSD1675_status_t waitForBusyFlag(const SSD1675_t* const display, const ui
 
     CHECK_AND_RETURN_STATUS(display != NULL, SSD1675_status_nullPointer);
 
-    timeoutTicksStart = unihal_getTickCount();
+    timeoutTicksStart = unihalos_getTickCount();
     while(unihal_gpio_read(display->bsy) == UniHAL_gpio_value_high)
     {
-        if((unihal_getTickCount() - timeoutTicksStart) > timeoutMs)
+        if((unihalos_getTickCount() - timeoutTicksStart) > timeoutMs)
         {
             return SSD1675_status_timeout;
         }
-        unihal_usleep(pollTimespanUs);
+        unihalos_usleep(pollTimespanUs);
     }
 
     return SSD1675_status_ok;

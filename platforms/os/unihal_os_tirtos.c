@@ -13,6 +13,9 @@
 #include <stdint.h>
 #include <string.h>
 
+#include <ti/sysbios/knl/Clock.h>
+#include <ti/sysbios/knl/Task.h>
+
 #include "unihal/unihal_os.h"
 #include "unihal_os_tirtos.h"
 
@@ -40,6 +43,21 @@ _Static_assert(sizeof(UniHALos_TIRTOS_timerStruct_t) <= sizeof(UniHALos_swTimer_
 /******************************************************************************
  Global functions
  ******************************************************************************/
+
+uint32_t unihalos_getTickCount(void)
+{
+    return Clock_getTicks() * Clock_tickPeriod / 1000;
+}
+
+void unihalos_usleep(const uint32_t microseconds)
+{
+    Task_sleep(microseconds / Clock_tickPeriod);
+}
+
+void unihalos_sleep(const uint32_t seconds)
+{
+    Task_sleep(seconds * 1000 * 1000 / Clock_tickPeriod);
+}
 
 bool unihalos_swTimer_init(UniHALos_swTimer_t* const instance, const uint32_t periodUs, const bool oneShot, void (*handler)(void* const arg), void* const arg)
 {

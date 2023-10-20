@@ -14,6 +14,7 @@
 #include <string.h>
 
 #include "unihal/unihal.h"
+#include "unihal/unihal_os.h"
 #include "unihal/utils/array.h"
 #include "unihal/utils/stream.h"
 #include "unihal/drivers/sensor/bme280.h"
@@ -295,7 +296,7 @@ static BME280_status_t resetDevice(BME280_t* instance)
 
     for(uint8_t attempt = 0U; attempt < RESET_RETRY_COUNT; attempt++)
     {
-        unihal_usleep(RESET_TIME_US);
+        unihalos_usleep(RESET_TIME_US);
         status = getDeviceStatus(instance, &deviceStatus);
 
         if(status != BME280_status_ok)
@@ -333,7 +334,7 @@ static BME280_status_t waitForConversion(BME280_t* instance)
             return BME280_status_ok;
         }
 
-        unihal_usleep(SINGLE_CONVERSION_DELAY_US);
+        unihalos_usleep(SINGLE_CONVERSION_DELAY_US);
         conversionTime += SINGLE_CONVERSION_DELAY_US;
     }
 
