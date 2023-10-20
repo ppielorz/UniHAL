@@ -68,6 +68,7 @@ extern bool unihal_init(void)
 
     AONBatMonEnable();
     GPIO_init();
+    SPI_init();
     Timer_init();
 
 
@@ -312,12 +313,15 @@ bool unihal_spi_transfer(const UniHAL_spi_t* const instance, const size_t dataLe
     SPI_Handle spiHandle = SPI_open(spiStruct->index, NULL);//TODO spi params
     bool status = false;
 
-    SPI_Transaction spiTransaction = {0};
-    spiTransaction.rxBuf = readBuffer;
-    spiTransaction.txBuf = (void*) writeBuffer;
-    spiTransaction.count = dataLen;
-    status = SPI_transfer(spiHandle, &spiTransaction);
-    SPI_close(spiHandle);
+    if(spiHandle != NULL)
+    {
+        SPI_Transaction spiTransaction = {0};
+        spiTransaction.rxBuf = readBuffer;
+        spiTransaction.txBuf = (void*) writeBuffer;
+        spiTransaction.count = dataLen;
+        status = SPI_transfer(spiHandle, &spiTransaction);
+        SPI_close(spiHandle);
+    }
 
     return status;
 }
