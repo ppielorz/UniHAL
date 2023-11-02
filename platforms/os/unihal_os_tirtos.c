@@ -49,17 +49,12 @@ uint32_t unihalos_getTickCount(void)
     return Clock_getTicks() * Clock_tickPeriod / 1000;
 }
 
-void unihalos_usleep(const uint32_t microseconds)
+void unihalos_sleep(const uint32_t milliseconds)
 {
-    Task_sleep(microseconds / Clock_tickPeriod);
+    Task_sleep(milliseconds * 1000 / Clock_tickPeriod);
 }
 
-void unihalos_sleep(const uint32_t seconds)
-{
-    Task_sleep(seconds * 1000 * 1000 / Clock_tickPeriod);
-}
-
-bool unihalos_swTimer_init(UniHALos_swTimer_t* const instance, const uint32_t periodUs, const bool oneShot, void (*handler)(void* const arg), void* const arg)
+bool unihalos_swTimer_init(UniHALos_swTimer_t* const instance, const uint32_t periodMs, const bool oneShot, void (*handler)(void* const arg), void* const arg)
 {
     if(instance == NULL)
     {
@@ -69,7 +64,7 @@ bool unihalos_swTimer_init(UniHALos_swTimer_t* const instance, const uint32_t pe
     Clock_Params_init(&timer->params);
     timer->params.arg       = (uintptr_t) arg;
     timer->params.startFlag = false;
-    timer->params.period    = oneShot ? 0 : periodUs / Clock_tickPeriod;
+    timer->params.period    = oneShot ? 0 : periodMs * 1000 / Clock_tickPeriod;
     timer->handle = Clock_construct(&timer->clock, (Clock_FuncPtr)handler, periodUs / Clock_tickPeriod, &timer->params);
 
     return (timer->handle != NULL);
@@ -96,14 +91,14 @@ bool unihalos_swTimer_stop(UniHALos_swTimer_t* const instance)
     return true;
 }
 
-bool unihalos_swTimer_setPeriod(UniHALos_swTimer_t* const instance, const uint32_t periodUs)
+bool unihalos_swTimer_setPeriod(UniHALos_swTimer_t* const instance, const uint32_t periodMs)
 {
     UniHALos_TIRTOS_timerStruct_t* timer = (UniHALos_TIRTOS_timerStruct_t*) instance->obj;
     //TODO must be stopped
-    Clock_setTimeout(timer->handle, periodUs / Clock_tickPeriod);
+    Clock_setTimeout(timer->handle, periodMs * 1000 / Clock_tickPeriod);
     if(timer->clock.period != 0)
     {
-        Clock_setPeriod(timer->handle, periodUs / Clock_tickPeriod);
+        Clock_setPeriod(timer->handle, periodMs * 1000 / Clock_tickPeriod);
     }
     return true;
 }

@@ -54,14 +54,13 @@ typedef struct
  */
 extern uint32_t unihalos_getTickCount(void);
 
-extern void unihalos_sleep(const uint32_t seconds);
-extern void unihalos_usleep(const uint32_t microseconds);
+extern void unihalos_sleep(const uint32_t milliseconds);
 
-extern bool unihalos_swTimer_init(UniHALos_swTimer_t* const instance, const uint32_t periodUs, const bool oneShot, UniHALos_swTimer_callbackFp_t callback, void* const arg);
+extern bool unihalos_swTimer_init(UniHALos_swTimer_t* const instance, const uint32_t periodMs, const bool oneShot, UniHALos_swTimer_callbackFp_t callback, void* const arg);
 extern bool unihalos_swTimer_deinit(UniHALos_swTimer_t* const instance);
 extern bool unihalos_swTimer_start(UniHALos_swTimer_t* const instance);
 extern bool unihalos_swTimer_stop(UniHALos_swTimer_t* const instance);
-extern bool unihalos_swTimer_setPeriod(UniHALos_swTimer_t* const instance, const uint32_t periodUs);
+extern bool unihalos_swTimer_setPeriod(UniHALos_swTimer_t* const instance, const uint32_t periodMs);
 
 #ifdef __cplusplus
 }

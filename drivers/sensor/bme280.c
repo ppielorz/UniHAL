@@ -49,10 +49,10 @@
 #define RAW_DATA_HUMIDITY_MSB_OFFSET        6U
 #define RAW_DATA_HUMIDITY_LSB_OFFSET        7U
 
-#define RESET_TIME_US       2000
+#define RESET_TIME_MS       2
 #define RESET_RETRY_COUNT   3
-#define SINGLE_CONVERSION_DELAY_US 1000
-#define MAX_CONVERSION_TIME_US (500 * 1000)
+#define SINGLE_CONVERSION_DELAY_MS 1
+#define MAX_CONVERSION_TIME_MS 500
 
 #define REGISTER_STATUS_MEASURING_BIT   (1 << 3)
 #define REGISTER_STATUS_UPDATE_BIT      (1 << 0)
@@ -296,7 +296,7 @@ static BME280_status_t resetDevice(BME280_t* instance)
 
     for(uint8_t attempt = 0U; attempt < RESET_RETRY_COUNT; attempt++)
     {
-        unihalos_usleep(RESET_TIME_US);
+        unihalos_sleep(RESET_TIME_MS);
         status = getDeviceStatus(instance, &deviceStatus);
 
         if(status != BME280_status_ok)
@@ -320,7 +320,7 @@ static BME280_status_t waitForConversion(BME280_t* instance)
     BME280_status_t status = BME280_status_ok;
     uint8_t deviceStatus = 0U;
 
-    while(conversionTime < MAX_CONVERSION_TIME_US)
+    while(conversionTime < MAX_CONVERSION_TIME_MS)
     {
         status = getDeviceStatus(instance, &deviceStatus);
 
@@ -334,8 +334,8 @@ static BME280_status_t waitForConversion(BME280_t* instance)
             return BME280_status_ok;
         }
 
-        unihalos_usleep(SINGLE_CONVERSION_DELAY_US);
-        conversionTime += SINGLE_CONVERSION_DELAY_US;
+        unihalos_sleep(SINGLE_CONVERSION_DELAY_MS);
+        conversionTime += SINGLE_CONVERSION_DELAY_MS;
     }
 
     return BME280_status_ok;

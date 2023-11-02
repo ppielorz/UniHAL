@@ -61,17 +61,12 @@ uint32_t unihalos_getTickCount(void)
     return xTaskGetTickCount();
 }
 
-void unihalos_usleep(const uint32_t microseconds)
+void unihalos_sleep(const uint32_t milliseconds)
 {
-    vTaskDelay(pdMS_TO_TICKS(microseconds / 1000));
+    vTaskDelay(pdMS_TO_TICKS(milliseconds));
 }
 
-void unihalos_sleep(const uint32_t seconds)
-{
-    Task_sleep(pdMS_TO_TICKS(seconds * 1000));
-}
-
-bool unihalos_swTimer_init(UniHALos_swTimer_t* const instance, const uint32_t periodUs, const bool oneShot, UniHALos_swTimer_callbackFp_t callback, void* const arg)
+bool unihalos_swTimer_init(UniHALos_swTimer_t* const instance, const uint32_t periodMs, const bool oneShot, UniHALos_swTimer_callbackFp_t callback, void* const arg)
 {
     if(instance == NULL)
     {
@@ -84,7 +79,7 @@ bool unihalos_swTimer_init(UniHALos_swTimer_t* const instance, const uint32_t pe
     }
 
     UniHALos_FreeRTOS_timerStruct_t* timerStruct = (UniHALos_FreeRTOS_timerStruct_t*) instance->obj;
-    timerStruct->timerHandle = xTimerCreateStatic(NULL, pdMS_TO_TICKS(periodUs / 1000), oneShot ? pdFALSE : pdTRUE, NULL, timerCallbackDispatcher, &timerStruct->timer);
+    timerStruct->timerHandle = xTimerCreateStatic(NULL, pdMS_TO_TICKS(periodMs), oneShot ? pdFALSE : pdTRUE, NULL, timerCallbackDispatcher, &timerStruct->timer);
 
     if(timerStruct->timerHandle == NULL)
     {
@@ -135,12 +130,12 @@ bool unihalos_swTimer_stop(UniHALos_swTimer_t* const instance)
     return false;
 }
 
-bool unihalos_swTimer_setPeriod(UniHALos_swTimer_t* const instance, const uint32_t periodUs)
+bool unihalos_swTimer_setPeriod(UniHALos_swTimer_t* const instance, const uint32_t periodMs)
 {
     if(instance != NULL)
     {
         UniHALos_FreeRTOS_timerStruct_t* timerStruct = (UniHALos_FreeRTOS_timerStruct_t*) instance->obj;
-        return xTimerChangePeriod(timerStruct->timerHandle, pdMS_TO_TICKS(periodUs / 1000), 0U) == pdPASS;
+        return xTimerChangePeriod(timerStruct->timerHandle, pdMS_TO_TICKS(periodMs), 0U) == pdPASS;
     }
     return false;
 }

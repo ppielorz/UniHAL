@@ -49,12 +49,15 @@ typedef struct
  Local variables
  *****************************************************************************/
 static timerInterruptHandlerEntry_t timerInterruptHandlers[8];
+static UniHAL_gpio_errorHandlerFp_t errorHandler = NULL;
+static void* errorHandlerArg = NULL;
 
 /******************************************************************************
  Local function prototypes
  *****************************************************************************/
 static void interruptHandler(uint_least8_t index);
 static void timerHandler(Timer_Handle handle, int_fast16_t status);
+static const char* i2cError(const int_fast16_t errorCode);
 
 /******************************************************************************
  Global functions
@@ -70,7 +73,7 @@ extern bool unihal_init(void)
     GPIO_init();
     SPI_init();
     Timer_init();
-
+    I2C_init();
 
     /*if(pin == NULL)
     {
@@ -85,6 +88,20 @@ extern bool unihal_init(void)
     }*/
 
     return status;
+}
+
+void unihal_setErrorHandler(UniHAL_gpio_errorHandlerFp_t errorHandlerFp, void* arg)
+{
+    errorHandler = errorHandlerFp;
+    errorHandlerArg = arg;
+}
+
+void unihal_callErrorHandler(const char* const errorMessage)
+{
+    if(errorHandler)
+    {
+        errorHandler(errorMessage, errorHandlerArg);
+    }
 }
 
 extern bool unihal_gpio_init(UniHAL_gpio_t* const instance)
@@ -257,7 +274,6 @@ bool unihal_i2c_transfer(const UniHAL_i2c_t* const instance, const uint8_t slave
 {
     //DU_ASSERT(instance != NULL);
     UniHAL_SimpleLink_i2cStruct_t* i2cStruct = (UniHAL_SimpleLink_i2cStruct_t*) instance->obj;
-    I2C_Handle i2cHandle = I2C_open(i2cStruct->index, &i2cStruct->params);
 
     I2C_Transaction transaction = {};
     transaction.targetAddress = slaveAddress;
@@ -272,10 +288,18 @@ bool unihal_i2c_transfer(const UniHAL_i2c_t* const instance, const uint8_t slave
         transaction.writeCount = writeVector->size;
     }
 
-    int_fast16_t i2cStatus = I2C_transferTimeout(i2cHandle, &transaction, timeout);
-
+    I2C_Handle i2cHandle = I2C_open(i2cStruct->index, &i2cStruct->params);
+    int_fast16_t i2cStatus = I2C_transferTimeout(i2cHandle, &transaction, timeout * 100);
     I2C_close(i2cHandle);
-    return (I2C_STATUS_SUCCESS == i2cStatus);
+    if(I2C_STATUS_SUCCESS != i2cStatus)
+    {
+        char errorText[32];
+        snprintf(errorText, sizeof(errorText), "I2C_transferTimeout -> %i", i2cStatus);
+        unihal_callErrorHandler(i2cError(i2cStatus));
+        return false;
+    }
+
+    return true;
 }
 
 bool unihal_i2c_readMem(const UniHAL_i2c_t* const instance, const uint8_t slaveAddress, const uint32_t timeout, 
@@ -413,5 +437,45 @@ static void timerHandler(Timer_Handle handle, int_fast16_t status)
             timerInterruptHandlers[entry].handler(timerInterruptHandlers[entry].arg);
             break;
         }
+    }
+}
+
+static const char* i2cError(const int_fast16_t errorCode)
+{
+    switch(errorCode)
+    {
+        case I2C_STATUS_ERROR:
+        return "I2C error";
+
+        case I2C_STATUS_UNDEFINEDCMD:
+        return "I2C error";
+
+        case I2C_STATUS_TIMEOUT:
+        return "I2C error";
+
+        case I2C_STATUS_CLOCK_TIMEOUT:
+        return "I2C error";
+
+        case I2C_STATUS_ADDR_NACK:
+        return "I2C error";
+
+        case I2C_STATUS_DATA_NACK:
+        return "I2C error";
+
+        case I2C_STATUS_ARB_LOST:
+        return "I2C error";
+
+        case I2C_STATUS_INCOMPLETE:
+        return "I2C error";
+
+        case I2C_STATUS_BUS_BUSY:
+        return "I2C error";
+
+        case I2C_STATUS_CANCEL:
+        return "I2C error";
+
+        case I2C_STATUS_INVALID_TRANS:
+        return "I2C error";
+
     }
 }

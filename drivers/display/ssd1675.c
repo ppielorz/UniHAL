@@ -50,15 +50,15 @@
 #define ANALOG_BLOCK_CONTROL_VALUE 0x54
 #define DIGITAL_BLOCK_CONTROL_VALUE 0x3B
 
-#define HW_RESET_TIMESPAN_US            10000
-#define SW_RESET_TIMESPAN_US            1000
+#define HW_RESET_TIMESPAN_MS            10
+#define SW_RESET_TIMESPAN_MS            1
 #define SW_RESET_TIMEOUT_MS             300
 #define MASTER_ACTIVATION_TIMEOUT_MS    200
-#define MASTER_ACTIVATION_TIMESPAN_US   1000
+#define MASTER_ACTIVATION_TIMESPAN_MS   1
 #define TEMPERATURE_SENSOR_COMMUNICATION_TIMEOUT_MS    20
-#define TEMPERATURE_SENSOR_COMMUNICATION_TIMESPAN_US   1000
+#define TEMPERATURE_SENSOR_COMMUNICATION_TIMESPAN_MS   1
 #define DISPLAY_REFRESH_TIMEOUT_MS    5000000
-#define DISPLAY_REFRESH_TIMESPAN_US   100000
+#define DISPLAY_REFRESH_TIMESPAN_MS   100
 
 /******************************************************************************
  External Variables
@@ -81,7 +81,7 @@ static SSD1675_status_t initDisplay(const SSD1675_t* const display);
 static SSD1675_status_t setRamContentOption(const SSD1675_t* const display, const uint8_t bwRamOption, const uint8_t redRamOption);
 static SSD1675_status_t hwReset(const SSD1675_t* const display);
 static SSD1675_status_t swReset(const SSD1675_t* const display);
-static SSD1675_status_t waitForBusyFlag(const SSD1675_t* const display, const uint32_t timeoutMs, const uint32_t pollTimespanUs);
+static SSD1675_status_t waitForBusyFlag(const SSD1675_t* const display, const uint32_t timeoutMs, const uint32_t pollTimespanMs);
 static SSD1675_status_t enterSleep(const SSD1675_t* const display);
 static SSD1675_status_t setCursor(const SSD1675_t* const display, const uint8_t x, const uint16_t y);
 //static SSD1675_status_t temperatureSensorWrite(const SSD1675_t* const display, const uint8_t x, const uint16_t y);
@@ -166,7 +166,7 @@ SSD1675_status_t ssd1675_refresh(SSD1675_t* const display)
     CHECK_AND_RETURN_IF_ERROR(sendData(display, 0x41));
     CHECK_AND_RETURN_IF_ERROR(sendData(display, 0x01));
     CHECK_AND_RETURN_IF_ERROR(sendData(display, 0x00));
-    CHECK_AND_RETURN_IF_ERROR(waitForBusyFlag(display, TEMPERATURE_SENSOR_COMMUNICATION_TIMEOUT_MS, TEMPERATURE_SENSOR_COMMUNICATION_TIMESPAN_US));
+    CHECK_AND_RETURN_IF_ERROR(waitForBusyFlag(display, TEMPERATURE_SENSOR_COMMUNICATION_TIMEOUT_MS, TEMPERATURE_SENSOR_COMMUNICATION_TIMESPAN_MS));
 
 
 
@@ -174,7 +174,7 @@ SSD1675_status_t ssd1675_refresh(SSD1675_t* const display)
     sendData(display, 0xC7);
     //unihalos_usleep(100000);
     sendCommand(display, 0x20);
-    CHECK_AND_RETURN_IF_ERROR(waitForBusyFlag(display, DISPLAY_REFRESH_TIMEOUT_MS, DISPLAY_REFRESH_TIMESPAN_US));
+    CHECK_AND_RETURN_IF_ERROR(waitForBusyFlag(display, DISPLAY_REFRESH_TIMEOUT_MS, DISPLAY_REFRESH_TIMESPAN_MS));
 
     CHECK_AND_RETURN_IF_ERROR(enterSleep(display));
 
@@ -230,27 +230,27 @@ static SSD1675_status_t initDisplay(const SSD1675_t* const display)
     sendCommand(display, 0x22);
     sendData(display, 0x80);
     sendCommand(display, 0x20);
-    CHECK_AND_RETURN_IF_ERROR(waitForBusyFlag(display, MASTER_ACTIVATION_TIMEOUT_MS, MASTER_ACTIVATION_TIMESPAN_US));
+    CHECK_AND_RETURN_IF_ERROR(waitForBusyFlag(display, MASTER_ACTIVATION_TIMEOUT_MS, MASTER_ACTIVATION_TIMESPAN_MS));
 
     /* Wake up temperature sensor. */
     CHECK_AND_RETURN_IF_ERROR(sendCommand(display, 0x1C));
     CHECK_AND_RETURN_IF_ERROR(sendData(display, 0x41));
     CHECK_AND_RETURN_IF_ERROR(sendData(display, 0x00));
     CHECK_AND_RETURN_IF_ERROR(sendData(display, 0x00));
-    CHECK_AND_RETURN_IF_ERROR(waitForBusyFlag(display, TEMPERATURE_SENSOR_COMMUNICATION_TIMEOUT_MS, TEMPERATURE_SENSOR_COMMUNICATION_TIMESPAN_US));
-    unihalos_usleep(100000);
+    CHECK_AND_RETURN_IF_ERROR(waitForBusyFlag(display, TEMPERATURE_SENSOR_COMMUNICATION_TIMEOUT_MS, TEMPERATURE_SENSOR_COMMUNICATION_TIMESPAN_MS));
+    unihalos_sleep(100);
     
     /* Select pointer for temperature register. */
     CHECK_AND_RETURN_IF_ERROR(sendCommand(display, 0x1C));
     CHECK_AND_RETURN_IF_ERROR(sendData(display, 0x00));
     CHECK_AND_RETURN_IF_ERROR(sendData(display, 0x00));
     CHECK_AND_RETURN_IF_ERROR(sendData(display, 0x00));
-    CHECK_AND_RETURN_IF_ERROR(waitForBusyFlag(display, TEMPERATURE_SENSOR_COMMUNICATION_TIMEOUT_MS, TEMPERATURE_SENSOR_COMMUNICATION_TIMESPAN_US));
+    CHECK_AND_RETURN_IF_ERROR(waitForBusyFlag(display, TEMPERATURE_SENSOR_COMMUNICATION_TIMEOUT_MS, TEMPERATURE_SENSOR_COMMUNICATION_TIMESPAN_MS));
     
     sendCommand(display, 0x22);
     sendData(display, 0xB0);
     sendCommand(display, 0x20);
-    CHECK_AND_RETURN_IF_ERROR(waitForBusyFlag(display, MASTER_ACTIVATION_TIMEOUT_MS, MASTER_ACTIVATION_TIMESPAN_US));
+    CHECK_AND_RETURN_IF_ERROR(waitForBusyFlag(display, MASTER_ACTIVATION_TIMEOUT_MS, MASTER_ACTIVATION_TIMESPAN_MS));
 
 
     sendCommand(display, 0x01);
@@ -300,11 +300,11 @@ static SSD1675_status_t hwReset(const SSD1675_t* const display)
     CHECK_AND_RETURN_STATUS(display != NULL, SSD1675_status_nullPointer);
 
     CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->rst, UniHAL_gpio_value_high) == true, SSD1675_status_rstPinWriteError);
-    unihalos_usleep(HW_RESET_TIMESPAN_US);
+    unihalos_sleep(HW_RESET_TIMESPAN_MS);
     CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->rst, UniHAL_gpio_value_low) == true, SSD1675_status_rstPinWriteError);
-    unihalos_usleep(HW_RESET_TIMESPAN_US);
+    unihalos_sleep(HW_RESET_TIMESPAN_MS);
     CHECK_AND_RETURN_STATUS(unihal_gpio_write(display->rst, UniHAL_gpio_value_high) == true, SSD1675_status_rstPinWriteError);
-    unihalos_usleep(HW_RESET_TIMESPAN_US);
+    unihalos_sleep(HW_RESET_TIMESPAN_MS);
 
     return SSD1675_status_ok;
 }
@@ -316,12 +316,12 @@ static SSD1675_status_t swReset(const SSD1675_t* const display)
     CHECK_AND_RETURN_STATUS(display != NULL, SSD1675_status_nullPointer);
 
     CHECK_AND_RETURN_IF_ERROR(sendCommand(display, REG_RESET));
-    CHECK_AND_RETURN_IF_ERROR(waitForBusyFlag(display, SW_RESET_TIMEOUT_MS, SW_RESET_TIMESPAN_US));
+    CHECK_AND_RETURN_IF_ERROR(waitForBusyFlag(display, SW_RESET_TIMEOUT_MS, SW_RESET_TIMESPAN_MS));
 
     return ret;
 }
 
-static SSD1675_status_t waitForBusyFlag(const SSD1675_t* const display, const uint32_t timeoutMs, const uint32_t pollTimespanUs)
+static SSD1675_status_t waitForBusyFlag(const SSD1675_t* const display, const uint32_t timeoutMs, const uint32_t pollTimespanMs)
 {
     uint32_t timeoutTicksStart;
 
@@ -334,7 +334,7 @@ static SSD1675_status_t waitForBusyFlag(const SSD1675_t* const display, const ui
         {
             return SSD1675_status_timeout;
         }
-        unihalos_usleep(pollTimespanUs);
+        unihalos_sleep(pollTimespanMs);
     }
 
     return SSD1675_status_ok;

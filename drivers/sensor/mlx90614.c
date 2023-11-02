@@ -156,29 +156,35 @@ static bool mlxRead(MLX90614_t* instance, uint8_t command, uint16_t* data)
     }
 
     uint8_t readBufferData[3] = {0U};
-    uint8_t crcTemporary[5] = {0U};
-    bool status = true;
     vector_t readVector = {.data = readBufferData, .size = sizeof(readBufferData)};
     vector_t writeVector = {.data = &command, .size = sizeof(command)};
 
-    status = unihal_i2c_transfer(instance->i2cDriver, instance->deviceAddress, 100U, &writeVector, &readVector);
-
-    if(status)
+    if(!unihal_i2c_transfer(instance->i2cDriver, instance->deviceAddress, 100U, &writeVector, &readVector))
     {
-        crcTemporary[0] = (instance->deviceAddress << 1) | 0;
-        crcTemporary[1] = command;
-        crcTemporary[2] = (instance->deviceAddress << 1) | 1;
-        memcpy(&crcTemporary[3], readVector.data, 2);
-
-        status = (mlxCrc(crcTemporary, sizeof(crcTemporary)) == readVector.data[2]);
+        unihal_callErrorHandler("MLX90614 communication error");
+        return false;
     }
 
-    if(status)
+    #if 0
+    const uint8_t crcTemporary[] = 
     {
-        *data = readVector.data[0] | (readVector.data[1] << 8);
-    }
+        (instance->deviceAddress << 1) | 0,
+        command,
+        (instance->deviceAddress << 1) | 1,
+        readVector.data[0],
+        readVector.data[1]
+    };
+    const uint8_t calculatedCrc = mlxCrc(crcTemporary, sizeof(crcTemporary));
 
-    return status;
+    if(calculatedCrc != readVector.data[2])
+    {
+        unihal_callErrorHandler("MLX90614 CRC error");
+        return false;
+    }
+    #endif
+
+    *data = readVector.data[0] | (readVector.data[1] << 8);
+    return true;
 }
 
 static bool mlxWrite(MLX90614_t* instance, uint8_t command, uint16_t data)
@@ -201,19 +207,16 @@ static bool mlxWrite(MLX90614_t* instance, uint8_t command, uint16_t data)
 
 static uint8_t mlxCrc(const uint8_t* buffer, size_t bufferLen)
 {
-    const uint8_t crcTable[16] = {0x00U, 0x07U, 0x0EU, 0x09U, 0x1CU, 0x1BU, 0x12U, 0x15U,
-                                   0x38U, 0x3FU, 0x36U, 0x31U, 0x24U, 0x23U, 0x2AU, 0x2DU};
-    uint8_t tblIdx;
     uint8_t crc = 0U;
-
     while (bufferLen--)
     {
-        tblIdx = (crc >> 4) ^ (*buffer >> 4);
-        crc = crcTable[tblIdx & 0x0F] ^ (crc << 4);
-        tblIdx = (crc >> 4) ^ (*buffer >> 0);
-        crc = crcTable[tblIdx & 0x0F] ^ (crc << 4);
+        uint8_t i = 8;
+        crc ^= *buffer;
+        while(i--)
+        {
+            crc = crc & 0x80 ? (crc << 1) ^ 7 : crc << 1;
+        }
         buffer++;
     }
-
-    return crc & 0xFF;
+    return crc;
 }

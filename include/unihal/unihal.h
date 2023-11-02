@@ -34,6 +34,7 @@ typedef enum
 } UniHAL_status_t;
 
 typedef void (*UniHAL_gpio_interruptHandlerFp_t)(void* arg);
+typedef void (*UniHAL_gpio_errorHandlerFp_t)(const char* const errorMessage, void* arg);
 
 typedef enum
 {
@@ -143,6 +144,18 @@ typedef struct
  *****************************************************************************/
 
 extern bool unihal_init(void);
+
+/**
+ * @brief Sets a new error handler function.
+ * 
+ * @details If an error occurs during UniHAL operation errorHandlerFp will be 
+ *          called with provided arg argument.
+ * 
+ * @param errorHandlerFp Pointer to error handler function.
+ * @param arg Argument to be passed.
+ */
+extern void unihal_setErrorHandler(UniHAL_gpio_errorHandlerFp_t errorHandlerFp, void* arg);
+extern void unihal_callErrorHandler(const char* const errorMessage);
 extern void unihal_reboot(void);
 
 extern bool unihal_gpio_init(UniHAL_gpio_t* const instance);
