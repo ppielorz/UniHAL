@@ -97,7 +97,7 @@ typedef struct
 
 } UniHAL_i2c_t;*/
 
-typedef struct
+typedef struct UniHAL_i2c_t
 {
     /*!
      * @brief Hardware specific driver object.
@@ -107,7 +107,7 @@ typedef struct
     UniHAL_gpio_t* sclGpio;
 } UniHAL_i2c_t;
 
-typedef struct
+typedef struct UniHAL_spi_t
 {
     /*!
      * @brief Hardware specific driver object.
@@ -119,7 +119,7 @@ typedef struct
 
 } UniHAL_spi_t;
 
-typedef struct
+typedef struct UniHAL_uart_t
 {
     /*!
      * @brief Hardware specific driver object.
@@ -130,7 +130,7 @@ typedef struct
 
 } UniHAL_uart_t;
 
-typedef struct
+typedef struct UniHAL_timer_t
 {
     /*!
      * @brief Hardware specific driver object.
@@ -138,6 +138,18 @@ typedef struct
     void* obj;
 
 } UniHAL_timer_t;
+
+/******************************************************************************
+ Generic Function Prototypes
+ *****************************************************************************/
+extern void unihal_gpio_construct(UniHAL_gpio_t* const instance, void* const obj);
+extern void unihal_spi_construct(UniHAL_spi_t* const instance, void* const obj, UniHAL_gpio_t* const mosiGpio, UniHAL_gpio_t* const misoGpio, UniHAL_gpio_t* const sckGpio);
+
+
+extern void unihal_uart_construct(UniHAL_uart_t* const instance, void* const obj, UniHAL_gpio_t* const txGpio, UniHAL_gpio_t* const rxGpio);
+
+extern void unihal_i2c_construct(UniHAL_i2c_t* const instance, void* const obj, UniHAL_gpio_t* const sdaGpio, UniHAL_gpio_t* const sclGpio);
+extern void unihal_timer_construct(UniHAL_timer_t* const instance, void* const obj);
 
 /******************************************************************************
  Function Prototypes
@@ -172,13 +184,8 @@ extern bool unihal_gpio_disableInterrupt(UniHAL_gpio_t* const instance);
 extern bool unihal_gpio_write(const UniHAL_gpio_t* const instance, const UniHAL_gpio_value_t outputValue);
 extern UniHAL_gpio_value_t unihal_gpio_read(const UniHAL_gpio_t* const instance);
 
-extern bool unihal_spi_init(UniHAL_spi_t* const instance, void* const obj, UniHAL_gpio_t* const mosiGpio, UniHAL_gpio_t* const misoGpio, UniHAL_gpio_t* const sckGpio);
-
 extern bool unihal_spi_transfer(const UniHAL_spi_t* const instance, const size_t dataLen, const uint8_t* const writeBuffer, uint8_t* const readBuffer);
 
-extern bool unihal_uart_init(UniHAL_uart_t* const instance, void* const obj, UniHAL_gpio_t* const txGpio, UniHAL_gpio_t* const rxGpio);
-
-extern bool unihal_i2c_init(UniHAL_i2c_t* const instance, void* const obj, UniHAL_gpio_t* const sdaGpio, UniHAL_gpio_t* const sclGpio);
 /*!
  * @brief 
  * 

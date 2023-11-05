@@ -1,7 +1,7 @@
 /******************************************************************************
  @file unihal.c
 
- @brief UniHAL general definitions
+ @brief UniHAL generic definitions.
 
  @author Paweł Pielorz (pawel.pielorz@gmail.com)
 
@@ -10,9 +10,6 @@
 /******************************************************************************
  Includes
  *****************************************************************************/
-#include <stdint.h>
-#include <string.h>
-
 #include "unihal/unihal.h"
 
 /******************************************************************************
@@ -39,33 +36,51 @@
  Global functions
  ******************************************************************************/
 
-extern bool unihal_spi_init(UniHAL_spi_t* instance, void* obj, UniHAL_gpio_t* mosiGpio, UniHAL_gpio_t* misoGpio, UniHAL_gpio_t* sckGpio)
+extern void unihal_gpio_construct(UniHAL_gpio_t* instance, void* obj)
 {
-    //TODO assert
-    instance->obj = obj;
-    instance->mosiGpio = mosiGpio;
-    instance->misoGpio = misoGpio;
-    instance->sckGpio = sckGpio;
-
-    return true;
+    if(instance)
+    {
+        instance->obj = obj;
+    }
 }
 
-extern bool unihal_uart_init(UniHAL_uart_t* instance, void* obj, UniHAL_gpio_t* txGpio, UniHAL_gpio_t* rxGpio)
+extern void unihal_spi_construct(UniHAL_spi_t* instance, void* obj, UniHAL_gpio_t* mosiGpio, UniHAL_gpio_t* misoGpio, UniHAL_gpio_t* sckGpio)
 {
-    //TODO assert
-    instance->obj = obj;
-    instance->txGpio = txGpio;
-    instance->rxGpio = rxGpio;
-    return true;
+    if(instance)
+    {
+        instance->obj = obj;
+        instance->mosiGpio = mosiGpio;
+        instance->misoGpio = misoGpio;
+        instance->sckGpio = sckGpio;
+    }
 }
 
-extern bool unihal_i2c_init(UniHAL_i2c_t* instance, void* obj, UniHAL_gpio_t* sdaGpio, UniHAL_gpio_t* sclGpio)
+extern void unihal_uart_construct(UniHAL_uart_t* instance, void* obj, UniHAL_gpio_t* txGpio, UniHAL_gpio_t* rxGpio)
 {
-    //TODO assert
-    instance->obj = obj;
-    instance->sdaGpio = sdaGpio;
-    instance->sclGpio = sclGpio;
-    return true;
+    if(instance)
+    {
+        instance->obj = obj;
+        instance->txGpio = txGpio;
+        instance->rxGpio = rxGpio;
+    }
+}
+
+extern void unihal_i2c_construct(UniHAL_i2c_t* instance, void* obj, UniHAL_gpio_t* sdaGpio, UniHAL_gpio_t* sclGpio)
+{
+    if(instance)
+    {
+        instance->obj = obj;
+        instance->sdaGpio = sdaGpio;
+        instance->sclGpio = sclGpio;
+    }
+}
+
+extern void unihal_timer_construct(UniHAL_timer_t* instance, void* obj)
+{
+    if(instance)
+    {
+        instance->obj = obj;
+    }
 }
 
 
