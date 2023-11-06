@@ -40,6 +40,11 @@
  Global functions
  ******************************************************************************/
 
+void unihal_setErrorHandler(UniHAL_gpio_errorHandlerFp_t errorHandlerFp, void* arg)
+{
+    mock().actualCall("unihal_setErrorHandler");
+}
+
 bool unihal_i2c_transfer(const UniHAL_i2c_t* const instance, const uint8_t slaveAddress, const uint32_t timeout,
                         const vector_t* const writeVector, vector_t* const readVector)
 {
