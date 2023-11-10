@@ -12,6 +12,7 @@
  *****************************************************************************/
 #include <stdint.h>
 #include <string.h>
+#include <stdio.h>
 
 #include <ti/drivers/I2C.h>
 #include <ti/drivers/SPI.h>
@@ -27,6 +28,7 @@
  Constants and definitions
  *****************************************************************************/
 
+#define UNIHAL_PLATFORM "UniHAL CC13/26XX"
 #define GPIO_INDEX(instance) ((UniHAL_SimpleLink_gpioStruct_t*) instance->obj)->index
 
 typedef struct
@@ -57,6 +59,7 @@ static void* errorHandlerArg = NULL;
  *****************************************************************************/
 static void interruptHandler(uint_least8_t index);
 static void timerHandler(Timer_Handle handle, int_fast16_t status);
+static char* prepareErrorText(char* const buffer, const size_t bufferSize, const long int line, const char* const error);
 static const char* i2cError(const int_fast16_t errorCode);
 
 /******************************************************************************
@@ -293,9 +296,8 @@ bool unihal_i2c_transfer(const UniHAL_i2c_t* const instance, const uint8_t slave
     I2C_close(i2cHandle);
     if(I2C_STATUS_SUCCESS != i2cStatus)
     {
-        char errorText[32];
-        snprintf(errorText, sizeof(errorText), "I2C_transferTimeout -> %i", i2cStatus);
-        unihal_callErrorHandler(i2cError(i2cStatus));
+        char errorText[64];
+        unihal_callErrorHandler(prepareErrorText(errorText, sizeof(errorText), __LINE__, i2cError(i2cStatus)));
         return false;
     }
 
@@ -440,6 +442,16 @@ static void timerHandler(Timer_Handle handle, int_fast16_t status)
     }
 }
 
+static char* prepareErrorText(char* const buffer, const size_t bufferSize, const long int line, const char* const error)
+{
+    if(buffer != NULL && error != NULL)
+    {
+        snprintf(buffer, bufferSize, "%s:%ld %s", UNIHAL_PLATFORM, line, error);
+    }
+
+    return buffer;
+}
+
 static const char* i2cError(const int_fast16_t errorCode)
 {
     switch(errorCode)
@@ -448,34 +460,36 @@ static const char* i2cError(const int_fast16_t errorCode)
         return "I2C error";
 
         case I2C_STATUS_UNDEFINEDCMD:
-        return "I2C error";
+        return "I2C undefined CMD";
 
         case I2C_STATUS_TIMEOUT:
-        return "I2C error";
+        return "I2C timeout";
 
         case I2C_STATUS_CLOCK_TIMEOUT:
-        return "I2C error";
+        return "I2C clock timeout";
 
         case I2C_STATUS_ADDR_NACK:
-        return "I2C error";
+        return "I2C addr nack";
 
         case I2C_STATUS_DATA_NACK:
-        return "I2C error";
+        return "I2C data nack";
 
         case I2C_STATUS_ARB_LOST:
-        return "I2C error";
+        return "I2C arb lost";
 
         case I2C_STATUS_INCOMPLETE:
-        return "I2C error";
+        return "I2C incomplete";
 
         case I2C_STATUS_BUS_BUSY:
-        return "I2C error";
+        return "I2C bus busy";
 
         case I2C_STATUS_CANCEL:
-        return "I2C error";
+        return "I2C cancel";
 
         case I2C_STATUS_INVALID_TRANS:
-        return "I2C error";
+        return "I2C invalid trans";
 
+        default:
+        return "I2C unknown error";
     }
 }
