@@ -8,6 +8,7 @@ target_include_directories(unihal PUBLIC include)
 target_compile_options(unihal PRIVATE -Wall -Wextra -Wpedantic -Werror)
 
 add_subdirectory(drivers)
+add_subdirectory(generic)
 add_subdirectory(monogfx)
 add_subdirectory(utils)
 add_subdirectory(platforms)
