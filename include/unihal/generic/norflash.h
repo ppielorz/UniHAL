@@ -28,6 +28,9 @@ extern "C"
 /******************************************************************************
  Constants and definitions
  *****************************************************************************/
+#define UNIHAL_NORFLASH_TIMEOUT_FOREVER UINT32_MAX
+#define UNIHAL_NORFLASH_SECTOR_SIZE     4096U
+
 typedef enum
 {
     UniHAL_NORFlash_status_success = 0,
@@ -58,7 +61,8 @@ extern UniHAL_NORFlash_status_t unihal_norflash_readId(UniHAL_NORFlash_t* const 
 extern UniHAL_NORFlash_status_t unihal_norflash_deepPowerDown(UniHAL_NORFlash_t* const instance);
 extern UniHAL_NORFlash_status_t unihal_norflash_releasePowerDown(UniHAL_NORFlash_t* const instance);
 extern UniHAL_NORFlash_status_t unihal_norflash_read(UniHAL_NORFlash_t* const instance, const uint32_t address, uint8_t* const readBuffer, const size_t readBufferSize);
-extern UniHAL_NORFlash_status_t unihal_norflash_eraseBlock4K(UniHAL_NORFlash_t* const instance, const uint32_t address);
+extern UniHAL_NORFlash_status_t unihal_norflash_write(UniHAL_NORFlash_t* const instance, const uint32_t address, const uint8_t* const writeBuffer, const size_t writeBufferSize, const uint32_t timeout);
+extern UniHAL_NORFlash_status_t unihal_norflash_eraseSector(UniHAL_NORFlash_t* const instance, const uint32_t address, const uint32_t timeout);
 
 extern UniHAL_NORFlash_status_t unihal_norflash_writeEnable(UniHAL_NORFlash_t* const instance);
 extern UniHAL_NORFlash_status_t unihal_norflash_writeDisable(UniHAL_NORFlash_t* const instance);
