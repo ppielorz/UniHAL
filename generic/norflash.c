@@ -41,9 +41,9 @@
 #define STATUS_REGISTER_1_WEL           (1 << 1)
 #define STATUS_REGISTER_1_WIP           (1 << 0)
 
-#define ERASE_SECTOR_MASK               0xFFFFF000
-#define ERASE_BLOCK_32K_MASK            0xFFFF8000
-#define ERASE_BLOCK_64K_MASK            0xFFFF0000
+#define ERASE_SECTOR_MASK               0x00000FFF
+#define ERASE_BLOCK_32K_MASK            0x00007FFF
+#define ERASE_BLOCK_64K_MASK            0x0000FFFF
 
 
 /******************************************************************************

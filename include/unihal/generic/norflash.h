@@ -41,7 +41,7 @@ typedef enum
     UniHAL_NORFlash_status_unalignedBlockAddress = 5,
     UniHAL_NORFlash_status_writeDisabled = 6,
 
-    UniHAL_NORFlash_count
+    UniHAL_NORFlash_status_count
 } UniHAL_NORFlash_status_t;
 
 
