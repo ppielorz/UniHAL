@@ -15,10 +15,17 @@
 #include <CppUTestExt/MockSupport.h>
 
 #include "unihal/unihal.h"
+#include "unihal/unihal_os.h"
 
 /******************************************************************************
  Constants and definitions
  *****************************************************************************/
+typedef struct
+{
+    UniHALos_swTimer_callbackFp_t callback;
+    void* arg;
+} UniHALos_swTimer_mockObj_t;
+
 
 /******************************************************************************
  External Variables
@@ -39,6 +46,11 @@
 /******************************************************************************
  Global functions
  ******************************************************************************/
+
+void unihal_reboot(void)
+{
+    mock().actualCall("unihal_reboot");
+}
 
 void unihal_setErrorHandler(UniHAL_gpio_errorHandlerFp_t errorHandlerFp, void* arg)
 {
@@ -120,6 +132,50 @@ uint32_t unihal_getVoltage(void)
     mock().actualCall("unihal_getVoltage");
     return mock().unsignedIntReturnValue();
 }
+
+bool unihalos_swTimer_init(UniHALos_swTimer_t* const instance, const uint32_t periodMs, const bool oneShot, UniHALos_swTimer_callbackFp_t callback, void* const arg)
+{
+    instance->callback = callback;
+    instance->arg = arg;
+
+    return mock().actualCall("unihalos_swTimer_init")
+        .withPointerParameter("instance", instance)
+        .withUnsignedIntParameter("perdiodMs", periodMs)
+        .withBoolParameter("oneShot", oneShot)
+        //.withFunctionPointerParameter("callback", callback)
+        .withPointerParameter("arg", arg)
+        .returnBoolValueOrDefault(true);
+}
+
+bool unihalos_swTimer_deinit(UniHALos_swTimer_t* const instance)
+{
+    return mock().actualCall("unihalos_swTimer_deinit")
+        .withPointerParameter("instance", instance)
+        .returnBoolValueOrDefault(true);
+}
+
+bool unihalos_swTimer_start(UniHALos_swTimer_t* const instance)
+{
+    return mock().actualCall("unihalos_swTimer_start")
+        .withPointerParameter("instance", instance)
+        .returnBoolValueOrDefault(true);
+}
+
+bool unihalos_swTimer_stop(UniHALos_swTimer_t* const instance)
+{
+    return mock().actualCall("unihalos_swTimer_stop")
+        .withPointerParameter("instance", instance)
+        .returnBoolValueOrDefault(true);
+}
+
+bool unihalos_swTimer_setPeriod(UniHALos_swTimer_t* const instance, const uint32_t periodMs)
+{
+    return mock().actualCall("unihalos_swTimer_setPeriod")
+        .withPointerParameter("instance", instance)
+        .withUnsignedIntParameter("perdiodMs", periodMs)
+        .returnBoolValueOrDefault(true);
+}
+
 
 /******************************************************************************
  Local Functions
