@@ -27,8 +27,7 @@ _Static_assert(sizeof(UniHALos_FreeRTOS_timerStruct_t) <= sizeof(UniHALos_swTime
 typedef struct
 {
     TimerHandle_t handle;
-    UniHALos_swTimer_callbackFp_t callback;
-    void* arg;
+    UniHALos_swTimer_t* swTimer;
 } dispatcherSlot_t;
 
 /******************************************************************************
@@ -85,9 +84,11 @@ bool unihalos_swTimer_init(UniHALos_swTimer_t* const instance, const uint32_t pe
     {
         return false;
     }
+
+    instance->callback = callback;
+    instance->arg = arg;
     dispatcherSlot->handle = timerStruct->timerHandle;
-    dispatcherSlot->callback = callback;
-    dispatcherSlot->arg = arg;
+    dispatcherSlot->swTimer = instance;
     return true;
 }
 
@@ -105,8 +106,7 @@ bool unihalos_swTimer_deinit(UniHALos_swTimer_t* const instance)
     }
 
     dispatcherSlot->handle = NULL;
-    dispatcherSlot->callback = NULL;
-    dispatcherSlot->arg = NULL;
+    dispatcherSlot->swTimer = NULL;
     return xTimerStop(timerStruct->timerHandle, 0U) == pdPASS;
 }
 
@@ -148,7 +148,7 @@ static void timerCallbackDispatcher(TimerHandle_t xTimer)
     dispatcherSlot_t* dispatcherSlot = findTimerCallbackDispatcherSlot(xTimer);
     if(dispatcherSlot != NULL)
     {
-        dispatcherSlot->callback(dispatcherSlot->arg);
+        dispatcherSlot->swTimer->callback(dispatcherSlot->swTimer->arg);
     }
 }
 

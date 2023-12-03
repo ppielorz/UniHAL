@@ -37,6 +37,8 @@ typedef struct
      */
     uint8_t obj[UNIHALOS_SWTIMER_OBJECT_SIZE];
 
+    UniHALos_swTimer_callbackFp_t callback;
+    void* arg;
 
 } UniHALos_swTimer_t;
 
