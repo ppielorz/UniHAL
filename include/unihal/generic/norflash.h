@@ -64,9 +64,6 @@ extern UniHAL_NORFlash_status_t unihal_norflash_read(UniHAL_NORFlash_t* const in
 extern UniHAL_NORFlash_status_t unihal_norflash_write(UniHAL_NORFlash_t* const instance, const uint32_t address, const uint8_t* const writeBuffer, const size_t writeBufferSize, const uint32_t timeout);
 extern UniHAL_NORFlash_status_t unihal_norflash_eraseSector(UniHAL_NORFlash_t* const instance, const uint32_t address, const uint32_t timeout);
 
-extern UniHAL_NORFlash_status_t unihal_norflash_writeEnable(UniHAL_NORFlash_t* const instance);
-extern UniHAL_NORFlash_status_t unihal_norflash_writeDisable(UniHAL_NORFlash_t* const instance);
-
 #ifdef __cplusplus
 }
 #endif

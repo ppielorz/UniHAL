@@ -66,6 +66,8 @@ static UniHAL_NORFlash_status_t commandWithAddressAndRead(UniHAL_NORFlash_t* con
 static UniHAL_NORFlash_status_t isWriteFinished(UniHAL_NORFlash_t* const instance);
 static UniHAL_NORFlash_status_t isWriteEnabled(UniHAL_NORFlash_t* const instance);
 static UniHAL_NORFlash_status_t waitForWriteFinish(UniHAL_NORFlash_t* const instance, const uint32_t timeout);
+static UniHAL_NORFlash_status_t writeEnable(UniHAL_NORFlash_t* const instance);
+static UniHAL_NORFlash_status_t writeDisable(UniHAL_NORFlash_t* const instance);
 
 /******************************************************************************
  Global functions
@@ -128,7 +130,7 @@ UniHAL_NORFlash_status_t unihal_norflash_write(UniHAL_NORFlash_t* const instance
     CHECK_AND_RETURN_STATUS(instance != NULL, UniHAL_NORFlash_status_nullPointer);
     CHECK_AND_RETURN_STATUS(writeBuffer != NULL, UniHAL_NORFlash_status_nullPointer);
 
-    UniHAL_NORFlash_status_t status = isWriteEnabled(instance);
+    UniHAL_NORFlash_status_t status = writeEnable(instance);
     if(status != UniHAL_NORFlash_status_success)
     {
         return status;
@@ -170,7 +172,7 @@ UniHAL_NORFlash_status_t unihal_norflash_eraseSector(UniHAL_NORFlash_t* const in
     CHECK_AND_RETURN_STATUS(instance != NULL, UniHAL_NORFlash_status_nullPointer);
     CHECK_AND_RETURN_STATUS((address & ERASE_SECTOR_MASK) == 0U, UniHAL_NORFlash_status_unalignedBlockAddress);
 
-    UniHAL_NORFlash_status_t status = isWriteEnabled(instance);
+    UniHAL_NORFlash_status_t status = writeEnable(instance);
     if(status == UniHAL_NORFlash_status_success)
     {
         status = commandWithAddressAndRead(instance, COMMAND_ERASE_SECTOR, address, NULL, 0U);
@@ -182,18 +184,6 @@ UniHAL_NORFlash_status_t unihal_norflash_eraseSector(UniHAL_NORFlash_t* const in
     }
 
     return status;
-}
-
-UniHAL_NORFlash_status_t unihal_norflash_writeEnable(UniHAL_NORFlash_t* const instance)
-{
-    CHECK_AND_RETURN_STATUS(instance != NULL, UniHAL_NORFlash_status_nullPointer);
-    return commandWithoutAddressAndRead(instance, COMMAND_WRITE_ENABLE, NULL, 0U);
-}
-
-UniHAL_NORFlash_status_t unihal_norflash_writeDisable(UniHAL_NORFlash_t* const instance)
-{
-    CHECK_AND_RETURN_STATUS(instance != NULL, UniHAL_NORFlash_status_nullPointer);
-    return commandWithoutAddressAndRead(instance, COMMAND_WRITE_DISABLE, NULL, 0U);
 }
 
 /******************************************************************************
@@ -279,7 +269,7 @@ static UniHAL_NORFlash_status_t isWriteFinished(UniHAL_NORFlash_t* const instanc
     return status;
 }
 
-UniHAL_NORFlash_status_t isWriteEnabled(UniHAL_NORFlash_t* const instance)
+static UniHAL_NORFlash_status_t isWriteEnabled(UniHAL_NORFlash_t* const instance)
 {
     CHECK_AND_RETURN_STATUS(instance != NULL, UniHAL_NORFlash_status_nullPointer);
 
@@ -322,4 +312,16 @@ static UniHAL_NORFlash_status_t waitForWriteFinish(UniHAL_NORFlash_t* const inst
     }
 
     return status;
+}
+
+static UniHAL_NORFlash_status_t writeEnable(UniHAL_NORFlash_t* const instance)
+{
+    CHECK_AND_RETURN_STATUS(instance != NULL, UniHAL_NORFlash_status_nullPointer);
+    return commandWithoutAddressAndRead(instance, COMMAND_WRITE_ENABLE, NULL, 0U);
+}
+
+static UniHAL_NORFlash_status_t writeDisable(UniHAL_NORFlash_t* const instance)
+{
+    CHECK_AND_RETURN_STATUS(instance != NULL, UniHAL_NORFlash_status_nullPointer);
+    return commandWithoutAddressAndRead(instance, COMMAND_WRITE_DISABLE, NULL, 0U);
 }
