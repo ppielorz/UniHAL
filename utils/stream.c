@@ -54,6 +54,22 @@ Stream_status_t stream_init(Stream_t* const stream, uint8_t* const buffer, const
     return Stream_status_success;
 }
 
+Stream_status_t stream_initReadonly(Stream_t* const stream, const uint8_t* const buffer, const size_t bufLen, const Stream_dataFormat_t dataFormat)
+{
+    CHECK(stream != NULL, Stream_status_nullPointer);
+    CHECK(buffer != NULL, Stream_status_nullPointer);
+    CHECK((dataFormat == Stream_dataFormat_littleEndian) || (dataFormat == Stream_dataFormat_bigEndian), Stream_status_wrongDataFormat);
+
+    memset(stream, 0, sizeof(*stream));
+    stream->actualPosition = 0U;
+    stream->bufLen = bufLen;
+    stream->buffer = (uint8_t*) buffer; /* Cast potentially unsafe but readonly flag should handle it. */
+    stream->dataFormat = dataFormat;
+    stream->readonly = true;
+
+    return Stream_status_success;
+}
+
 Stream_status_t stream_getUint8(Stream_t* const stream, uint8_t* const value)
 {
     CHECK(stream != NULL, Stream_status_nullPointer);
@@ -69,6 +85,7 @@ Stream_status_t stream_getUint8(Stream_t* const stream, uint8_t* const value)
 Stream_status_t stream_putUint8(Stream_t* const stream, const uint8_t value)
 {
     CHECK(stream != NULL, Stream_status_nullPointer);
+    CHECK(stream->readonly == false, Stream_status_notAllowed);
     CHECK(stream->bufLen >= (stream->actualPosition + sizeof(value)), Stream_status_bufferOverflow);
 
     stream->buffer[stream->actualPosition] = value;
@@ -116,6 +133,7 @@ Stream_status_t stream_getUint16(Stream_t* const stream, uint16_t* const value)
 Stream_status_t stream_putUint16(Stream_t* const stream, const uint16_t value)
 {
     CHECK(stream != NULL, Stream_status_nullPointer);
+    CHECK(stream->readonly == false, Stream_status_notAllowed);
     CHECK(stream->bufLen >= (stream->actualPosition + sizeof(value)), Stream_status_bufferOverflow);
 
     uint8_t calculatedShift = 0U;
@@ -186,6 +204,7 @@ Stream_status_t stream_getUint32(Stream_t* const stream, uint32_t* const value)
 Stream_status_t stream_putUint32(Stream_t* const stream, const uint32_t value)
 {
     CHECK(stream != NULL, Stream_status_nullPointer);
+    CHECK(stream->readonly == false, Stream_status_notAllowed);
     CHECK(stream->bufLen >= (stream->actualPosition + sizeof(value)), Stream_status_bufferOverflow);
 
     uint8_t calculatedShift = 0U;
@@ -256,6 +275,7 @@ Stream_status_t stream_getUint64(Stream_t* const stream, uint64_t* const value)
 Stream_status_t stream_putUint64(Stream_t* const stream, const uint64_t value)
 {
     CHECK(stream != NULL, Stream_status_nullPointer);
+    CHECK(stream->readonly == false, Stream_status_notAllowed);
     CHECK(stream->bufLen >= (stream->actualPosition + sizeof(value)), Stream_status_bufferOverflow);
 
     uint8_t calculatedShift = 0U;
@@ -328,6 +348,7 @@ Stream_status_t stream_putBytes(Stream_t* const stream, const size_t byteCount, 
 {
     CHECK(stream != NULL, Stream_status_nullPointer);
     CHECK(sourceBuffer != NULL, Stream_status_nullPointer);
+    CHECK(stream->readonly == false, Stream_status_notAllowed);
     CHECK(stream->bufLen >= (stream->actualPosition + byteCount), Stream_status_bufferOverflow);
     CHECK(byteCount <= sourceBufferLen, Stream_status_bufferOverflow);
 
@@ -343,6 +364,7 @@ Stream_status_t stream_getFromStream(Stream_t* const stream, const size_t byteCo
     CHECK(outputStream != NULL, Stream_status_nullPointer);
     CHECK(stream->bufLen >= (stream->actualPosition + byteCount), Stream_status_bufferOverflow);
     CHECK(outputStream->bufLen >= (outputStream->actualPosition + byteCount), Stream_status_bufferOverflow);
+    CHECK(outputStream->readonly == false, Stream_status_notAllowed);
 
     memcpy(&outputStream->buffer[outputStream->actualPosition], &stream->buffer[stream->actualPosition], byteCount);
     stream->actualPosition += byteCount;
@@ -355,6 +377,7 @@ Stream_status_t stream_putFromStream(Stream_t* const stream, const size_t byteCo
 {
     CHECK(stream != NULL, Stream_status_nullPointer);
     CHECK(sourceStream != NULL, Stream_status_nullPointer);
+    CHECK(stream->readonly == false, Stream_status_notAllowed);
     CHECK(stream->bufLen >= (stream->actualPosition + byteCount), Stream_status_bufferOverflow);
     CHECK(sourceStream->bufLen >= (sourceStream->actualPosition + byteCount), Stream_status_bufferOverflow);
 
@@ -371,7 +394,7 @@ Stream_status_t stream_print(const Stream_t* const stream)
     
     const size_t columnsPerRow = 16U;
 
-    printf("Stream buffer length: %zd, actual position: %zd, data format: %d\n\n", stream->bufLen, stream->actualPosition, stream->dataFormat);
+    printf("Stream buffer length: %zd, actual position: %zd, data format: %d%s\n\n", stream->bufLen, stream->actualPosition, stream->dataFormat, stream->readonly ? ", readonly" : "");
 
     for(size_t row = 0U; row < ((stream->bufLen / columnsPerRow) + 1U); row++)
     {

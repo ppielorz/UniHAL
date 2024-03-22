@@ -1417,6 +1417,336 @@ TEST(Stream, exampleUsage1)
     status = stream_getUint64(&stream, &tempUint64);
     LONGS_EQUAL(Stream_status_success, status);
     LONGS_EQUAL(0x1234123412341234, tempUint64);
+}
 
+/******************************************************************************
+ Tests - readonly stream
+ *****************************************************************************/
 
+TEST_GROUP(StreamReadonly)
+{
+    void setup()
+    {
+
+    }
+
+    void teardown()
+    {
+        mock().checkExpectations();
+        mock().clear();
+        mock().removeAllComparatorsAndCopiers();
+    }
+};
+
+TEST(StreamReadonly, initReadonlyNullPointerStream)
+{
+    uint8_t streamBuffer[100] = {};
+
+    Stream_status_t status = stream_initReadonly(NULL, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
+
+    LONGS_EQUAL(Stream_status_nullPointer, status);
+}
+
+TEST(StreamReadonly, initReadonlyNullPointerStreamBuffer)
+{
+    Stream_t stream = {};
+    uint8_t streamBuffer[100] = {};
+
+    Stream_status_t status = stream_initReadonly(&stream, NULL, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
+
+    LONGS_EQUAL(Stream_status_nullPointer, status);
+}
+
+TEST(StreamReadonly, initReadonlyWrongDataFormat)
+{
+    Stream_t stream = {};
+    uint8_t streamBuffer[100] = {};
+
+    Stream_status_t status = stream_initReadonly(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_count);
+
+    LONGS_EQUAL(Stream_status_wrongDataFormat, status);
+}
+
+TEST(StreamReadonly, getUint8CorrectOperation)
+{
+    Stream_t stream = {};
+    const uint8_t streamBuffer[2 * sizeof(uint8_t)] = {0xAB, 0xCD};
+    uint8_t value = 0U;
+    Stream_status_t status = stream_initReadonly(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+
+    status = stream_getUint8(&stream, &value);
+    LONGS_EQUAL(Stream_status_success, status);
+    LONGS_EQUAL(0xAB, value);
+
+    status = stream_getUint8(&stream, &value);
+    LONGS_EQUAL(Stream_status_success, status);
+    LONGS_EQUAL(0xCD, value);
+}
+
+TEST(StreamReadonly, putUint8CorrectOperation)
+{
+    Stream_t stream = {};
+    const uint8_t streamBuffer[sizeof(uint8_t)] = {};
+    Stream_status_t status = stream_initReadonly(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+
+    status = stream_putUint8(&stream, 0xAB);
+    LONGS_EQUAL(Stream_status_notAllowed, status);
+}
+
+TEST(StreamReadonly, getUint16CorrectOperationLittleEndian)
+{
+    Stream_t stream = {};
+    const uint8_t streamBuffer[2 * sizeof(uint16_t)] = {0x12, 0x34, 0x56, 0x78};
+    uint16_t value = 0U;
+    Stream_status_t status = stream_initReadonly(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+
+    status = stream_getUint16(&stream, &value);
+    LONGS_EQUAL(Stream_status_success, status);
+    LONGS_EQUAL(0x3412, value);
+
+    status = stream_getUint16(&stream, &value);
+    LONGS_EQUAL(Stream_status_success, status);
+    LONGS_EQUAL(0x7856, value);
+}
+
+TEST(StreamReadonly, getUint16CorrectOperationBigEndian)
+{
+    Stream_t stream = {};
+    const uint8_t streamBuffer[2 * sizeof(uint16_t)] = {0x12, 0x34, 0x56, 0x78};
+    uint16_t value = 0U;
+    Stream_status_t status = stream_initReadonly(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_bigEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+
+    status = stream_getUint16(&stream, &value);
+    LONGS_EQUAL(Stream_status_success, status);
+    LONGS_EQUAL(0x1234, value);
+
+    status = stream_getUint16(&stream, &value);
+    LONGS_EQUAL(Stream_status_success, status);
+    LONGS_EQUAL(0x5678, value);
+}
+
+TEST(StreamReadonly, putUint16CorrectOperation)
+{
+    Stream_t stream = {};
+    const uint8_t streamBuffer[sizeof(uint16_t)] = {};
+    Stream_status_t status = stream_initReadonly(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+
+    status = stream_putUint16(&stream, 0xAB12);
+    LONGS_EQUAL(Stream_status_notAllowed, status);
+}
+
+TEST(StreamReadonly, getUint32CorrectOperationLittleEndian)
+{
+    Stream_t stream = {};
+    const uint8_t streamBuffer[2 * sizeof(uint32_t)] = {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0};
+    uint32_t value = 0U;
+    Stream_status_t status = stream_initReadonly(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+
+    status = stream_getUint32(&stream, &value);
+    LONGS_EQUAL(Stream_status_success, status);
+    LONGS_EQUAL(0x78563412, value);
+
+    status = stream_getUint32(&stream, &value);
+    LONGS_EQUAL(Stream_status_success, status);
+    LONGS_EQUAL(0xF0DEBC9A, value);
+}
+
+TEST(StreamReadonly, getUint32CorrectOperationBigEndian)
+{
+    Stream_t stream = {};
+    const uint8_t streamBuffer[2 * sizeof(uint32_t)] = {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0};
+    uint32_t value = 0U;
+    Stream_status_t status = stream_initReadonly(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_bigEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+
+    status = stream_getUint32(&stream, &value);
+    LONGS_EQUAL(Stream_status_success, status);
+    LONGS_EQUAL(0x12345678, value);
+
+    status = stream_getUint32(&stream, &value);
+    LONGS_EQUAL(Stream_status_success, status);
+    LONGS_EQUAL(0x9ABCDEF0, value);
+}
+
+TEST(StreamReadonly, putUint32CorrectOperation)
+{
+    Stream_t stream = {};
+    const uint8_t streamBuffer[sizeof(uint32_t)] = {};
+    Stream_status_t status = stream_initReadonly(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+
+    status = stream_putUint32(&stream, 0xAB121234);
+    LONGS_EQUAL(Stream_status_notAllowed, status);
+}
+
+TEST(StreamReadonly, getUint64CorrectOperationLittleEndian)
+{
+    Stream_t stream = {};
+    const uint8_t streamBuffer[2 * sizeof(uint64_t)] = {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88};
+    uint64_t value = 0U;
+    Stream_status_t status = stream_initReadonly(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+
+    status = stream_getUint64(&stream, &value);
+    LONGS_EQUAL(Stream_status_success, status);
+    UNSIGNED_LONGLONGS_EQUAL(0xF0DEBC9A78563412, value);
+
+    status = stream_getUint64(&stream, &value);
+    LONGS_EQUAL(Stream_status_success, status);
+    UNSIGNED_LONGLONGS_EQUAL(0x8877665544332211, value);
+}
+
+TEST(StreamReadonly, getUint64CorrectOperationBigEndian)
+{
+    Stream_t stream = {};
+    const uint8_t streamBuffer[2 * sizeof(uint64_t)] = {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88};
+    uint64_t value = 0U;
+    Stream_status_t status = stream_initReadonly(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_bigEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+
+    status = stream_getUint64(&stream, &value);
+    LONGS_EQUAL(Stream_status_success, status);
+    UNSIGNED_LONGLONGS_EQUAL(0x123456789ABCDEF0, value);
+
+    status = stream_getUint64(&stream, &value);
+    LONGS_EQUAL(Stream_status_success, status);
+    UNSIGNED_LONGLONGS_EQUAL(0x1122334455667788, value);
+}
+
+TEST(StreamReadonly, putUint64CorrectOperation)
+{
+    Stream_t stream = {};
+    const uint8_t streamBuffer[sizeof(uint64_t)] = {};
+    Stream_status_t status = stream_initReadonly(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+
+    status = stream_putUint64(&stream, 0xAB121234AB121234);
+    LONGS_EQUAL(Stream_status_notAllowed, status);
+}
+
+TEST(StreamReadonly, getBoolCorrectOperation)
+{
+    Stream_t stream = {};
+    const uint8_t streamBuffer[2 * sizeof(uint8_t)] = {0x00, 0xFF};
+    bool value = 0U;
+    Stream_status_t status = stream_initReadonly(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+
+    status = stream_getBool(&stream, &value);
+    LONGS_EQUAL(Stream_status_success, status);
+    CHECK_FALSE(value);
+
+    status = stream_getBool(&stream, &value);
+    LONGS_EQUAL(Stream_status_success, status);
+    CHECK_TRUE(value);
+}
+
+TEST(StreamReadonly, putBoolCorrectOperation)
+{
+    Stream_t stream = {};
+    const uint8_t streamBuffer[sizeof(uint8_t)] = {};
+    Stream_status_t status = stream_initReadonly(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+
+    status = stream_putBool(&stream, true);
+    LONGS_EQUAL(Stream_status_notAllowed, status);
+}
+
+TEST(StreamReadonly, getBytesCorrectOperation)
+{
+    Stream_t stream = {};
+    const uint8_t streamBuffer[5] = {0x11, 0x22, 0x33, 0x44, 0x55};
+    uint8_t outputBuffer[4] = {};
+    Stream_status_t status = stream_initReadonly(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+
+    status = stream_getBytes(&stream, 4, outputBuffer, sizeof(outputBuffer));
+
+    LONGS_EQUAL(Stream_status_success, status);
+    MEMCMP_EQUAL(streamBuffer, outputBuffer, 4);
+}
+
+TEST(StreamReadonly, putBytesCorrectOperation)
+{
+    Stream_t stream = {};
+    const uint8_t streamBuffer[5] = {};
+    uint8_t sourceBuffer[4] = {0x11, 0x22, 0x33, 0x44};
+    Stream_status_t status = stream_initReadonly(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+
+    status = stream_putBytes(&stream, 4, sourceBuffer, sizeof(sourceBuffer));
+    LONGS_EQUAL(Stream_status_notAllowed, status);
+}
+
+TEST(StreamReadonly, getFromStreamCorrectOperation)
+{
+    Stream_t stream = {};
+    const uint8_t streamBuffer[5] = {0x11, 0x22, 0x33, 0x44, 0x55};
+    Stream_t outputStream = {};
+    uint8_t outputStreamBuffer[5] = {};
+    Stream_status_t status = stream_initReadonly(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+    status = stream_init(&outputStream, outputStreamBuffer, sizeof(outputStreamBuffer), Stream_dataFormat_littleEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+
+    status = stream_getFromStream(&stream, 3, &outputStream);
+
+    LONGS_EQUAL(Stream_status_success, status);
+    LONGS_EQUAL(0x11, outputStreamBuffer[0]);
+    LONGS_EQUAL(0x22, outputStreamBuffer[1]);
+    LONGS_EQUAL(0x33, outputStreamBuffer[2]);
+}
+
+TEST(StreamReadonly, getFromStreamToReadonlyOutputStreamCorrectOperation)
+{
+    Stream_t stream = {};
+    const uint8_t streamBuffer[5] = {0x11, 0x22, 0x33, 0x44, 0x55};
+    Stream_t outputStream = {};
+    const uint8_t outputStreamBuffer[5] = {};
+    Stream_status_t status = stream_initReadonly(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+    status = stream_initReadonly(&outputStream, outputStreamBuffer, sizeof(outputStreamBuffer), Stream_dataFormat_littleEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+
+    status = stream_getFromStream(&stream, 3, &outputStream);
+    LONGS_EQUAL(Stream_status_notAllowed, status);
+}
+
+TEST(StreamReadonly, putFromStreamCorrectOperation)
+{
+    Stream_t stream = {};
+    const uint8_t streamBuffer[5] = {};
+    Stream_t sourceStream = {};
+    uint8_t sourceStreamBuffer[5] = {0x11, 0x22, 0x33, 0x44, 0x55};
+    Stream_status_t status = stream_initReadonly(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+    status = stream_init(&sourceStream, sourceStreamBuffer, sizeof(sourceStreamBuffer), Stream_dataFormat_littleEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+
+    status = stream_putFromStream(&stream, 3, &sourceStream);
+    LONGS_EQUAL(Stream_status_notAllowed, status);
+}
+
+TEST(StreamReadonly, putFromReadonlyStreamCorrectOperation)
+{
+    Stream_t stream = {};
+    uint8_t streamBuffer[5] = {};
+    Stream_t sourceStream = {};
+    const uint8_t sourceStreamBuffer[5] = {0x11, 0x22, 0x33, 0x44, 0x55};
+    Stream_status_t status = stream_init(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+    status = stream_initReadonly(&sourceStream, sourceStreamBuffer, sizeof(sourceStreamBuffer), Stream_dataFormat_littleEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+
+    status = stream_putFromStream(&stream, 3, &sourceStream);
+    LONGS_EQUAL(Stream_status_success, status);
+    LONGS_EQUAL(0x11, streamBuffer[0]);
+    LONGS_EQUAL(0x22, streamBuffer[1]);
+    LONGS_EQUAL(0x33, streamBuffer[2]);
 }

@@ -31,10 +31,11 @@ extern "C"
  */
 typedef enum
 {
-    Stream_status_success = 0, /*!< Operation success. */
-    Stream_status_nullPointer = 1, /*!< Null pointer provided. */
-    Stream_status_wrongDataFormat = 2, /*!< Wrong data format provided. */
-    Stream_status_bufferOverflow = 3, /*!< Operation would cause buffer overflow. */
+    Stream_status_success = 0,          /*!< Operation success. */
+    Stream_status_nullPointer = 1,      /*!< Null pointer provided. */
+    Stream_status_wrongDataFormat = 2,  /*!< Wrong data format provided. */
+    Stream_status_bufferOverflow = 3,   /*!< Operation would cause buffer overflow. */
+    Stream_status_notAllowed = 4,       /*!< Operation not allowed (stream is readonly). */
 
     Stream_status_count /*!< Number of possible statuses. */
 } Stream_status_t;
@@ -58,10 +59,11 @@ typedef enum
  */
 typedef struct
 {
-    uint8_t* buffer; /*!< Internal buffer for all operations. */
-    size_t bufLen; /*!< Internal buffer length. */
-    size_t actualPosition; /*!< Actual position of cursor. */
-    Stream_dataFormat_t dataFormat; /*!< Selected data format. */
+    uint8_t* buffer;                    /*!< Internal buffer for all operations. */
+    size_t bufLen;                      /*!< Internal buffer length. */
+    size_t actualPosition;              /*!< Actual position of cursor. */
+    Stream_dataFormat_t dataFormat;     /*!< Selected data format. */
+    bool readonly;                      /*!< Readonly flag. */
 } Stream_t;
 
 /******************************************************************************
@@ -72,9 +74,9 @@ typedef struct
  * @brief Initializes @ref Stream_t "Stream" struct.
  * 
  * @param stream Pointer to @ref Stream_t "Stream" struct to be initialized.
- * @param buffer Pointer to byte buffer which shall be used as stream buffer.
+ * @param buffer Pointer to byte buffer which shall be used as a stream buffer.
  * @param bufLen Buffer length (in bytes).
- * @param dataFormat Data format selection(see @ref Stream_dataFormat_t).
+ * @param dataFormat Data format selection (see @ref Stream_dataFormat_t).
  * 
  * @return Stream status code (see @ref Stream_status_t).
  * 
@@ -83,6 +85,22 @@ typedef struct
  * @retval Stream_status_wrongDataFormat Wrong data format provided.
  */
 Stream_status_t stream_init(Stream_t* const stream, uint8_t* const buffer, const size_t bufLen, const Stream_dataFormat_t dataFormat);
+
+/*!
+ * @brief Initializes @ref Stream_t "Stream" struct with readonly flag.
+ * 
+ * @param stream Pointer to @ref Stream_t "Stream" struct to be initialized.
+ * @param buffer Pointer to byte buffer which shall be used as a readonly stream buffer.
+ * @param bufLen Buffer length (in bytes).
+ * @param dataFormat Data format selection (see @ref Stream_dataFormat_t).
+ * 
+ * @return Stream status code (see @ref Stream_status_t).
+ * 
+ * @retval Stream_status_success Stream initialized properly.
+ * @retval Stream_status_nullPointer NULL pointer provided.
+ * @retval Stream_status_wrongDataFormat Wrong data format provided.
+ */
+Stream_status_t stream_initReadonly(Stream_t* const stream, const uint8_t* const buffer, const size_t bufLen, const Stream_dataFormat_t dataFormat);
 
 /*!
  * @brief Takes out an uint8_t number from given Stream and moves the cursor forwards by 1.
