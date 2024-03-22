@@ -18,6 +18,7 @@
 #include <string>
 #include <algorithm>
 #include <cstdint>
+#include <vector>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
