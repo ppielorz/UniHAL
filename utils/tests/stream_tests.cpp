@@ -1256,6 +1256,46 @@ TEST(Stream, setCursorCorrectOperation)
     LONGS_EQUAL(4, stream.actualPosition);
 }
 
+TEST(Stream, advanceCursorNullPointerStream)
+{
+    Stream_t stream = {};
+    uint8_t streamBuffer[5] = {};
+    Stream_status_t status = stream_init(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+
+    status = stream_advanceCursor(NULL, 4);
+
+    LONGS_EQUAL(Stream_status_nullPointer, status);
+}
+
+TEST(Stream, advanceCursorBufferOverflow)
+{
+    Stream_t stream = {};
+    uint8_t streamBuffer[5] = {};
+    Stream_status_t status = stream_init(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+
+    status = stream_advanceCursor(&stream, 6);
+
+    LONGS_EQUAL(Stream_status_bufferOverflow, status);
+}
+
+TEST(Stream, advanceCursorCorrectOperation)
+{
+    Stream_t stream = {};
+    uint8_t streamBuffer[5] = {};
+    Stream_status_t status = stream_init(&stream, streamBuffer, sizeof(streamBuffer), Stream_dataFormat_littleEndian);
+    LONGS_EQUAL(Stream_status_success, status);
+
+    status = stream_setCursor(&stream, 1);
+    LONGS_EQUAL(Stream_status_success, status);
+    LONGS_EQUAL(1, stream.actualPosition);
+
+    status = stream_advanceCursor(&stream, 3);
+    LONGS_EQUAL(Stream_status_success, status);
+    LONGS_EQUAL(4, stream.actualPosition);
+}
+
 TEST(Stream, freeBytesNullPointerStream)
 {
     Stream_t stream = {};

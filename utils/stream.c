@@ -430,6 +430,16 @@ Stream_status_t stream_setCursor(Stream_t* const stream, const size_t cursor)
     return Stream_status_success;
 }
 
+Stream_status_t stream_advanceCursor(Stream_t* const stream, const size_t advance)
+{
+    CHECK(stream != NULL, Stream_status_nullPointer);
+    CHECK(advance < (stream->bufLen - stream->actualPosition), Stream_status_bufferOverflow);
+
+    stream->actualPosition += advance;
+
+    return Stream_status_success;
+}
+
 Stream_status_t stream_freeBytes(const Stream_t* const stream, size_t* const freeBytes)
 {
     CHECK(stream != NULL, Stream_status_nullPointer);

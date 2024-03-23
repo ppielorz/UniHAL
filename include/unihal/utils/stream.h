@@ -354,6 +354,20 @@ Stream_status_t stream_getCursor(const Stream_t* const stream, size_t* const act
 Stream_status_t stream_setCursor(Stream_t* const stream, const size_t cursor);
 
 /*!
+ * @brief Advances the actual cursor position of the given Stream with the given value.
+ * 
+ * @param stream Pointer to @ref Stream_t "Stream" which cursor position shall be advanced.
+ * @param advance Cursor advance which shall be applied.
+ * 
+ * @return Stream status code (see @ref Stream_status_t).
+ * 
+ * @retval Stream_status_success Cursor advanced properly.
+ * @retval Stream_status_nullPointer NULL pointer provided.
+ * @retval Stream_status_bufferOverflow Given advance value would exceed buffer length.
+ */
+Stream_status_t stream_advanceCursor(Stream_t* const stream, const size_t advance);
+
+/*!
  * @brief Gets the actual number of free bytes in the given Stream.
  * 
  * @param stream Pointer to @ref Stream_t "Stream" from which number of free bytes shall be extracted.
