@@ -352,6 +352,19 @@ bool unihal_spi_transfer(const UniHAL_spi_t* const instance, const size_t dataLe
     return status;
 }
 
+extern bool unihal_uart_send(const UniHAL_uart_t* const instance, const size_t dataLen, const uint8_t* const writeBuffer)
+{
+    UniHAL_SimpleLink_uartStruct_t* uartStruct = (UniHAL_SimpleLink_uartStruct_t*) instance->obj;
+    UART2_Params uartParams;
+    UART2_Params_init(&uartParams);
+    uartParams.baudRate = 115200;
+    UART2_Handle uart = UART2_open(uartStruct->index, &uartParams);
+    const int_fast16_t status = UART2_write(uart, writeBuffer, dataLen, NULL);
+    UART2_close(uart);
+
+    return status == UART2_STATUS_SUCCESS;
+}
+
 void unihal_reboot(void)
 {
     SysCtrlSystemReset();

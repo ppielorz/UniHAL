@@ -186,6 +186,8 @@ extern UniHAL_gpio_value_t unihal_gpio_read(const UniHAL_gpio_t* const instance)
 
 extern bool unihal_spi_transfer(const UniHAL_spi_t* const instance, const size_t dataLen, const uint8_t* const writeBuffer, uint8_t* const readBuffer);
 
+extern bool unihal_uart_send(const UniHAL_uart_t* const instance, const size_t dataLen, const uint8_t* const writeBuffer);
+
 /*!
  * @brief 
  * 
