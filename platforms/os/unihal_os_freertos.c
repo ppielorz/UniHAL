@@ -102,6 +102,11 @@ void unihalos_sleep(const uint32_t milliseconds)
     vTaskDelay(pdMS_TO_TICKS(milliseconds));
 }
 
+extern size_t unihal_getFreeHeapSize(void)
+{
+    return xPortGetFreeHeapSize();
+}
+
 /******************************************************************************
  Global functions - Task
  *****************************************************************************/

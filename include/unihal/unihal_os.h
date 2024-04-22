@@ -117,6 +117,8 @@ extern uint32_t unihalos_getTickCount(void);
 
 extern void unihalos_sleep(const uint32_t milliseconds);
 
+extern size_t unihal_getFreeHeapSize(void);
+
 /******************************************************************************
  Function Prototypes - Task
  *****************************************************************************/
