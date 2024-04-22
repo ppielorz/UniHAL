@@ -27,6 +27,8 @@
  Constants and definitions
  *****************************************************************************/
 
+#define IS_IN_ISR() ((portNVIC_INT_CTRL_REG & 0xFF) != 0)
+
 typedef struct
 {
     StaticTask_t cb;
@@ -171,16 +173,16 @@ extern bool unihalos_queue_put(UniHALos_queue_t* const instance, const void* ele
 {
     UniHALos_FreeRTOS_queueStruct_t* queueStruct = (UniHALos_FreeRTOS_queueStruct_t*) instance->obj;
     BaseType_t status = pdFALSE;
-    /*if(__get_IPSR() != 0U)
+    if(IS_IN_ISR())
     {
         BaseType_t yeld = pdFALSE;
         status = xQueueSendFromISR(queueStruct->handle, element, &yeld);
         portYIELD_FROM_ISR(yeld);
     }
     else
-    {*/
+    {
         status = xQueueSend(queueStruct->handle, element, pdMS_TO_TICKS(timeout));
-    //}
+    }
     return status == pdTRUE;
 }
 
