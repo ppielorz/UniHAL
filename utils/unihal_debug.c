@@ -15,8 +15,9 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
-#include "unihal/unihal.h"
+#ifdef UNIHAL_DEBUG_PRINT_TICK_COUNT
 #include "unihal/unihal_os.h"
+#endif
 
 #include "unihal/utils/unihal_debug.h"
 
@@ -63,13 +64,16 @@ void unihal_debug_printf(const char *fmt, ...)
     {
         va_list argptr;
         va_start(argptr, fmt);
+        size_t position = 0U;
+        char* debugBuffer = (char*) malloc(UNIHAL_DEBUG_DEFAULT_BUFFER_LEN);
+        #ifdef UNIHAL_DEBUG_PRINT_TICK_COUNT
         const uint32_t tickCount = unihalos_getTickCount();
         const uint32_t milliseconds = tickCount % 1000U;
         const uint32_t seconds = (tickCount / 1000U) % 60U;
         const uint32_t minutes = ((tickCount / 1000U) / 60U) % 60U;
         const uint32_t hours = ((tickCount / 1000U) / 60U) / 60U;
-        char* debugBuffer = (char*) malloc(UNIHAL_DEBUG_DEFAULT_BUFFER_LEN);
-        size_t position = snprintf(debugBuffer, UNIHAL_DEBUG_DEFAULT_BUFFER_LEN, "%02u:%02u:%02u.%03u ", hours, minutes, seconds, milliseconds);
+        position += snprintf(&debugBuffer[position], UNIHAL_DEBUG_DEFAULT_BUFFER_LEN - position, "%02u:%02u:%02u.%03u ", hours, minutes, seconds, milliseconds);
+        #endif
         position += vsnprintf(&debugBuffer[position], UNIHAL_DEBUG_DEFAULT_BUFFER_LEN - position, fmt, argptr);
         va_end(argptr);
         debugCallback(debugCallbackArg, debugBuffer, position);

@@ -13,15 +13,17 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "unihal/unihal_os.h"
-#include "unihal/unihal.h"
-#include "unihal/utils/array.h"
-
 #include <FreeRTOS.h>
 #include <task.h>
 #include <semphr.h>
 #include <queue.h>
 #include <timers.h>
+
+#include "unihal/unihal_os.h"
+#include "unihal/unihal.h"
+#include "unihal/utils/array.h"
+
+#include "unihal/utils/unihal_debug.h"
 
 /******************************************************************************
  Constants and definitions
@@ -281,7 +283,7 @@ bool unihalos_swTimer_setPeriod(UniHALos_swTimer_t* const instance, const uint32
 
 void vApplicationStackOverflowHook(TaskHandle_t xTask, char * pcTaskName)
 {
-    unihal_callErrorHandler("Task overflow");
+    ASSERT(false);
 }
 
 /******************************************************************************

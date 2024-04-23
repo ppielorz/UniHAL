@@ -24,6 +24,8 @@
 #include "unihal/unihal.h"
 #include "unihal_cc13xx_cc26xx.h"
 
+#include "unihal/utils/unihal_debug.h"
+
 /******************************************************************************
  Constants and definitions
  *****************************************************************************/
@@ -51,8 +53,6 @@ typedef struct
  Local variables
  *****************************************************************************/
 static timerInterruptHandlerEntry_t timerInterruptHandlers[8];
-static UniHAL_gpio_errorHandlerFp_t errorHandler = NULL;
-static void* errorHandlerArg = NULL;
 
 /******************************************************************************
  Local function prototypes
@@ -91,20 +91,6 @@ extern bool unihal_init(void)
     }*/
 
     return status;
-}
-
-void unihal_setErrorHandler(UniHAL_gpio_errorHandlerFp_t errorHandlerFp, void* arg)
-{
-    errorHandler = errorHandlerFp;
-    errorHandlerArg = arg;
-}
-
-void unihal_callErrorHandler(const char* const errorMessage)
-{
-    if(errorHandler)
-    {
-        errorHandler(errorMessage, errorHandlerArg);
-    }
 }
 
 extern bool unihal_gpio_init(UniHAL_gpio_t* const instance)
@@ -297,7 +283,7 @@ bool unihal_i2c_transfer(const UniHAL_i2c_t* const instance, const uint8_t slave
     if(I2C_STATUS_SUCCESS != i2cStatus)
     {
         char errorText[64];
-        unihal_callErrorHandler(prepareErrorText(errorText, sizeof(errorText), __LINE__, i2cError(i2cStatus)));
+        DEBUG_ERROR("%s:%d %s", UNIHAL_PLATFORM, __LINE__, i2cError(i2cStatus));
         return false;
     }
 

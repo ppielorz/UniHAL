@@ -15,9 +15,6 @@
  *****************************************************************************/
 #include <assert.h>
 
-#include "unihal/unihal.h"
-#include "unihal/unihal_os.h"
-
 #ifdef __cplusplus
 extern "C"
 {

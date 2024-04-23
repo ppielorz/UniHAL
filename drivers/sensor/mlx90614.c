@@ -16,6 +16,7 @@
 #include "unihal/unihal.h"
 #include "unihal/utils/array.h"
 #include "unihal/drivers/sensor/mlx90614.h"
+#include "unihal/utils/unihal_debug.h"
 
 /******************************************************************************
  Constants and definitions
@@ -161,7 +162,7 @@ static bool mlxRead(MLX90614_t* instance, uint8_t command, uint16_t* data)
 
     if(!unihal_i2c_transfer(instance->i2cDriver, instance->deviceAddress, 100U, &writeVector, &readVector))
     {
-        unihal_callErrorHandler("MLX90614 communication error");
+        DEBUG_ERROR("MLX90614 communication error");
         return false;
     }
 
