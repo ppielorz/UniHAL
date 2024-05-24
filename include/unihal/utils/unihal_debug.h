@@ -46,7 +46,7 @@ static_assert(sizeof(DEBUG_MODULE) == sizeof("1234"), "Debug module length has t
 #define DEBUG_ERROR_IF(cond, ...)
 
 #define DEBUG_PRINTF_INTERNAL(...) unihal_debug_printf(DEBUG_MODULE_INTERNAL __VA_ARGS__)
-#define DEBUG_PRINTF_INTERNAL_COND(cond, ...) if((cond)) { unihal_debug_printf(__VA_ARGS__); }
+#define DEBUG_PRINTF_INTERNAL_COND(cond, ...) if((cond)) { unihal_debug_printf(DEBUG_MODULE_INTERNAL __VA_ARGS__); }
 
 #ifdef DEBUG
 #ifndef DEBUG_LEVEL
