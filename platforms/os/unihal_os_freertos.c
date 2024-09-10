@@ -116,7 +116,8 @@ extern bool unihalos_task_init(UniHALos_task_t* const instance, UniHALos_task_ta
                                 const size_t stackSize, const char* const name, const UniHALos_task_priority_t priority)
 {
     UniHALos_FreeRTOS_taskStruct_t* taskStruct = (UniHALos_FreeRTOS_taskStruct_t*) instance->obj;
-    taskStruct->handle = xTaskCreateStatic(taskFunction, name, stackSize / sizeof(portSTACK_TYPE), arg, 1 /* TODO priority*/, (portSTACK_TYPE*) stack, &taskStruct->cb);
+    const UBaseType_t priorityConverted = (priority == UniHALos_task_priority_high) ? 2U : ((priority == UniHALos_task_priority_medium) ? 1U : 0U);
+    taskStruct->handle = xTaskCreateStatic(taskFunction, name, stackSize / sizeof(portSTACK_TYPE), arg, priorityConverted, (portSTACK_TYPE*) stack, &taskStruct->cb);
 
     return taskStruct->handle != NULL;
 }
