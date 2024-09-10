@@ -59,7 +59,6 @@ bool unihal_i2c_transfer(const UniHAL_i2c_t* const instance, const uint8_t slave
     {
         mock().actualCall("unihal_i2c_transfer").withConstPointerParameter("instance", instance)
             .withUnsignedIntParameter("address", slaveAddress)
-            .withUnsignedIntParameter("timeout", timeout)
             .withPointerParameter("readVector", readVector)
             .withParameterOfType("vector_t", "writeVector", writeVector);
     }
@@ -67,24 +66,11 @@ bool unihal_i2c_transfer(const UniHAL_i2c_t* const instance, const uint8_t slave
     {
         mock().actualCall("unihal_i2c_transfer").withConstPointerParameter("instance", instance)
             .withUnsignedIntParameter("address", slaveAddress)
-            .withUnsignedIntParameter("timeout", timeout)
             .withParameterOfType("vector_t", "writeVector", writeVector)
             .withOutputParameterOfType("vector_t", "readVector", readVector);
     }
     return mock().boolReturnValue();
 }
-bool unihal_i2c_readMem(UniHAL_i2c_t* instance, uint8_t slaveAddress, uint32_t timeout, uint16_t memoryAddress, uint8_t memoryAddressSize, uint8_t* data, size_t dataLen)
-{
-    mock().actualCall("unihal_i2c_readMem").withPointerParameter("instance", instance)
-        .withUnsignedIntParameter("slaveAddress", slaveAddress)
-        .withUnsignedIntParameter("timeout", timeout)
-        .withUnsignedIntParameter("memoryAddress", memoryAddress)
-        .withUnsignedIntParameter("memoryAddressSize", memoryAddressSize)
-        .withOutputParameterOfType("uint8_t*", "data", data)
-        .withUnsignedIntParameter("dataLen", dataLen);
-    return mock().boolReturnValue();
-}
-
 
 bool unihal_spi_transfer(UniHAL_spi_t* instance, size_t dataLen, uint8_t* writeBuffer, uint8_t* readBuffer)
 {

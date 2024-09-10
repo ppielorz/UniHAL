@@ -290,35 +290,6 @@ bool unihal_i2c_transfer(const UniHAL_i2c_t* const instance, const uint8_t slave
     return true;
 }
 
-bool unihal_i2c_readMem(const UniHAL_i2c_t* const instance, const uint8_t slaveAddress, const uint32_t timeout, 
-                        const uint16_t memoryAddress, const uint8_t memoryAddressSize, uint8_t* const data, const size_t dataLen)
-{
-    //DU_ASSERT(instance != NULL);
-    //DU_ASSERT(data != NULL);
-
-    uint8_t writeBufferData[sizeof(uint16_t)];
-    vector_t writeBuffer = {writeBufferData, memoryAddressSize};
-    vector_t readBuffer = {data, dataLen};
-
-    switch(memoryAddressSize)
-    {
-        case sizeof(uint8_t):
-            writeBufferData[0] = (uint8_t) memoryAddress;
-            break;
-
-        case sizeof(uint16_t):
-            writeBufferData[0] = (uint8_t) (memoryAddress >> 8);
-            writeBufferData[1] = (uint8_t) (memoryAddress & 0xFF);
-            break;
-
-        default:
-            break;
-            //DU_ASSERT(false);
-    }
-
-    return unihal_i2c_transfer(instance, slaveAddress, timeout, &writeBuffer, &readBuffer);
-}
-
 bool unihal_spi_transfer(const UniHAL_spi_t* const instance, const size_t dataLen, const uint8_t* const writeBuffer, uint8_t* const readBuffer)
 {
     UniHAL_SimpleLink_spiStruct_t* spiStruct = (UniHAL_SimpleLink_spiStruct_t*) instance->obj;
