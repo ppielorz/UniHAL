@@ -190,7 +190,7 @@ extern bool unihal_gpio_deinit(UniHAL_gpio_t* const instance)
 
 
 extern bool unihal_gpio_registerInterrupt(UniHAL_gpio_t* const instance, const UniHAL_gpio_interrupt_t type, 
-                void (*handler)(void* const arg), void* const arg)
+                UniHAL_gpio_interruptHandlerFp_t handler, void* const arg)
 {
     GPIO_PinConfig pinConfig = GPIO_CFG_IN_INT_NONE;
     uint_least8_t index = GPIO_INDEX(instance);
@@ -215,6 +215,7 @@ extern bool unihal_gpio_registerInterrupt(UniHAL_gpio_t* const instance, const U
     {
         instance->irqHandler = handler;
         instance->irqArg = arg;
+        GPIO_clearInt(index);
         GPIO_setCallback(index, interruptHandler);
         GPIO_setUserArg(index, instance);
         GPIO_setInterruptConfig(index, pinConfig);
@@ -233,6 +234,13 @@ bool unihal_gpio_enableInterrupt(UniHAL_gpio_t* const instance)
 bool unihal_gpio_disableInterrupt(UniHAL_gpio_t* const instance)
 {
     GPIO_disableInt(GPIO_INDEX(instance));
+    GPIO_clearInt(GPIO_INDEX(instance));
+    return true;
+}
+
+bool unihal_gpio_clearInterrupt(UniHAL_gpio_t* const instance)
+{
+    GPIO_clearInt(GPIO_INDEX(instance));
     return true;
 }
 
@@ -393,10 +401,10 @@ bool unihal_timer_setPeriod(UniHAL_timer_t* const instance, const uint32_t perio
 
 static void interruptHandler(uint_least8_t index)
 {
-    const UniHAL_gpio_t* const instance = (const UniHAL_gpio_t* const) GPIO_getUserArg(index);
+    UniHAL_gpio_t* const instance = (UniHAL_gpio_t* const) GPIO_getUserArg(index);
     if(instance->irqHandler)
     {
-        instance->irqHandler(instance->irqArg);
+        instance->irqHandler(instance->irqArg, instance);
     }
 }
 
