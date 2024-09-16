@@ -96,7 +96,14 @@ void unihalos_start(void)
 }
 uint32_t unihalos_getTickCount(void)
 {
-    return xTaskGetTickCount();
+    if(IS_IN_ISR())
+    {
+        return xTaskGetTickCountFromISR();
+    }
+    else
+    {
+        return xTaskGetTickCount();
+    }
 }
 
 void unihalos_sleep(const uint32_t milliseconds)
@@ -254,22 +261,44 @@ bool unihalos_swTimer_deinit(UniHALos_swTimer_t* const instance)
 
 bool unihalos_swTimer_start(UniHALos_swTimer_t* const instance)
 {
+    BaseType_t status = pdFALSE;
+
     if(instance != NULL)
     {
         UniHALos_FreeRTOS_timerStruct_t* timerStruct = (UniHALos_FreeRTOS_timerStruct_t*) instance->obj;
-        return xTimerStart(timerStruct->handle, 0U) == pdPASS;
+        if(IS_IN_ISR())
+        {
+            BaseType_t yeld = pdFALSE;
+            status = xTimerStartFromISR(timerStruct->handle, &yeld);
+            portYIELD_FROM_ISR(yeld);
+        }
+        else
+        {
+            status = xTimerStart(timerStruct->handle, 0U);
+        }
     }
-    return false;
+    return status == pdTRUE;
 }
 
 bool unihalos_swTimer_stop(UniHALos_swTimer_t* const instance)
 {
+    BaseType_t status = pdFALSE;
+
     if(instance != NULL)
     {
         UniHALos_FreeRTOS_timerStruct_t* timerStruct = (UniHALos_FreeRTOS_timerStruct_t*) instance->obj;
-        return xTimerStop(timerStruct->handle, 0U) == pdPASS;
+        if(IS_IN_ISR())
+        {
+            BaseType_t yeld = pdFALSE;
+            status = xTimerStopFromISR(timerStruct->handle, &yeld);
+            portYIELD_FROM_ISR(yeld);
+        }
+        else
+        {
+            status = xTimerStop(timerStruct->handle, 0U);
+        }
     }
-    return false;
+    return status == pdTRUE;
 }
 
 bool unihalos_swTimer_setPeriod(UniHALos_swTimer_t* const instance, const uint32_t periodMs)
