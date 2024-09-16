@@ -19,6 +19,7 @@
 #include <ti/drivers/GPIO.h>
 
 #include "aon_batmon.h"
+#include "aon_rtc.h"
 #include "sys_ctrl.h"
 
 #include "unihal/unihal.h"
@@ -53,6 +54,7 @@ typedef struct
  Local variables
  *****************************************************************************/
 static timerInterruptHandlerEntry_t timerInterruptHandlers[8];
+static uint32_t timeOffset = 0U;
 
 /******************************************************************************
  Local function prototypes
@@ -333,6 +335,37 @@ extern bool unihal_uart_send(const UniHAL_uart_t* const instance, const size_t d
 void unihal_reboot(void)
 {
     SysCtrlSystemReset();
+}
+
+void unihal_getRtcTime(struct tm* const time, uint32_t* const microseconds)
+{
+    union
+    {
+        uint64_t  rawRtcTime;
+        struct
+        {
+            uint32_t subseconds;
+            uint32_t seconds;
+        };
+    } currentRtc;
+    currentRtc.rawRtcTime = AONRTCCurrent64BitValueGet();
+    currentRtc.seconds += timeOffset;
+
+    if(time != NULL)
+    {
+        const time_t tempTimestamp = currentRtc.seconds;
+        *time = *gmtime(&tempTimestamp);
+    }
+
+    if(microseconds != NULL)
+    {
+        *microseconds = currentRtc.subseconds / 4295;
+    }
+}
+
+void unihal_setRtcOffset(const uint32_t seconds)
+{
+    timeOffset = seconds - AONRTCSecGet();
 }
 
 uint32_t unihal_getVoltage(void)

@@ -3,10 +3,10 @@ cmake_minimum_required(VERSION 3.18)
 project(UniHAL VERSION 1.0.0 DESCRIPTION "Universal HAL layer")
 include(CTest)
 
-option(UNIHAL_DEBUG_PRINT_TICK_COUNT "Print formatted tick count on debug call, depends on UniHALos." ON)
+option(UNIHAL_DEBUG_PRINT_TIME "Print formatted time from RTC on debug call." ON)
 
-if(UNIHAL_DEBUG_PRINT_TICK_COUNT)
-  add_definitions(-DUNIHAL_DEBUG_PRINT_TICK_COUNT)
+if(UNIHAL_DEBUG_PRINT_TIME)
+  add_definitions(-DUNIHAL_DEBUG_PRINT_TIME)
 endif()
 
 add_library(unihal unihal.c)
