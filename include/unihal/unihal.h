@@ -34,10 +34,6 @@ typedef enum
     UniHAL_status_success = 0,
 } UniHAL_status_t;
 
-typedef struct UniHAL_gpio_t UniHAL_gpio_t;
-
-typedef void (*UniHAL_gpio_interruptHandlerFp_t)(void* arg, UniHAL_gpio_t* instance);
-
 typedef enum
 {
     UniHAL_gpio_interrupt_disabled = 0,
@@ -83,6 +79,10 @@ typedef enum
 
 } UniHAL_gpio_direction_t;
 
+typedef struct UniHAL_gpio_t UniHAL_gpio_t;
+
+typedef void (*UniHAL_gpio_interruptHandlerFp_t)(UniHAL_gpio_t* instance, const UniHAL_gpio_value_t value, void* arg1, void* arg2);
+
 struct UniHAL_gpio_t
 {
     /*!
@@ -90,7 +90,8 @@ struct UniHAL_gpio_t
      */
     void* obj;
     UniHAL_gpio_interruptHandlerFp_t irqHandler;
-    void* irqArg;
+    void* irqArg1;
+    void* irqArg2;
 
 };
 
@@ -171,7 +172,7 @@ extern bool unihal_gpio_configureInput(UniHAL_gpio_t* const instance, const UniH
 extern bool unihal_gpio_configureOutput(UniHAL_gpio_t* const instance, const UniHAL_gpio_value_t outputValue,
                                     const UniHAL_gpio_outputType_t outputType);
 
-extern bool unihal_gpio_registerInterrupt(UniHAL_gpio_t* const instance, const UniHAL_gpio_interrupt_t type, UniHAL_gpio_interruptHandlerFp_t handler, void* const arg);
+extern bool unihal_gpio_registerInterrupt(UniHAL_gpio_t* const instance, const UniHAL_gpio_interrupt_t type, UniHAL_gpio_interruptHandlerFp_t handler, void* const arg1, void* const arg2);
 extern bool unihal_gpio_enableInterrupt(UniHAL_gpio_t* const instance);
 extern bool unihal_gpio_disableInterrupt(UniHAL_gpio_t* const instance);
 extern bool unihal_gpio_clearInterrupt(UniHAL_gpio_t* const instance);
