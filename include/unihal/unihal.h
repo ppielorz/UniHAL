@@ -164,6 +164,7 @@ extern void unihal_reboot(void);
 
 extern void unihal_getRtcTime(struct tm* const time, uint32_t* const microseconds);
 extern void unihal_setRtcOffset(const uint32_t seconds);
+extern uint32_t unihal_getTickCount(void);
 
 extern bool unihal_gpio_init(UniHAL_gpio_t* const instance);
 extern bool unihal_gpio_deinit(UniHAL_gpio_t* const instance);

@@ -41,6 +41,16 @@ typedef struct
     void* arg;
 } timerInterruptHandlerEntry_t;
 
+typedef union
+{
+    uint64_t  rawRtcTime;
+    struct
+    {
+        uint32_t subseconds;
+        uint32_t seconds;
+    };
+} currentRtc_t;
+
 
 /******************************************************************************
  External Variables
@@ -340,15 +350,7 @@ void unihal_reboot(void)
 
 void unihal_getRtcTime(struct tm* const time, uint32_t* const microseconds)
 {
-    union
-    {
-        uint64_t  rawRtcTime;
-        struct
-        {
-            uint32_t subseconds;
-            uint32_t seconds;
-        };
-    } currentRtc;
+    currentRtc_t currentRtc;
     currentRtc.rawRtcTime = AONRTCCurrent64BitValueGet();
     currentRtc.seconds += timeOffset;
 
@@ -367,6 +369,14 @@ void unihal_getRtcTime(struct tm* const time, uint32_t* const microseconds)
 void unihal_setRtcOffset(const uint32_t seconds)
 {
     timeOffset = seconds - AONRTCSecGet();
+}
+
+uint32_t unihal_getTickCount(void)
+{
+    currentRtc_t currentRtc;
+    currentRtc.rawRtcTime = AONRTCCurrent64BitValueGet();
+
+    return currentRtc.seconds * 1000 + currentRtc.subseconds / 4295000;
 }
 
 uint32_t unihal_getVoltage(void)

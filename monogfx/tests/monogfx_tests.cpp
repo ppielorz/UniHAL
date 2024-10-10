@@ -435,6 +435,6 @@ static void printBenchmark()
         monoGFX_print(&gfx, 0, 0, &monoGFX_FreeMono_9pt, "testString123");
     }
     clock_t endTime = clock();
-    monoGFX_pngPrinter(&gfx, "/home/ppielorz/Drzemlik/source/unihal/monogfx/printBenchmark.png");
+    monoGFX_pngPrinter(&gfx, "printBenchmark.png");
     printf("printBenchmark time: %lu us\n", endTime - startTime);
 }

@@ -1,5 +1,5 @@
 /******************************************************************************
- @file drzemlik_device_debug.h
+ @file unihal_debug.h
 
  @brief UniHAL debug wrapper declaration.
  
