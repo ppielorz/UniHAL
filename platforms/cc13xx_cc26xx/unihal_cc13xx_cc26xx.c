@@ -335,12 +335,17 @@ extern bool unihal_uart_send(const UniHAL_uart_t* const instance, const size_t d
     UniHAL_SimpleLink_uartStruct_t* uartStruct = (UniHAL_SimpleLink_uartStruct_t*) instance->obj;
     UART2_Params uartParams;
     UART2_Params_init(&uartParams);
+    bool status = false;
     uartParams.baudRate = 115200;
-    UART2_Handle uart = UART2_open(uartStruct->index, &uartParams);
-    const int_fast16_t status = UART2_write(uart, writeBuffer, dataLen, NULL);
-    UART2_close(uart);
+    UART2_Handle uartHandle = UART2_open(uartStruct->index, &uartParams);
+    if(uartHandle != NULL)
+    {
+        const int_fast16_t uartStatus = UART2_write(uartHandle, writeBuffer, dataLen, NULL);
+        UART2_close(uartHandle);
+        status = uartStatus == UART2_STATUS_SUCCESS;
+    }
 
-    return status == UART2_STATUS_SUCCESS;
+    return status;
 }
 
 void unihal_reboot(void)
