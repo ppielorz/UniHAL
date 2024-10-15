@@ -41,7 +41,8 @@
  Local variables
  *****************************************************************************/
 static UniHAL_debugCallbackFp_t debugCallback = NULL;
-static void* debugCallbackArg = NULL;
+static UniHAL_assertCallbackFp_t assertCallback = NULL;
+static void* arg = NULL;
 
 /******************************************************************************
  Local function prototypes
@@ -50,13 +51,12 @@ static void* debugCallbackArg = NULL;
 /******************************************************************************
  Global functions
  ******************************************************************************/
-void unihal_debug_init(UniHAL_debugCallbackFp_t newDebugCallback, void* newDebugCallbackArg)
+void unihal_debug_init(UniHAL_debugCallbackFp_t newDebugCallback, UniHAL_assertCallbackFp_t newAssertCallback, void* newArg)
 {
-    if(newDebugCallback != NULL)
-    {
-        debugCallback = newDebugCallback;
-        debugCallbackArg = newDebugCallbackArg;
-    }
+
+    debugCallback = newDebugCallback;
+    assertCallback = newAssertCallback;
+    arg = newArg;
 }
 
 void unihal_debug_printf(const char *fmt, ...)
@@ -79,13 +79,16 @@ void unihal_debug_printf(const char *fmt, ...)
         #endif
         position += vsnprintf(&debugBuffer[position], UNIHAL_DEBUG_DEFAULT_BUFFER_LEN - position, fmt, argptr);
         va_end(argptr);
-        debugCallback(debugCallbackArg, debugBuffer, position);
+        debugCallback(arg, debugBuffer, position);
     }
 }
 
 void unihal_debug_assert(const char* file, int line)
 {
-    unihal_debug_printf("Assert failed: %s:%d\n", file, line);
+    if(assertCallback != NULL)
+    {
+        assertCallback(arg, file, line);
+    }
     while(1);
 }
 

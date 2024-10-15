@@ -88,12 +88,13 @@ static_assert(sizeof(DEBUG_MODULE) == sizeof("1234"), "Debug module length has t
 #define ASSERT(expr) if(!(expr)) { unihal_debug_assert(__FILE__, __LINE__); }
 
 typedef void (*UniHAL_debugCallbackFp_t)(void* arg, const char* debugBuffer, const size_t debugBufferLen);
+typedef void (*UniHAL_assertCallbackFp_t)(void* arg, const char* file, const int line);
 
 /******************************************************************************
  Function Prototypes
  *****************************************************************************/
 
-void unihal_debug_init(UniHAL_debugCallbackFp_t newDebugCallback, void* newDebugCallbackArg);
+void unihal_debug_init(UniHAL_debugCallbackFp_t newDebugCallback, UniHAL_assertCallbackFp_t newAssertCallback, void* newArg);
 
 void unihal_debug_printf(const char *fmt, ...) __attribute__ ( ( format ( printf, 1, 2 ) ) );
 
