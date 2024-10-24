@@ -144,14 +144,35 @@ bool unihalos_mutex_init(UniHALos_mutex_t* const instance)
 bool unihalos_mutex_acquire(UniHALos_mutex_t* const instance, uint32_t timeout)
 {
     UniHALos_FreeRTOS_mutexStruct_t* mutexStruct = (UniHALos_FreeRTOS_mutexStruct_t*) instance->obj;
-    const BaseType_t status = xSemaphoreTake(mutexStruct->handle, pdMS_TO_TICKS(timeout));
+    BaseType_t status = pdFALSE;
+    if(IS_IN_ISR())
+    {
+        BaseType_t yeld = pdFALSE;
+        status = xSemaphoreTakeFromISR(mutexStruct->handle, &yeld);
+        portYIELD_FROM_ISR(yeld);
+    }
+    else
+    {
+        status = xSemaphoreTake(mutexStruct->handle, pdMS_TO_TICKS(timeout));
+    }
+
     return status == pdTRUE;
 }
 
 bool unihalos_mutex_release(UniHALos_mutex_t* const instance)
 {
     UniHALos_FreeRTOS_mutexStruct_t* mutexStruct = (UniHALos_FreeRTOS_mutexStruct_t*) instance->obj;
-    const BaseType_t status = xSemaphoreGive(mutexStruct->handle);
+    BaseType_t status = pdFALSE;
+    if(IS_IN_ISR())
+    {
+        BaseType_t yeld = pdFALSE;
+        status = xSemaphoreGiveFromISR(mutexStruct->handle, &yeld);
+        portYIELD_FROM_ISR(yeld);
+    }
+    else
+    {
+        status = xSemaphoreGive(mutexStruct->handle);
+    }
     return status == pdTRUE;
 }
 
