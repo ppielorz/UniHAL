@@ -183,7 +183,7 @@ class FontConverter
         {
             std::ostringstream fontMeta;
             fontMeta << "const monoGFX_font_t monoGFX_" << std::dec << m_fontName << "_" << m_fontSize << "pt = {bitmapBuffer, " << (int) m_fontBitmap.size();
-            fontMeta << ", glyphs, 20};" << std::endl; //TODO 20 yAdvance
+            fontMeta << ", glyphs};" << std::endl;
 
             return fontMeta;
         }
@@ -363,7 +363,7 @@ static void convertSingleGlyph(FontConverter& fontConverter, FT_Face& face, cons
     const FT_Bitmap& bitmap = face->glyph->bitmap;
     const uint8_t xAdvance = (int8_t) (face->glyph->metrics.horiAdvance / 64);
     const int8_t xOffset = (int8_t) (face->glyph->metrics.horiBearingX / 64);
-    const int8_t yOffset = (uint8_t) ((face->glyph->metrics.vertAdvance - face->glyph->metrics.horiBearingY) / 64);
+    const int8_t yOffset = (uint8_t) (1 - face->glyph->bitmap_top);
     const uint8_t width = (uint8_t) bitmap.width;
     const uint8_t height = (uint8_t) bitmap.rows;
 

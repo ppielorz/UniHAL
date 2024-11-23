@@ -16,11 +16,9 @@
 #include <stdio.h>
 
 #include <libpng16/png.h>
-//#include <libpng16/pngconf.h>
-//#include <libpng16/pnglibconf.h>
 
 #include "unihal/monogfx/monogfx.h"
-#include "monogfx_printers.h"
+#include "unihal/monogfx/tools/monogfx_printers.h"
 
 /******************************************************************************
  Constants and definitions

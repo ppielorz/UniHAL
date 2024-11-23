@@ -9,39 +9,16 @@ buildType:
       short: Release
       long: Optimize generated code
       buildType: Release
-
-coverage:
-  default: disable
-  choices:
-    enable:
-      short: Enable coverage
-      long: Enable code coverage
+    test:
+      short: Test
+      long: Build tests
+      buildType: Debug
       settings:
+        BUILD_TESTING: yes
+    coverage:
+      short: Coverage
+      long: Build tests with coverage
+      buildType: Debug
+      settings:
+        BUILD_TESTING: yes
         ENABLE_COVERAGE: yes
-    disable:
-      short: Disable coverage
-      long: Disable code coverage
-
-monoGFX_fontConverter:
-  default: disable
-  choices:
-    enable:
-      short: Enable monoGFX FontConverter
-      long: Enable monoGFX FontConverter build
-      settings:
-        ENABLE_MONOGFX_FONT_CONVERTER: yes
-    disable:
-      short: Disable monoGFX FontConverter
-      long: Disable monoGFX FontConverter build
-
-monoGFX_printers:
-  default: disable
-  choices:
-    enable:
-      short: Enable monoGFX printers
-      long: Enable monoGFX printers build
-      settings:
-        ENABLE_MONOGFX_PRINTERS: yes
-    disable:
-      short: Disable monoGFX printers
-      long: Disable monoGFX printers build

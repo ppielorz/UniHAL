@@ -1,4 +1,15 @@
-set(TEST_NAME monogfx_tests)
-add_executable(${TEST_NAME} monogfx_tests.cpp)
-target_link_libraries(${TEST_NAME} unihal unihal_tests_tools monoGFX_printers CppUTest CppUTestExt)
-add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
+add_executable(monogfx_tests monogfx_tests.cpp)
+target_link_libraries(monogfx_tests unihal unihal_tests_tools monoGFX_printers CppUTest CppUTestExt)
+add_test(NAME monogfx_tests COMMAND monogfx_tests)
+
+add_executable(monogfx_benchmarks monogfx_benchmarks.cpp)
+target_link_libraries(monogfx_benchmarks unihal monoGFX_printers)
+add_test(NAME monogfx_benchmarks COMMAND monogfx_benchmarks)
+
+add_executable(monogfx_fontTests monogfx_fontTests.c)
+target_link_libraries(monogfx_fontTests unihal monoGFX_printers)
+add_test(NAME monogfx_fontTests COMMAND monogfx_fontTests)
+
+add_executable(monogfx_widgetTests monogfx_widgetTests.c)
+target_link_libraries(monogfx_widgetTests unihal monoGFX_printers)
+add_test(NAME monogfx_widgetTests COMMAND monogfx_widgetTests)

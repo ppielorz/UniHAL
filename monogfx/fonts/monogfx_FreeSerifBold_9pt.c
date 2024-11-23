@@ -89,15 +89,15 @@ static const monoGFX_glyph_t glyphs[] =
 {
 /********************
  *  Character: ' ', X advance: 5
- *  X offset: 0, Y offset: 19
+ *  X offset: 0, Y offset: 0
  *  X size: 1, Y size: 1
  *       
  ********************/
-{0, 5, 0, 19, 1, 1},
+{0, 5, 0, 0, 1, 1},
 
 /********************
  *  Character: '!', X advance: 6
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 3, Y size: 13
  *   ###   
  *   ###   
@@ -113,11 +113,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ###   
  *   ###   
  ********************/
-{1, 6, 1, 6, 3, 13},
+{1, 6, 1, -12, 3, 13},
 
 /********************
  *  Character: '"', X advance: 11
- *  X offset: 2, Y offset: 6
+ *  X offset: 2, Y offset: -12
  *  X size: 7, Y size: 5
  *    ##   ##    
  *    ##   ##    
@@ -125,11 +125,11 @@ static const monoGFX_glyph_t glyphs[] =
  *    #    ##    
  *    #    #     
  ********************/
-{6, 11, 2, 6, 7, 5},
+{6, 11, 2, -12, 7, 5},
 
 /********************
  *  Character: '#', X advance: 9
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 9, Y size: 13
  *     ##  # 
  *     #   # 
@@ -145,11 +145,11 @@ static const monoGFX_glyph_t glyphs[] =
  *    #  ##  
  *   ##  ##  
  ********************/
-{11, 9, 0, 6, 9, 13},
+{11, 9, 0, -12, 9, 13},
 
 /********************
  *  Character: '$', X advance: 10
- *  X offset: 1, Y offset: 5
+ *  X offset: 1, Y offset: -13
  *  X size: 8, Y size: 15
  *      #      
  *     ##      
@@ -167,11 +167,11 @@ static const monoGFX_glyph_t glyphs[] =
  *     ####    
  *      #      
  ********************/
-{26, 10, 1, 5, 8, 15},
+{26, 10, 1, -13, 8, 15},
 
 /********************
  *  Character: '%', X advance: 19
- *  X offset: 2, Y offset: 5
+ *  X offset: 2, Y offset: -12
  *  X size: 15, Y size: 13
  *       ###    #        
  *     ###  #####        
@@ -187,11 +187,11 @@ static const monoGFX_glyph_t glyphs[] =
  *        #   ##  ##     
  *       #     ###       
  ********************/
-{41, 19, 2, 5, 15, 13},
+{41, 19, 2, -12, 15, 13},
 
 /********************
  *  Character: '&', X advance: 16
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 14, Y size: 13
  *       #####       
  *      ##  ###      
@@ -207,11 +207,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   #####   ####    
  *    ####### #####  
  ********************/
-{66, 16, 1, 6, 14, 13},
+{66, 16, 1, -12, 14, 13},
 
 /********************
  *  Character: ''', X advance: 5
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 2, Y size: 5
  *   ##   
  *   ##   
@@ -219,11 +219,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ##   
  *   #    
  ********************/
-{89, 5, 1, 6, 2, 5},
+{89, 5, 1, -12, 2, 5},
 
 /********************
  *  Character: '(', X advance: 6
- *  X offset: 1, Y offset: 5
+ *  X offset: 1, Y offset: -12
  *  X size: 4, Y size: 16
  *      #  
  *     #   
@@ -242,11 +242,11 @@ static const monoGFX_glyph_t glyphs[] =
  *     #   
  *      #  
  ********************/
-{91, 6, 1, 5, 4, 16},
+{91, 6, 1, -12, 4, 16},
 
 /********************
  *  Character: ')', X advance: 6
- *  X offset: 1, Y offset: 5
+ *  X offset: 1, Y offset: -12
  *  X size: 4, Y size: 16
  *   #     
  *    #    
@@ -265,11 +265,11 @@ static const monoGFX_glyph_t glyphs[] =
  *    #    
  *   #     
  ********************/
-{99, 6, 1, 5, 4, 16},
+{99, 6, 1, -12, 4, 16},
 
 /********************
  *  Character: '*', X advance: 10
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 8, Y size: 8
  *      ##     
  *      ##     
@@ -280,11 +280,11 @@ static const monoGFX_glyph_t glyphs[] =
  *    # ## ##  
  *      ##     
  ********************/
-{107, 10, 1, 6, 8, 8},
+{107, 10, 1, -12, 8, 8},
 
 /********************
  *  Character: '+', X advance: 13
- *  X offset: 2, Y offset: 9
+ *  X offset: 2, Y offset: -9
  *  X size: 10, Y size: 11
  *        ##       
  *        ##       
@@ -298,11 +298,11 @@ static const monoGFX_glyph_t glyphs[] =
  *        ##       
  *        ##       
  ********************/
-{115, 13, 2, 9, 10, 11},
+{115, 13, 2, -9, 10, 11},
 
 /********************
  *  Character: ',', X advance: 5
- *  X offset: 0, Y offset: 16
+ *  X offset: 0, Y offset: -2
  *  X size: 3, Y size: 6
  *  ##   
  *  ###  
@@ -311,30 +311,30 @@ static const monoGFX_glyph_t glyphs[] =
  *   #   
  *  #    
  ********************/
-{129, 5, 0, 16, 3, 6},
+{129, 5, 0, -2, 3, 6},
 
 /********************
  *  Character: '-', X advance: 6
- *  X offset: 1, Y offset: 14
+ *  X offset: 1, Y offset: -4
  *  X size: 4, Y size: 2
  *   ####  
  *   ####  
  ********************/
-{132, 6, 1, 14, 4, 2},
+{132, 6, 1, -4, 4, 2},
 
 /********************
  *  Character: '.', X advance: 5
- *  X offset: 1, Y offset: 16
+ *  X offset: 1, Y offset: -2
  *  X size: 3, Y size: 3
  *   ###  
  *   ###  
  *   ###  
  ********************/
-{133, 5, 1, 16, 3, 3},
+{133, 5, 1, -2, 3, 3},
 
 /********************
  *  Character: '/', X advance: 5
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 6, Y size: 13
  *      ##
  *      ##
@@ -350,11 +350,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   #    
  *  ##    
  ********************/
-{135, 5, 0, 6, 6, 13},
+{135, 5, 0, -12, 6, 13},
 
 /********************
  *  Character: '0', X advance: 10
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 9, Y size: 13
  *     ###    
  *    ## ##   
@@ -370,11 +370,11 @@ static const monoGFX_glyph_t glyphs[] =
  *    ## ##   
  *     ###    
  ********************/
-{145, 10, 0, 6, 9, 13},
+{145, 10, 0, -12, 9, 13},
 
 /********************
  *  Character: '1', X advance: 9
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 6, Y size: 13
  *      ##    
  *    ####    
@@ -390,11 +390,11 @@ static const monoGFX_glyph_t glyphs[] =
  *     ###    
  *   ######   
  ********************/
-{160, 9, 1, 6, 6, 13},
+{160, 9, 1, -12, 6, 13},
 
 /********************
  *  Character: '2', X advance: 9
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 9, Y size: 13
  *    ####   
  *   ######  
@@ -410,11 +410,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ####### 
  *  ######## 
  ********************/
-{170, 9, 0, 6, 9, 13},
+{170, 9, 0, -12, 9, 13},
 
 /********************
  *  Character: '3', X advance: 10
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 9, Y size: 13
  *    #####   
  *   #  ####  
@@ -430,11 +430,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ###  #   
  *   #####    
  ********************/
-{185, 10, 0, 6, 9, 13},
+{185, 10, 0, -12, 9, 13},
 
 /********************
  *  Character: '4', X advance: 9
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 8, Y size: 13
  *        ##  
  *       ###  
@@ -450,11 +450,11 @@ static const monoGFX_glyph_t glyphs[] =
  *       ###  
  *       ###  
  ********************/
-{200, 9, 1, 6, 8, 13},
+{200, 9, 1, -12, 8, 13},
 
 /********************
  *  Character: '5', X advance: 10
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 9, Y size: 13
  *     ###### 
  *    ######  
@@ -470,11 +470,11 @@ static const monoGFX_glyph_t glyphs[] =
  *  ###   #   
  *   #####    
  ********************/
-{213, 10, 0, 6, 9, 13},
+{213, 10, 0, -12, 9, 13},
 
 /********************
  *  Character: '6', X advance: 10
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 8, Y size: 13
  *         ##  
  *      ###    
@@ -490,11 +490,11 @@ static const monoGFX_glyph_t glyphs[] =
  *    ##  ##   
  *     ####    
  ********************/
-{228, 10, 1, 6, 8, 13},
+{228, 10, 1, -12, 8, 13},
 
 /********************
  *  Character: '7', X advance: 9
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 9, Y size: 13
  *   ########
  *   ########
@@ -510,11 +510,11 @@ static const monoGFX_glyph_t glyphs[] =
  *     ##    
  *     ##    
  ********************/
-{241, 9, 0, 6, 9, 13},
+{241, 9, 0, -12, 9, 13},
 
 /********************
  *  Character: '8', X advance: 10
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 8, Y size: 13
  *     ####    
  *    #   ##   
@@ -530,11 +530,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ##  ###   
  *    #####    
  ********************/
-{256, 10, 1, 6, 8, 13},
+{256, 10, 1, -12, 8, 13},
 
 /********************
  *  Character: '9', X advance: 10
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 8, Y size: 13
  *     ####    
  *    ##  ##   
@@ -550,11 +550,11 @@ static const monoGFX_glyph_t glyphs[] =
  *     ###     
  *   ##        
  ********************/
-{269, 10, 1, 6, 8, 13},
+{269, 10, 1, -12, 8, 13},
 
 /********************
  *  Character: ':', X advance: 6
- *  X offset: 2, Y offset: 10
+ *  X offset: 2, Y offset: -8
  *  X size: 3, Y size: 9
  *    ###   
  *    ###   
@@ -566,11 +566,11 @@ static const monoGFX_glyph_t glyphs[] =
  *    ###   
  *    ###   
  ********************/
-{282, 6, 2, 10, 3, 9},
+{282, 6, 2, -8, 3, 9},
 
 /********************
  *  Character: ';', X advance: 6
- *  X offset: 2, Y offset: 10
+ *  X offset: 2, Y offset: -8
  *  X size: 3, Y size: 12
  *    ###   
  *    ###   
@@ -585,11 +585,11 @@ static const monoGFX_glyph_t glyphs[] =
  *     #    
  *    #     
  ********************/
-{286, 6, 2, 10, 3, 12},
+{286, 6, 2, -8, 3, 12},
 
 /********************
  *  Character: '<', X advance: 13
- *  X offset: 1, Y offset: 8
+ *  X offset: 1, Y offset: -9
  *  X size: 11, Y size: 10
  *            ##  
  *          ####  
@@ -602,11 +602,11 @@ static const monoGFX_glyph_t glyphs[] =
  *         #####  
  *            ##  
  ********************/
-{291, 13, 1, 8, 11, 10},
+{291, 13, 1, -9, 11, 10},
 
 /********************
  *  Character: '=', X advance: 13
- *  X offset: 1, Y offset: 12
+ *  X offset: 1, Y offset: -6
  *  X size: 11, Y size: 5
  *   ###########  
  *                
@@ -614,11 +614,11 @@ static const monoGFX_glyph_t glyphs[] =
  *                
  *   ###########  
  ********************/
-{305, 13, 1, 12, 11, 5},
+{305, 13, 1, -6, 11, 5},
 
 /********************
  *  Character: '>', X advance: 13
- *  X offset: 1, Y offset: 8
+ *  X offset: 1, Y offset: -9
  *  X size: 11, Y size: 10
  *   ##           
  *   ####         
@@ -631,11 +631,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ####         
  *   ##           
  ********************/
-{312, 13, 1, 8, 11, 10},
+{312, 13, 1, -9, 11, 10},
 
 /********************
  *  Character: '?', X advance: 10
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 8, Y size: 13
  *     ####    
  *   ##  ###   
@@ -651,11 +651,11 @@ static const monoGFX_glyph_t glyphs[] =
  *      ###    
  *      ##     
  ********************/
-{326, 10, 1, 6, 8, 13},
+{326, 10, 1, -12, 8, 13},
 
 /********************
  *  Character: '@', X advance: 18
- *  X offset: 2, Y offset: 6
+ *  X offset: 2, Y offset: -12
  *  X size: 14, Y size: 13
  *         #####        
  *       ##     ##      
@@ -671,11 +671,11 @@ static const monoGFX_glyph_t glyphs[] =
  *      ###     #       
  *        ######        
  ********************/
-{339, 18, 2, 6, 14, 13},
+{339, 18, 2, -12, 14, 13},
 
 /********************
  *  Character: 'A', X advance: 14
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 13, Y size: 13
  *        #       
  *        ##      
@@ -691,11 +691,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ##      ###  
  *  ####   ###### 
  ********************/
-{362, 14, 0, 6, 13, 13},
+{362, 14, 0, -12, 13, 13},
 
 /********************
  *  Character: 'B', X advance: 13
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 12, Y size: 13
  *  #########    
  *    ###   ###  
@@ -711,11 +711,11 @@ static const monoGFX_glyph_t glyphs[] =
  *    ###   ###  
  *  #########    
  ********************/
-{384, 13, 0, 6, 12, 13},
+{384, 13, 0, -12, 12, 13},
 
 /********************
  *  Character: 'C', X advance: 13
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 12, Y size: 13
  *       ####   # 
  *     ###   #### 
@@ -731,11 +731,11 @@ static const monoGFX_glyph_t glyphs[] =
  *     ###    ##  
  *       #####    
  ********************/
-{404, 13, 1, 6, 12, 13},
+{404, 13, 1, -12, 12, 13},
 
 /********************
  *  Character: 'D', X advance: 14
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 13, Y size: 13
  *  #########     
  *    ###   ###   
@@ -751,11 +751,11 @@ static const monoGFX_glyph_t glyphs[] =
  *    ###   ###   
  *  #########     
  ********************/
-{424, 14, 0, 6, 13, 13},
+{424, 14, 0, -12, 13, 13},
 
 /********************
  *  Character: 'E', X advance: 13
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 11, Y size: 13
  *   ###########  
  *    ###     ##  
@@ -771,11 +771,11 @@ static const monoGFX_glyph_t glyphs[] =
  *    ###    ###  
  *   ##########   
  ********************/
-{446, 13, 1, 6, 11, 13},
+{446, 13, 1, -12, 11, 13},
 
 /********************
  *  Character: 'F', X advance: 12
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 11, Y size: 13
  *   ########### 
  *    ###     ## 
@@ -791,11 +791,11 @@ static const monoGFX_glyph_t glyphs[] =
  *    ###        
  *   ######      
  ********************/
-{464, 12, 1, 6, 11, 13},
+{464, 12, 1, -12, 11, 13},
 
 /********************
  *  Character: 'G', X advance: 15
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 13, Y size: 13
  *       #####  #   
  *     ###    ###   
@@ -811,11 +811,11 @@ static const monoGFX_glyph_t glyphs[] =
  *     ###    ###   
  *       ######     
  ********************/
-{482, 15, 1, 6, 13, 13},
+{482, 15, 1, -12, 13, 13},
 
 /********************
  *  Character: 'H', X advance: 15
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 13, Y size: 13
  *   #####   #####  
  *    ###     ###   
@@ -831,11 +831,11 @@ static const monoGFX_glyph_t glyphs[] =
  *    ###     ###   
  *   #####   #####  
  ********************/
-{504, 15, 1, 6, 13, 13},
+{504, 15, 1, -12, 13, 13},
 
 /********************
  *  Character: 'I', X advance: 7
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 5, Y size: 13
  *   #####  
  *    ###   
@@ -851,11 +851,11 @@ static const monoGFX_glyph_t glyphs[] =
  *    ###   
  *   #####  
  ********************/
-{526, 7, 1, 6, 5, 13},
+{526, 7, 1, -12, 5, 13},
 
 /********************
  *  Character: 'J', X advance: 10
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 8, Y size: 15
  *    ######  
  *      ###   
@@ -873,11 +873,11 @@ static const monoGFX_glyph_t glyphs[] =
  *  ##  ##    
  *   ####     
  ********************/
-{535, 10, 0, 6, 8, 15},
+{535, 10, 0, -12, 8, 15},
 
 /********************
  *  Character: 'K', X advance: 15
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 13, Y size: 13
  *   #####  ######  
  *    ###     ##    
@@ -893,11 +893,11 @@ static const monoGFX_glyph_t glyphs[] =
  *    ###    ####   
  *   #####  ######  
  ********************/
-{550, 15, 1, 6, 13, 13},
+{550, 15, 1, -12, 13, 13},
 
 /********************
  *  Character: 'L', X advance: 13
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 11, Y size: 13
  *   ######       
  *    ###         
@@ -913,11 +913,11 @@ static const monoGFX_glyph_t glyphs[] =
  *    ###    ###  
  *   ##########   
  ********************/
-{572, 13, 1, 6, 11, 13},
+{572, 13, 1, -12, 11, 13},
 
 /********************
  *  Character: 'M', X advance: 18
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 17, Y size: 13
  *  ######       #### 
  *    ####      ####  
@@ -933,11 +933,11 @@ static const monoGFX_glyph_t glyphs[] =
  *    #    ##    ###  
  *   ###   #    ##### 
  ********************/
-{590, 18, 0, 6, 17, 13},
+{590, 18, 0, -12, 17, 13},
 
 /********************
  *  Character: 'N', X advance: 14
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 12, Y size: 13
  *   ####     ###  
  *    ####     #   
@@ -953,11 +953,11 @@ static const monoGFX_glyph_t glyphs[] =
  *    #       ##   
  *   ###       #   
  ********************/
-{618, 14, 1, 6, 12, 13},
+{618, 14, 1, -12, 12, 13},
 
 /********************
  *  Character: 'O', X advance: 15
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 13, Y size: 13
  *       #####      
  *     ###   ###    
@@ -973,11 +973,11 @@ static const monoGFX_glyph_t glyphs[] =
  *     ###   ###    
  *       #####      
  ********************/
-{638, 15, 1, 6, 13, 13},
+{638, 15, 1, -12, 13, 13},
 
 /********************
  *  Character: 'P', X advance: 12
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 10, Y size: 13
  *   ########    
  *    ###  ###   
@@ -993,11 +993,11 @@ static const monoGFX_glyph_t glyphs[] =
  *    ###        
  *   #####       
  ********************/
-{660, 12, 1, 6, 10, 13},
+{660, 12, 1, -12, 10, 13},
 
 /********************
  *  Character: 'Q', X advance: 15
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 13, Y size: 16
  *       #####      
  *     ###   ###    
@@ -1016,11 +1016,11 @@ static const monoGFX_glyph_t glyphs[] =
  *        #####     
  *          #####   
  ********************/
-{677, 15, 1, 6, 13, 16},
+{677, 15, 1, -12, 13, 16},
 
 /********************
  *  Character: 'R', X advance: 14
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 13, Y size: 13
  *   #########     
  *    ###   ###    
@@ -1036,11 +1036,11 @@ static const monoGFX_glyph_t glyphs[] =
  *    ###    ####  
  *   #####    #### 
  ********************/
-{703, 14, 1, 6, 13, 13},
+{703, 14, 1, -12, 13, 13},
 
 /********************
  *  Character: 'S', X advance: 11
- *  X offset: 1, Y offset: 5
+ *  X offset: 1, Y offset: -12
  *  X size: 9, Y size: 13
  *     ####  #  
  *    ##   ###  
@@ -1056,11 +1056,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ###   ##   
  *   # #####    
  ********************/
-{725, 11, 1, 5, 9, 13},
+{725, 11, 1, -12, 9, 13},
 
 /********************
  *  Character: 'T', X advance: 12
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 12, Y size: 13
  *  ############
  *  ##   ###  ##
@@ -1076,11 +1076,11 @@ static const monoGFX_glyph_t glyphs[] =
  *       ###    
  *      #####   
  ********************/
-{740, 12, 0, 6, 12, 13},
+{740, 12, 0, -12, 12, 13},
 
 /********************
  *  Character: 'U', X advance: 14
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 12, Y size: 13
  *   #####    ###  
  *    ###      #   
@@ -1096,11 +1096,11 @@ static const monoGFX_glyph_t glyphs[] =
  *     ###    #    
  *      ######     
  ********************/
-{760, 14, 1, 6, 12, 13},
+{760, 14, 1, -12, 12, 13},
 
 /********************
  *  Character: 'V', X advance: 13
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 13, Y size: 14
  *  #######  ####
  *   ####      # 
@@ -1117,11 +1117,11 @@ static const monoGFX_glyph_t glyphs[] =
  *        ##     
  *               
  ********************/
-{780, 13, 0, 6, 13, 14},
+{780, 13, 0, -12, 13, 14},
 
 /********************
  *  Character: 'W', X advance: 19
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 19, Y size: 13
  *  ###### ######  ####
  *   ####    ###    ## 
@@ -1137,11 +1137,11 @@ static const monoGFX_glyph_t glyphs[] =
  *       ##     ##     
  *       ##      #     
  ********************/
-{803, 19, 0, 6, 19, 13},
+{803, 19, 0, -12, 19, 13},
 
 /********************
  *  Character: 'X', X advance: 14
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 13, Y size: 13
  *  ####### ##### 
  *    ###     ##  
@@ -1157,11 +1157,11 @@ static const monoGFX_glyph_t glyphs[] =
  *    ##    ####  
  *  #####  ###### 
  ********************/
-{834, 14, 0, 6, 13, 13},
+{834, 14, 0, -12, 13, 13},
 
 /********************
  *  Character: 'Y', X advance: 13
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 13, Y size: 13
  *  ######   ####
  *   ####     ## 
@@ -1177,11 +1177,11 @@ static const monoGFX_glyph_t glyphs[] =
  *       ###     
  *      #####    
  ********************/
-{856, 13, 0, 6, 13, 13},
+{856, 13, 0, -12, 13, 13},
 
 /********************
  *  Character: 'Z', X advance: 12
- *  X offset: -1, Y offset: 6
+ *  X offset: -1, Y offset: -12
  *  X size: 12, Y size: 13
  *   ########## 
  *   ##    ###  
@@ -1197,11 +1197,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ###     ## 
  *  ########### 
  ********************/
-{878, 12, -1, 6, 12, 13},
+{878, 12, -1, -12, 12, 13},
 
 /********************
  *  Character: '[', X advance: 6
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 4, Y size: 16
  *   ####  
  *   ##    
@@ -1220,11 +1220,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ##    
  *   ####  
  ********************/
-{898, 6, 1, 6, 4, 16},
+{898, 6, 1, -12, 4, 16},
 
 /********************
  *  Character: '\', X advance: 5
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 6, Y size: 13
  *  ##    
  *  ##    
@@ -1240,11 +1240,11 @@ static const monoGFX_glyph_t glyphs[] =
  *      # 
  *      ##
  ********************/
-{906, 5, 0, 6, 6, 13},
+{906, 5, 0, -12, 6, 13},
 
 /********************
  *  Character: ']', X advance: 6
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 4, Y size: 16
  *   ####  
  *     ##  
@@ -1263,11 +1263,11 @@ static const monoGFX_glyph_t glyphs[] =
  *     ##  
  *   ####  
  ********************/
-{916, 6, 1, 6, 4, 16},
+{916, 6, 1, -12, 4, 16},
 
 /********************
  *  Character: '^', X advance: 11
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 9, Y size: 7
  *       ##     
  *      ###     
@@ -1277,30 +1277,30 @@ static const monoGFX_glyph_t glyphs[] =
  *    ##   ##   
  *    #     #   
  ********************/
-{924, 11, 1, 6, 9, 7},
+{924, 11, 1, -12, 9, 7},
 
 /********************
  *  Character: '_', X advance: 9
- *  X offset: 0, Y offset: 21
+ *  X offset: 0, Y offset: 3
  *  X size: 10, Y size: 1
  *  ##########
  ********************/
-{932, 9, 0, 21, 10, 1},
+{932, 9, 0, 3, 10, 1},
 
 /********************
  *  Character: '`', X advance: 6
- *  X offset: 0, Y offset: 5
+ *  X offset: 0, Y offset: -13
  *  X size: 4, Y size: 4
  *  ##    
  *  ##    
  *   ##   
  *    ##  
  ********************/
-{934, 6, 0, 5, 4, 4},
+{934, 6, 0, -13, 4, 4},
 
 /********************
  *  Character: 'a', X advance: 9
- *  X offset: 0, Y offset: 10
+ *  X offset: 0, Y offset: -8
  *  X size: 10, Y size: 9
  *   ######   
  *  ##    ### 
@@ -1312,11 +1312,11 @@ static const monoGFX_glyph_t glyphs[] =
  *  ###   ### 
  *  ##########
  ********************/
-{936, 9, 0, 10, 10, 9},
+{936, 9, 0, -8, 10, 9},
 
 /********************
  *  Character: 'b', X advance: 10
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 10, Y size: 13
  *  ####      
  *   ###      
@@ -1332,11 +1332,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ###  ### 
  *   #  ####  
  ********************/
-{948, 10, 0, 6, 10, 13},
+{948, 10, 0, -12, 10, 13},
 
 /********************
  *  Character: 'c', X advance: 8
- *  X offset: 0, Y offset: 10
+ *  X offset: 0, Y offset: -8
  *  X size: 8, Y size: 9
  *     #### 
  *   ###  ##
@@ -1348,11 +1348,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ####  #
  *    ##### 
  ********************/
-{965, 8, 0, 10, 8, 9},
+{965, 8, 0, -8, 8, 9},
 
 /********************
  *  Character: 'd', X advance: 10
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 10, Y size: 13
  *       #### 
  *        ### 
@@ -1368,11 +1368,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ### #### 
  *    ### ####
  ********************/
-{974, 10, 0, 6, 10, 13},
+{974, 10, 0, -12, 10, 13},
 
 /********************
  *  Character: 'e', X advance: 8
- *  X offset: 0, Y offset: 10
+ *  X offset: 0, Y offset: -8
  *  X size: 8, Y size: 9
  *    ####  
  *   ##  ## 
@@ -1384,11 +1384,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ###  # 
  *    ####  
  ********************/
-{991, 8, 0, 10, 8, 9},
+{991, 8, 0, -8, 8, 9},
 
 /********************
  *  Character: 'f', X advance: 8
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 8, Y size: 13
  *    ##### 
  *   ###  ##
@@ -1404,11 +1404,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ###    
  *  #####   
  ********************/
-{1000, 8, 0, 6, 8, 13},
+{1000, 8, 0, -12, 8, 13},
 
 /********************
  *  Character: 'g', X advance: 9
- *  X offset: 1, Y offset: 10
+ *  X offset: 1, Y offset: -8
  *  X size: 8, Y size: 13
  *     ###    
  *    ##  ### 
@@ -1424,11 +1424,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   #      # 
  *    ######  
  ********************/
-{1013, 9, 1, 10, 8, 13},
+{1013, 9, 1, -8, 8, 13},
 
 /********************
  *  Character: 'h', X advance: 11
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 11, Y size: 13
  *  ####       
  *   ###       
@@ -1444,11 +1444,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ###   ### 
  *  ##### #####
  ********************/
-{1026, 11, 0, 6, 11, 13},
+{1026, 11, 0, -12, 11, 13},
 
 /********************
  *  Character: 'i', X advance: 6
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 5, Y size: 13
  *   ###  
  *   ###  
@@ -1464,11 +1464,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ###  
  *  ##### 
  ********************/
-{1044, 6, 0, 6, 5, 13},
+{1044, 6, 0, -12, 5, 13},
 
 /********************
  *  Character: 'j', X advance: 8
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 6, Y size: 17
  *     ###  
  *     ###  
@@ -1488,11 +1488,11 @@ static const monoGFX_glyph_t glyphs[] =
  *  ## ##   
  *   ####   
  ********************/
-{1053, 8, 0, 6, 6, 17},
+{1053, 8, 0, -12, 6, 17},
 
 /********************
  *  Character: 'k', X advance: 11
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 10, Y size: 13
  *  ####       
  *   ###       
@@ -1508,11 +1508,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ###   ### 
  *  ##### #### 
  ********************/
-{1066, 11, 0, 6, 10, 13},
+{1066, 11, 0, -12, 10, 13},
 
 /********************
  *  Character: 'l', X advance: 5
- *  X offset: 0, Y offset: 6
+ *  X offset: 0, Y offset: -12
  *  X size: 5, Y size: 13
  *  #### 
  *   ### 
@@ -1528,11 +1528,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ### 
  *  #####
  ********************/
-{1083, 5, 0, 6, 5, 13},
+{1083, 5, 0, -12, 5, 13},
 
 /********************
  *  Character: 'm', X advance: 16
- *  X offset: 0, Y offset: 10
+ *  X offset: 0, Y offset: -8
  *  X size: 16, Y size: 9
  *  #### ####  ###  
  *   ####  #### ### 
@@ -1544,11 +1544,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ###   ###  ### 
  *  ##### ##########
  ********************/
-{1092, 16, 0, 10, 16, 9},
+{1092, 16, 0, -8, 16, 9},
 
 /********************
  *  Character: 'n', X advance: 11
- *  X offset: 0, Y offset: 10
+ *  X offset: 0, Y offset: -8
  *  X size: 11, Y size: 9
  *  #### ####  
  *   ####  ### 
@@ -1560,11 +1560,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ###   ### 
  *  ##### #####
  ********************/
-{1110, 11, 0, 10, 11, 9},
+{1110, 11, 0, -8, 11, 9},
 
 /********************
  *  Character: 'o', X advance: 10
- *  X offset: 0, Y offset: 10
+ *  X offset: 0, Y offset: -8
  *  X size: 9, Y size: 9
  *    #####   
  *   ##   ##  
@@ -1576,11 +1576,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ##   ##  
  *    #####   
  ********************/
-{1123, 10, 0, 10, 9, 9},
+{1123, 10, 0, -8, 9, 9},
 
 /********************
  *  Character: 'p', X advance: 10
- *  X offset: -1, Y offset: 10
+ *  X offset: -1, Y offset: -8
  *  X size: 10, Y size: 13
  *  #### ###  
  *   #### ### 
@@ -1596,11 +1596,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ###      
  *  #####     
  ********************/
-{1134, 10, -1, 10, 10, 13},
+{1134, 10, -1, -8, 10, 13},
 
 /********************
  *  Character: 'q', X advance: 10
- *  X offset: 0, Y offset: 10
+ *  X offset: 0, Y offset: -8
  *  X size: 10, Y size: 13
  *    ####  # 
  *   ###  ### 
@@ -1616,11 +1616,11 @@ static const monoGFX_glyph_t glyphs[] =
  *        ### 
  *       #####
  ********************/
-{1151, 10, 0, 10, 10, 13},
+{1151, 10, 0, -8, 10, 13},
 
 /********************
  *  Character: 'r', X advance: 8
- *  X offset: 0, Y offset: 10
+ *  X offset: 0, Y offset: -8
  *  X size: 8, Y size: 9
  *  #### ###
  *   #### ##
@@ -1632,11 +1632,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ###    
  *  #####   
  ********************/
-{1168, 8, 0, 10, 8, 9},
+{1168, 8, 0, -8, 8, 9},
 
 /********************
  *  Character: 's', X advance: 8
- *  X offset: 0, Y offset: 10
+ *  X offset: 0, Y offset: -8
  *  X size: 6, Y size: 9
  *   ### #  
  *  ##  ##  
@@ -1648,11 +1648,11 @@ static const monoGFX_glyph_t glyphs[] =
  *  ##  ##  
  *  # ###   
  ********************/
-{1177, 8, 0, 10, 6, 9},
+{1177, 8, 0, -8, 6, 9},
 
 /********************
  *  Character: 't', X advance: 6
- *  X offset: 0, Y offset: 7
+ *  X offset: 0, Y offset: -11
  *  X size: 6, Y size: 12
  *     #  
  *    ##  
@@ -1667,11 +1667,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ### #
  *    ### 
  ********************/
-{1184, 6, 0, 7, 6, 12},
+{1184, 6, 0, -11, 6, 12},
 
 /********************
  *  Character: 'u', X advance: 11
- *  X offset: 0, Y offset: 10
+ *  X offset: 0, Y offset: -8
  *  X size: 11, Y size: 9
  *  ####  #### 
  *   ###   ### 
@@ -1683,11 +1683,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   ###   ### 
  *    #########
  ********************/
-{1193, 11, 0, 10, 11, 9},
+{1193, 11, 0, -8, 11, 9},
 
 /********************
  *  Character: 'v', X advance: 9
- *  X offset: 0, Y offset: 10
+ *  X offset: 0, Y offset: -8
  *  X size: 9, Y size: 9
  *  ##### ###
  *   ###   # 
@@ -1699,11 +1699,11 @@ static const monoGFX_glyph_t glyphs[] =
  *      #    
  *      #    
  ********************/
-{1206, 9, 0, 10, 9, 9},
+{1206, 9, 0, -8, 9, 9},
 
 /********************
  *  Character: 'w', X advance: 13
- *  X offset: 0, Y offset: 10
+ *  X offset: 0, Y offset: -8
  *  X size: 13, Y size: 9
  *  #### ##### ##
  *   ###  ###  # 
@@ -1715,11 +1715,11 @@ static const monoGFX_glyph_t glyphs[] =
  *     ##   ##   
  *      #   #    
  ********************/
-{1217, 13, 0, 10, 13, 9},
+{1217, 13, 0, -8, 13, 9},
 
 /********************
  *  Character: 'x', X advance: 10
- *  X offset: 0, Y offset: 10
+ *  X offset: 0, Y offset: -8
  *  X size: 9, Y size: 9
  *  ##### ### 
  *   ###   #  
@@ -1731,11 +1731,11 @@ static const monoGFX_glyph_t glyphs[] =
  *    #   ### 
  *  #### #### 
  ********************/
-{1232, 10, 0, 10, 9, 9},
+{1232, 10, 0, -8, 9, 9},
 
 /********************
  *  Character: 'y', X advance: 9
- *  X offset: 0, Y offset: 10
+ *  X offset: 0, Y offset: -8
  *  X size: 8, Y size: 13
  *  #### ### 
  *   ##   #  
@@ -1751,11 +1751,11 @@ static const monoGFX_glyph_t glyphs[] =
  *  ###      
  *  ###      
  ********************/
-{1243, 9, 0, 10, 8, 13},
+{1243, 9, 0, -8, 8, 13},
 
 /********************
  *  Character: 'z', X advance: 8
- *  X offset: 0, Y offset: 10
+ *  X offset: 0, Y offset: -8
  *  X size: 8, Y size: 9
  *  ########
  *  #   ### 
@@ -1767,11 +1767,11 @@ static const monoGFX_glyph_t glyphs[] =
  *  ####  ##
  *  ########
  ********************/
-{1256, 8, 0, 10, 8, 9},
+{1256, 8, 0, -8, 8, 9},
 
 /********************
  *  Character: '{', X advance: 7
- *  X offset: -1, Y offset: 5
+ *  X offset: -1, Y offset: -13
  *  X size: 6, Y size: 17
  *     ### 
  *    ###  
@@ -1791,11 +1791,11 @@ static const monoGFX_glyph_t glyphs[] =
  *    ###  
  *     ### 
  ********************/
-{1265, 7, -1, 5, 6, 17},
+{1265, 7, -1, -13, 6, 17},
 
 /********************
  *  Character: '|', X advance: 4
- *  X offset: 1, Y offset: 6
+ *  X offset: 1, Y offset: -12
  *  X size: 1, Y size: 13
  *   #   
  *   #   
@@ -1811,11 +1811,11 @@ static const monoGFX_glyph_t glyphs[] =
  *   #   
  *   #   
  ********************/
-{1278, 4, 1, 6, 1, 13},
+{1278, 4, 1, -12, 1, 13},
 
 /********************
  *  Character: '}', X advance: 7
- *  X offset: 1, Y offset: 5
+ *  X offset: 1, Y offset: -13
  *  X size: 6, Y size: 17
  *   ###    
  *    ###   
@@ -1835,17 +1835,17 @@ static const monoGFX_glyph_t glyphs[] =
  *    ###   
  *   ###    
  ********************/
-{1280, 7, 1, 5, 6, 17},
+{1280, 7, 1, -13, 6, 17},
 
 /********************
  *  Character: '~', X advance: 10
- *  X offset: 0, Y offset: 13
+ *  X offset: 0, Y offset: -5
  *  X size: 8, Y size: 2
  *  ####   #  
  *  #   ####  
  ********************/
-{1293, 10, 0, 13, 8, 2},
+{1293, 10, 0, -5, 8, 2},
 
 };
 
-const monoGFX_font_t monoGFX_FreeSerifBold_9pt = {bitmapBuffer, 1295, glyphs, 20};
+const monoGFX_font_t monoGFX_FreeSerifBold_9pt = {bitmapBuffer, 1295, glyphs};

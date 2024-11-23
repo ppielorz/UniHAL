@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.18)
 
 project(UniHAL VERSION 1.0.0 DESCRIPTION "Universal HAL layer")
-include(CTest)
 
 option(UNIHAL_DEBUG_PRINT_TIME "Print formatted time from RTC on debug call." ON)
 
@@ -11,7 +10,13 @@ endif()
 
 add_library(unihal unihal.c)
 target_include_directories(unihal PUBLIC include)
-target_compile_options(unihal PRIVATE -Wall -Wextra -Wpedantic -Werror -Wno-unused-function)
+
+target_compile_options(unihal PRIVATE -Wall -Wpedantic -Wextra -Wconversion)
+if(BUILD_TESTING)
+    include(CTest)
+else()
+    target_compile_options(unihal PRIVATE -Werror)
+endif()
 
 add_subdirectory(drivers)
 add_subdirectory(generic)
