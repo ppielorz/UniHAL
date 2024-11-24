@@ -182,7 +182,7 @@ static void testFont(const fontTestEntry_t* entry)
 
     size_t xPosition = 0U;
     monoGFX_init(&gfx, xSize, ySize, gfxBuffer, gfxBufferSize, monoGFX_rotation_none);
-    monoGFX_textInit(&text, 0, 40, 80, 20, entry->font, textBuffer);
+    monoGFX_textInit(&text, 0, 40, entry->font, textBuffer);
     monoGFX_lineInit(&line, 0, 41, xSize, 41);
     monoGFX_lineSetStyle(&line, 1, monoGFX_lineWidget_style_dashed);
     monoGFX_widgetLink(&screen, (monoGFX_widget_t*) &text);

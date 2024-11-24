@@ -142,7 +142,7 @@ static void printBenchmark()
     clock_t startTime = clock();
     for(size_t i = 0U; i < 10000; i++)
     {
-        monoGFX_print(&gfx, 0, 0, &monoGFX_FreeMono_9pt, "testString123");
+        //monoGFX_print(&gfx, 0, 0, &monoGFX_FreeMono_9pt, "testString123");
     }
     clock_t endTime = clock();
     monoGFX_pngPrinter(&gfx, "printBenchmark.png");
