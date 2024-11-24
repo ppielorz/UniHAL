@@ -26,7 +26,7 @@ extern "C"
  Constants and definitions
  *****************************************************************************/
 
-#define ABSOLUTE_ZERO -273.15
+#define ABSOLUTE_ZERO -273.15F
 #define MLX90614_DEFAULT_ADDRESS        0x5A
 
 typedef struct

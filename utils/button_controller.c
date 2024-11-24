@@ -93,7 +93,7 @@ void interruptController(UniHAL_gpio_t* instance, const UniHAL_gpio_value_t valu
 {
     (void) instance;
     UniHAL_buttonController_t* buttonController = (UniHAL_buttonController_t*) arg1;
-    size_t buttonIndex = (size_t) arg2;
+    uint8_t buttonIndex = (uint8_t)((uintptr_t) arg2);
     UniHAL_buttonController_button_t* button = &buttonController->buttons[buttonIndex];
 
     switch(button->type)

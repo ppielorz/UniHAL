@@ -138,7 +138,7 @@ BME280_status_t bme280_setOptions(BME280_t* instance, BME280_oversampling_t humi
         return BME280_status_wrongOversamplingValue;
     }
 
-    uint8_t tempCtrlMeasureModeRegister = (temperatureOversampling << 5) | (pressureOversampling << 2) | BME280_mode_sleep;
+    uint8_t tempCtrlMeasureModeRegister = (uint8_t)((temperatureOversampling << 5) | (pressureOversampling << 2) | BME280_mode_sleep);
 
     if(!i2cWrite(instance, REGISTER_CTRL_HUM_ADDRESS, humidityOversampling))
     {
@@ -168,8 +168,8 @@ BME280_status_t bme280_setMode(BME280_t* instance, BME280_mode_t mode)
         return BME280_status_communicationError;
     }
 
-    tempCtrlMeasureModeRegister &= ~(0x03);
-    tempCtrlMeasureModeRegister |= mode;
+    tempCtrlMeasureModeRegister &= (uint8_t) ~(0x03);
+    tempCtrlMeasureModeRegister |= (uint8_t) mode;
 
     if(!i2cWrite(instance, REGISTER_CTRL_MEAS_MODE_ADDRESS, tempCtrlMeasureModeRegister))
     {

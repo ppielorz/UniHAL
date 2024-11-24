@@ -62,8 +62,8 @@ typedef enum
 typedef struct
 {
     monoGFX_t* gfx;
-    size_t xSize;
-    size_t ySize;
+    uint8_t xSize;
+    uint8_t ySize;
     uint8_t address;
     SSD1306_addressingMode_t addressingMode;
 

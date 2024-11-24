@@ -72,12 +72,12 @@ void unihal_debug_printf(const char *fmt, ...)
         uint32_t microseconds = 0U;
         unihal_getRtcTime(&time, &microseconds);
         const uint32_t milliseconds = microseconds / 1000;
-        const uint32_t seconds = time.tm_sec;
-        const uint32_t minutes = time.tm_min;
-        const uint32_t hours = time.tm_hour;
-        position += snprintf(&debugBuffer[position], UNIHAL_DEBUG_DEFAULT_BUFFER_LEN - position, "%02u:%02u:%02u.%03u ", hours, minutes, seconds, milliseconds);
+        const int seconds = time.tm_sec;
+        const int minutes = time.tm_min;
+        const int hours = time.tm_hour;
+        position += (size_t) snprintf(&debugBuffer[position], UNIHAL_DEBUG_DEFAULT_BUFFER_LEN - position, "%02d:%02d:%02d.%03u ", hours, minutes, seconds, milliseconds);
         #endif
-        position += vsnprintf(&debugBuffer[position], UNIHAL_DEBUG_DEFAULT_BUFFER_LEN - position, fmt, argptr);
+        position += (size_t) vsnprintf(&debugBuffer[position], UNIHAL_DEBUG_DEFAULT_BUFFER_LEN - position, fmt, argptr);
         va_end(argptr);
         debugCallback(arg, debugBuffer, position);
     }

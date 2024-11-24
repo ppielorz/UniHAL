@@ -119,13 +119,14 @@ SSD1675_status_t ssd1675_init(SSD1675_t* const display, monoGFX_t* const bwGfx, 
     CHECK_AND_RETURN_STATUS(unihal_gpio_configureOutput(display->rst, UniHAL_gpio_value_high, UniHAL_gpio_outputType_pushPull) == true, SSD1675_status_rstPinConfigureError);
     CHECK_AND_RETURN_STATUS(unihal_gpio_configureInput(display->bsy, UniHAL_gpio_pull_noPull) == true, SSD1675_status_bsyPinConfigureError);
     CHECK_AND_RETURN_STATUS(unihal_gpio_configureOutput(display->dc, UniHAL_gpio_value_low, UniHAL_gpio_outputType_pushPull) == true, SSD1675_status_dcPinConfigureError);
+    CHECK_AND_RETURN_STATUS(bwGfx->xSizeBuffer <= WIDTH_MAX, SSD1675_status_widthTooLarge);
+    CHECK_AND_RETURN_STATUS(bwGfx->ySizeBuffer <= HEIGHT_MAX, SSD1675_status_heightTooLarge);
 
-    display->xSize = bwGfx->xSizeBuffer;
+    display->xSize = (uint8_t) bwGfx->xSizeBuffer;
     display->ySize = bwGfx->ySizeBuffer;
     display->bwGfx = bwGfx;
     display->rGfx = rGfx;
-    CHECK_AND_RETURN_STATUS(display->xSize <= WIDTH_MAX, SSD1675_status_widthTooLarge);
-    CHECK_AND_RETURN_STATUS(display->ySize <= HEIGHT_MAX, SSD1675_status_heightTooLarge);
+
     CHECK_AND_RETURN_STATUS(rGfx == NULL || bwGfx->xSize == rGfx->xSize, SSD1675_status_gfxSizeMismatch);
     CHECK_AND_RETURN_STATUS(rGfx == NULL || bwGfx->ySize == rGfx->ySize, SSD1675_status_gfxSizeMismatch);
 
@@ -270,8 +271,8 @@ static SSD1675_status_t initDisplay(const SSD1675_t* const display)
     sendCommand(display, 0x45); //set RAM Y-address start/end position
     sendData(display, 0x00);
     sendData(display, 0x00);
-    sendData(display, display->ySize % UINT8_MAX); //RAM Y-address end at 00H
-    sendData(display, display->ySize / UINT8_MAX);
+    sendData(display, (uint8_t)(display->ySize % UINT8_MAX)); //RAM Y-address end at 00H
+    sendData(display, (uint8_t)(display->ySize / UINT8_MAX));
 
     return SSD1675_status_ok;
 }
@@ -367,8 +368,8 @@ static SSD1675_status_t setCursor(const SSD1675_t* const display, const uint8_t 
     CHECK_AND_RETURN_IF_ERROR(sendData(display, x / 8));
 
     CHECK_AND_RETURN_IF_ERROR(sendCommand(display, REG_RAM_Y_ADDRESS));
-    CHECK_AND_RETURN_IF_ERROR(sendData(display, y & 0xFF));
-    CHECK_AND_RETURN_IF_ERROR(sendData(display, (y >> 8) & 0xFF));
+    CHECK_AND_RETURN_IF_ERROR(sendData(display, (uint8_t)(y & 0xFF)));
+    CHECK_AND_RETURN_IF_ERROR(sendData(display, (uint8_t)((y >> 8) & 0xFF)));
 
     return ret;
 }

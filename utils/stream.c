@@ -108,7 +108,7 @@ Stream_status_t stream_getUint16(Stream_t* const stream, uint16_t* const value)
         case Stream_dataFormat_bigEndian:
             for(uint8_t i = 0U; i < sizeof(*value); i++)
             {
-                calculatedShift = 8 * (sizeof(*value) - 1 - i);
+                calculatedShift = (uint8_t)(8 * (sizeof(*value) - 1 - i));
                 *value |= stream->buffer[stream->actualPosition + i] << calculatedShift;
             }
             break;
@@ -143,7 +143,7 @@ Stream_status_t stream_putUint16(Stream_t* const stream, const uint16_t value)
         case Stream_dataFormat_bigEndian:
             for(uint8_t i = 0U; i < sizeof(value); i++)
             {
-                calculatedShift = 8 * (sizeof(value) - 1 - i);
+                calculatedShift = (uint8_t)(8 * (sizeof(value) - 1 - i));
                 stream->buffer[stream->actualPosition + i] = (uint8_t)(value >> calculatedShift);
             }
             break;
@@ -179,7 +179,7 @@ Stream_status_t stream_getUint32(Stream_t* const stream, uint32_t* const value)
         case Stream_dataFormat_bigEndian:
             for(uint8_t i = 0U; i < sizeof(*value); i++)
             {
-                calculatedShift = 8 * (sizeof(*value) - 1 - i);
+                calculatedShift = (uint8_t)(8 * (sizeof(*value) - 1 - i));
                 *value |= stream->buffer[stream->actualPosition + i] << calculatedShift;
             }
             break;
@@ -214,7 +214,7 @@ Stream_status_t stream_putUint32(Stream_t* const stream, const uint32_t value)
         case Stream_dataFormat_bigEndian:
             for(uint8_t i = 0U; i < sizeof(value); i++)
             {
-                calculatedShift = 8 * (sizeof(value) - 1 - i);
+                calculatedShift = (uint8_t)(8 * (sizeof(value) - 1 - i));
                 stream->buffer[stream->actualPosition + i] = (uint8_t)(value >> calculatedShift);
             }
             break;
@@ -250,7 +250,7 @@ Stream_status_t stream_getUint64(Stream_t* const stream, uint64_t* const value)
         case Stream_dataFormat_bigEndian:
             for(uint8_t i = 0U; i < sizeof(*value); i++)
             {
-                calculatedShift = 8 * (sizeof(*value) - 1 - i);
+                calculatedShift = (uint8_t)(8 * (sizeof(*value) - 1 - i));
                 *value |= (uint64_t) stream->buffer[stream->actualPosition + i] << calculatedShift;
             }
             break;
@@ -285,7 +285,7 @@ Stream_status_t stream_putUint64(Stream_t* const stream, const uint64_t value)
         case Stream_dataFormat_bigEndian:
             for(uint8_t i = 0U; i < sizeof(value); i++)
             {
-                calculatedShift = 8 * (sizeof(value) - 1 - i);
+                calculatedShift = (uint8_t)(8 * (sizeof(value) - 1 - i));
                 stream->buffer[stream->actualPosition + i] = (uint8_t)(value >> calculatedShift);
             }
             break;

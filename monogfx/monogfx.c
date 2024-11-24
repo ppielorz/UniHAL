@@ -161,7 +161,7 @@ monoGFX_status_t monoGFX_getPixel(const monoGFX_t* const gfx, const int16_t xPos
     return monoGFX_status_success;
 }
 
-monoGFX_status_t monoGFX_putChar(const monoGFX_t* const gfx, const size_t xPosition, const size_t yPosition, const monoGFX_font_t* const font, const char character)
+monoGFX_status_t monoGFX_putChar(const monoGFX_t* const gfx, const int16_t xPosition, const int16_t yPosition, const monoGFX_font_t* const font, const char character)
 {
     CHECK_AND_RETURN_STATUS(gfx != NULL, monoGFX_status_nullPointer);
     //CHECK_AND_RETURN_STATUS(xPosition < gfx->xSize, monoGFX_status_xAxisExceeded);
@@ -171,15 +171,15 @@ monoGFX_status_t monoGFX_putChar(const monoGFX_t* const gfx, const size_t xPosit
 
     const monoGFX_glyph_t* glyph = &font->glyphs[character - MONOGFX_FIRST_ASCII_CHARACTER];
     const uint8_t* glyphBitmap = &font->bitmap[glyph->bitmapOffset];
-    size_t bitNumber = 0U;
+    uint16_t bitNumber = 0U;
 
-    for(size_t y = 0U; y < glyph->height; y++)
+    for(uint16_t y = 0U; y < glyph->height; y++)
     {
-        for(size_t x = 0U; x < glyph->width; x++)
+        for(uint16_t x = 0U; x < glyph->width; x++)
         {
             if(*(glyphBitmap + bitNumber / 8) & (1 << bitNumber % 8))
             {
-                monoGFX_setPixel(gfx, xPosition + x + glyph->xOffset, yPosition + y + glyph->yOffset);
+                monoGFX_setPixel(gfx, (int16_t)(xPosition + x + glyph->xOffset), (int16_t)(yPosition + y + glyph->yOffset));
             }
             bitNumber++;
         }
@@ -458,7 +458,7 @@ static void renderLineStep(const monoGFX_t* const gfx, const monoGFX_lineWidget_
         {
             if((int16_t) yPosition + yThicknessOffset >= 0)
             {
-                setPixelInternal(gfx, xPosition, (uint16_t) yPosition + yThicknessOffset);
+                setPixelInternal(gfx, xPosition, (uint16_t) (yPosition + yThicknessOffset));
             }
         }
     }

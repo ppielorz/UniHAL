@@ -144,8 +144,8 @@ SSD1306_status_t ssd1306_initSPI(SSD1306_t* const display, monoGFX_t* const gfx,
 
     CHECK_AND_RETURN_STATUS(gfx->xSizeBuffer <= WIDTH_MAX, SSD1306_status_widthTooLarge);
     CHECK_AND_RETURN_STATUS(gfx->ySizeBuffer <= HEIGHT_MAX, SSD1306_status_heightTooLarge);
-    display->xSize = gfx->xSizeBuffer;
-    display->ySize = gfx->ySizeBuffer;
+    display->xSize = (uint8_t) gfx->xSizeBuffer;
+    display->ySize = (uint8_t) gfx->ySizeBuffer;
     gfx->bitReverseOrder = true;
 
     CHECK_AND_RETURN_IF_ERROR(reset(display));

@@ -108,7 +108,7 @@ uint16_t bh1721_readIlluminance(BH1721_t* instance)
 
     if(status)
     {
-        illuminance = (readVectorData[0] << 8 | readVectorData[1]) * 6 / 5;
+        illuminance = (uint16_t)((readVectorData[0] << 8 | readVectorData[1]) * 6 / 5);
     }
 
     writeCommand(instance, POWER_DOWN);
